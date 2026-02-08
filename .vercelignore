@@ -1,0 +1,11 @@
+node_modules
+.git
+*.log
+.env
+.vercel
+GameSim - New
+generate_data.js
+update_char_data.js
+char_progression_reference.py
+charProgressionData_updated.js
+*.md
