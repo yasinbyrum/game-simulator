@@ -113,6 +113,8 @@ function getSimulationInputs() {
         dailyPUChests: getUiVal('simDailyPUChests', 2),
         dailyFreeChests: getUiVal('simDailyFreeChests', 2),
         doWE: getUiVal('simDoWE', true),
+        dailyGoldChests: getUiVal('simDailyGoldChests', 2),
+        dailyDiamondChests: getUiVal('simDailyDiamondChests', 2),
 
         // Game Data (Read-only access)
         startCfg: {
@@ -138,6 +140,7 @@ function getSimulationInputs() {
         scriptedChests: getSafe('scriptedChests') || [],
         botData: getSafe('botData') || [],
         matchmakingData: getSafe('matchmakingData') || [],
-        shopConfig: getSafe('shopConfig') || { slots: [], priceMultipliers: {} }
+        shopConfig: getSafe('shopConfig') || { slots: [], priceMultipliers: {} },
+        rewardChestConfig: getSafe('rewardChestConfig') || {}
     };
 }

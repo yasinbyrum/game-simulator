@@ -757,6 +757,35 @@ function simulateGame(inputs) {
         }
         checkMissionsNow();
 
+        // 6. Reward Chests (Gold & Diamond) - Bucket-based
+        if (inputs.rewardChestConfig) {
+            // Gold Chest
+            if (inputs.dailyGoldChests > 0 && inputs.rewardChestConfig.goldChest) {
+                let goldChestReward = inputs.rewardChestConfig.goldChest['b' + currentDayBucket] || 0;
+                for (let i = 0; i < Math.min(inputs.dailyGoldChests, 2); i++) {
+                    if (goldChestReward > 0) {
+                        let oldG = state.gold;
+                        addRes("Gold", goldChestReward, "Gold Chest");
+                        addLog("CHEST", `Gold Chest Claimed (${i + 1}/${inputs.dailyGoldChests})`, `+${goldChestReward} Gold (${oldG} → ${state.gold}) [Bucket ${currentDayBucket}]`, "Gold Chest");
+                        state.totalAds++; adsToday++;
+                    }
+                }
+            }
+
+            // Diamond Chest
+            if (inputs.dailyDiamondChests > 0 && inputs.rewardChestConfig.diamondChest) {
+                let diamondChestReward = inputs.rewardChestConfig.diamondChest['b' + currentDayBucket] || 0;
+                for (let i = 0; i < Math.min(inputs.dailyDiamondChests, 2); i++) {
+                    if (diamondChestReward > 0) {
+                        let oldD = state.diamonds;
+                        addRes("Diamonds", diamondChestReward, "Diamond Chest");
+                        addLog("CHEST", `Diamond Chest Claimed (${i + 1}/${inputs.dailyDiamondChests})`, `+${diamondChestReward} Diamonds (${oldD} → ${state.diamonds}) [Bucket ${currentDayBucket}]`, "Diamond Chest");
+                        state.totalAds++; adsToday++;
+                    }
+                }
+            }
+        }
+
 
 
         // 6. Grand Prize (Mission Completion)
@@ -870,13 +899,13 @@ function renderSimulationResults(state, inputs) {
         if (state.bestCharName && state.bestCharName !== "-") {
             let charImg = (typeof getAnyImgTag === 'function') ? getAnyImgTag(state.bestCharName, 80) : '';
             bestCharEl.innerHTML = `
-                <div style="display:flex; align-items:center; gap:15px; padding:10px; background:linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,140,0,0.1)); border-radius:12px; border:2px solid rgba(255,215,0,0.3);">
-                    <div style="transform:scale(1.3); filter:drop-shadow(0 4px 8px rgba(255,215,0,0.4));">${charImg}</div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="transform:scale(1.0);">${charImg}</div>
                     <div style="flex:1;">
-                        <div style="font-size:1.4rem; font-weight:bold; color:#ffd700; text-shadow:0 2px 4px rgba(0,0,0,0.5);">${state.bestCharName}</div>
-                        <div style="margin-top:8px;">
-                            <div style="color:#4ade80; font-size:1rem; margin-bottom:3px;">⚡ Level ${state.bestCharLevel}</div>
-                            <div style="color:#60a5fa; font-size:1rem;">💪 Power ${state.bestCharPower}</div>
+                        <div style="font-size:1.1rem; font-weight:bold; color:#ffd700;">${state.bestCharName}</div>
+                        <div style="margin-top:4px; font-size:0.85rem;">
+                            <div style="color:#4ade80;">Level ${state.bestCharLevel}</div>
+                            <div style="color:#60a5fa;">Power ${state.bestCharPower}</div>
                         </div>
                     </div>
                 </div>

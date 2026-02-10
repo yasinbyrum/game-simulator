@@ -17,6 +17,7 @@ const fileMap = {
     'missionData': 'data_core.js',
     'winRewardData': 'data_core.js',
     'weConfig': 'data_core.js',
+    'rewardChestConfig': 'data_core.js',
     'loginConfig': 'data_core.js',
     'leaderboardConfig': 'data_core.js',
     'chestConfigs': 'data_core.js',
@@ -139,6 +140,7 @@ window.nav = function (id) {
     else if (id === 'leaderboard') { createTabs('lbTabs', 'setLBBucket', currentLBBucket); renderLeaderboard(); injectSaveButton('leaderboard', 'leaderboardConfig'); injectExcelButtons('leaderboard', 'leaderboardConfig'); }
     else if (id === 'daily-login') { renderDaily(); injectSaveButton('daily-login', 'loginConfig'); }
     else if (id === 'watch-earn') { renderWE(); injectSaveButton('watch-earn', 'weConfig'); }
+    else if (id === 'reward-chests') { renderRewardChests(); injectSaveButton('reward-chests', 'rewardChestConfig'); }
     else if (id === 'missions') { createTabs('missionTabs', 'setMissionBucket', currentMissionBucket); renderMissions(); injectSaveButton('missions', ['missionData', 'missionCompletion']); injectExcelButtons('missions', 'missionData'); }
     else if (id === 'win-rewards') { renderWinRewards(); injectSaveButton('win-rewards', 'winRewardData'); }
     else if (id === 'chest-config') { renderChestTabs(); renderChestConfigViz(); renderScriptedChestUI(); updateManualBucketOptions(); injectSaveButton('chest-config', ['chestConfigs', 'simConfig']); injectExcelButtons('chest-config', 'chestConfigs'); }
@@ -516,6 +518,40 @@ function renderWE() {
         <td><input class="edit" value="${x.type}" onchange="updateVal('weConfig.b${currentWEBucket}[${i}].type',this.value,false)" style="font-size:1.15rem;"></td>
         <td><input class="edit" type="number" value="${x.amt}" onchange="updateVal('weConfig.b${currentWEBucket}[${i}].amt',this.value)" style="font-size:1.15rem;"></td>
     </tr>`).join('');
+}
+
+function renderRewardChests() {
+    let data = getSafe('rewardChestConfig');
+    const goldEl = document.getElementById('goldChestBody');
+    const diamondEl = document.getElementById('diamondChestBody');
+
+    if (!data) {
+        if (goldEl) goldEl.innerHTML = "<tr><td colspan='5'>No Reward Chest Data.</td></tr>";
+        if (diamondEl) diamondEl.innerHTML = "<tr><td colspan='5'>No Reward Chest Data.</td></tr>";
+        return;
+    }
+
+    // Render Gold Chest row
+    if (goldEl && data.goldChest) {
+        let row = "<tr>";
+        for (let b = 1; b <= 5; b++) {
+            let val = data.goldChest['b' + b] || 0;
+            row += `<td><input class="edit" type="number" value="${val}" onchange="updateVal('rewardChestConfig.goldChest.b${b}', this.value)" style="width:80px; font-size:1.2rem; text-align:center;"></td>`;
+        }
+        row += "</tr>";
+        goldEl.innerHTML = row;
+    }
+
+    // Render Diamond Chest row
+    if (diamondEl && data.diamondChest) {
+        let row = "<tr>";
+        for (let b = 1; b <= 5; b++) {
+            let val = data.diamondChest['b' + b] || 0;
+            row += `<td><input class="edit" type="number" value="${val}" onchange="updateVal('rewardChestConfig.diamondChest.b${b}', this.value)" style="width:80px; font-size:1.2rem; text-align:center;"></td>`;
+        }
+        row += "</tr>";
+        diamondEl.innerHTML = row;
+    }
 }
 
 function renderBotIntelligence() {
@@ -897,14 +933,14 @@ function renderCharts(stats) {
         });
     }
 
-    // 2. Gem Sources (Bar)
+    // 2. Diamond Sources (Bar)
     let ctx2 = document.getElementById('chartGemSource');
     if (ctx2) {
         window.myCharts['chartGemSource'] = new Chart(ctx2, {
             type: 'bar',
             data: {
                 labels: Object.keys(stats.gemSources),
-                datasets: [{ label: 'Gem Sources', data: Object.values(stats.gemSources), backgroundColor: '#a855f7' }]
+                datasets: [{ label: 'Diamond Sources', data: Object.values(stats.gemSources), backgroundColor: '#a855f7' }]
             },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
         });

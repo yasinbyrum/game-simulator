@@ -619,6 +619,27 @@ var weConfig = {
   ]
 };
 
+// --- REWARD CHESTS (Gold & Diamond) ---
+var rewardChestConfig = {
+  "goldChest": {
+    "dailyLimit": 2,
+    "b1": 100,
+    "b2": 250,
+    "b3": 500,
+    "b4": 1000,
+    "b5": 2000
+  },
+  "diamondChest": {
+    "dailyLimit": 2,
+    "b1": 10,
+    "b2": 25,
+    "b3": 50,
+    "b4": 100,
+    "b5": 200
+  }
+};
+
+
 var loginConfig = {
   "onboarding": [
     { "day": 1, "type": "Gold", "amt": 100 },
