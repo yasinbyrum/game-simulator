@@ -115,7 +115,10 @@ function getSimulationInputs() {
         doWE: getUiVal('simDoWE', true),
 
         // Game Data (Read-only access)
-        startCfg: getSafe('startConfig') || { gold: 0, diamonds: 0 },
+        startCfg: {
+            gold: getUiVal('simStartGold', 500),
+            diamonds: getUiVal('simStartGems', 0)
+        },
         levelData: getSafe('levelData') || [],
         cupRoadData: getSafe('cupRoadData') || [],
         simConfig: getSafe('simConfig') || { lossPenalty: 30 },

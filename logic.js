@@ -484,7 +484,13 @@ window.updateCharStat = function (charName, levelIdx, statIdx, val) {
 
 function renderPowerUps() {
     let data = getSafe('powerUpData'); const el = document.getElementById('powerUpBody'); if (data && el) {
-        el.innerHTML = data.map((d, i) => `<tr><td><div style="display:flex; align-items:center; gap:12px;">${getPngTag(d.n, 45)}<span style="font-size:1.1rem; font-weight:800; color:#fff;">${d.n}</span></div></td><td style="color:#fbbf24; font-size:1.4rem; font-weight:bold; text-align:center;">${d.s}★</td>${[2, 3, 4, 5].map(l => `<td><div style="display:flex; gap:8px; align-items:center; justify-content:center;"><span style="font-size:1.0rem; font-weight:bold; color:#fbbf24;">G</span><input class="edit" type="number" style="width:70px; padding:4px; text-align:center; font-size:1.0rem;" value="${d['l' + l]}" onchange="updateVal('powerUpData[${i}].l${l}', this.value)"><span style="font-size:1.0rem; font-weight:bold; color:#60a5fa;">XP</span><input class="edit" type="number" style="width:45px; padding:4px; text-align:center; font-size:1.0rem;" value="${d['xp' + l]}" onchange="updateVal('powerUpData[${i}].xp${l}', this.value)"></div></td>`).join('')}</tr>`).join('');
+        // Filter out disabled power-ups (like Triple Goal)
+        let activeData = data.filter(d => !d.disabled);
+        el.innerHTML = activeData.map((d, i) => {
+            // Find original index for correct updateVal path
+            let originalIndex = data.findIndex(p => p.n === d.n);
+            return `<tr><td><div style="display:flex; align-items:center; gap:12px;">${getPngTag(d.n, 45)}<span style="font-size:1.1rem; font-weight:800; color:#fff;">${d.n}</span></div></td><td style="color:#fbbf24; font-size:1.4rem; font-weight:bold; text-align:center;">${d.s}★</td>${[2, 3, 4, 5].map(l => `<td><div style="display:flex; gap:8px; align-items:center; justify-content:center;"><span style="font-size:1.0rem; font-weight:bold; color:#fbbf24;">G</span><input class="edit" type="number" style="width:70px; padding:4px; text-align:center; font-size:1.0rem;" value="${d['l' + l]}" onchange="updateVal('powerUpData[${originalIndex}].l${l}', this.value)"><span style="font-size:1.0rem; font-weight:bold; color:#60a5fa;">XP</span><input class="edit" type="number" style="width:45px; padding:4px; text-align:center; font-size:1.0rem;" value="${d['xp' + l]}" onchange="updateVal('powerUpData[${originalIndex}].xp${l}', this.value)"></div></td>`).join('')}</tr>`;
+        }).join('');
     }
 }
 
@@ -805,7 +811,7 @@ window.simulateManualChestOpen = function () {
             let amt = conf.amounts[amtKey]['b' + b] || conf.amounts[amtKey]['b1'];
             let pupPool = getSafe('powerUpData');
 
-            let candidates = pupPool.filter(p => p.s === star);
+            let candidates = pupPool.filter(p => p.s === star && !p.disabled);
             if (candidates.length > 0) {
                 let chosen = candidates[Math.floor(Math.random() * candidates.length)];
 

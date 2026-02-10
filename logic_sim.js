@@ -57,8 +57,9 @@ function simulateGame(inputs) {
         else if (type === 'XP') { state.xp += amt; track('xpSources', source, amt); }
     };
 
-    // Initialize PowerUps
+    // Initialize PowerUps (skip disabled ones like Triple Goal)
     inputs.powerUpData.forEach(p => {
+        if (p.disabled) return; // Skip disabled power-ups
         let isStarter = p.n === "Rocket Gun" || p.n === "Giant Player";
         state.powerUps[p.n] = { star: p.s, level: 1, amount: 0, unlocked: isStarter };
     });
