@@ -135,7 +135,7 @@ header {
 
 #dashboard {
     height: 100%;
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 .result-grid {
@@ -219,9 +219,8 @@ header {
 
 .card.log-card-container {
     flex: 1;
-    min-height: 0;
+    min-height: 300px;
     margin-bottom: 0;
-    overflow: hidden;
 }
 
 .card-header {
@@ -467,8 +466,6 @@ input.edit:focus,
     font-family: 'Consolas', monospace;
     font-size: 0.95rem;
     line-height: 1.6;
-    height: 100%;
-    overflow-y: auto;
     background: rgba(0, 0, 0, 0.2);
     border-top: 1px solid var(--border);
 }
