@@ -18,27 +18,6 @@ var simConfig = {
   "dailyFreeChestLimit": 2
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// DAILY LOGIN REWARDS (User Request: Taiga on Day 2 & 4)
 var loginConfig = {
   "fixed": [
     { "day": 1, "type": "Gold", "amt": 100 },
