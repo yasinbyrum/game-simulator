@@ -624,19 +624,66 @@ var rewardChestConfig = {
   "goldChest": {
     "dailyLimit": 2,
     "b1": 100,
-    "b2": 250,
-    "b3": 500,
-    "b4": 1000,
-    "b5": 2000
+    "b2": 150,
+    "b3": 300,
+    "b4": 400,
+    "b5": 1000
   },
   "diamondChest": {
     "dailyLimit": 2,
-    "b1": 10,
-    "b2": 25,
-    "b3": 50,
-    "b4": 100,
-    "b5": 200
+    "b1": 5,
+    "b2": 8,
+    "b3": 15,
+    "b4": 20,
+    "b5": 50
   }
+};
+
+
+// --- MARKET CONFIG ---
+var marketConfig = {
+  "goldPackages": [
+    { "id": "gold_small", "gold": 500, "diamonds": 50, "name": "Small Gold Pack", "img": "gold_card" },
+    { "id": "gold_medium", "gold": 1500, "diamonds": 125, "name": "Medium Gold Pack", "img": "gold_card" },
+    { "id": "gold_large", "gold": 5000, "diamonds": 350, "name": "Large Gold Pack", "img": "gold_card" }
+  ],
+  "powerPacks": [
+    // 1 STAR (5 Diamonds)
+    { "id": "pup_mega_ball", "star": 1, "count": 5, "diamonds": 5, "name": "5x Mega Ball", "img": "Mega Ball" },
+    { "id": "pup_reverse_controls", "star": 1, "count": 5, "diamonds": 5, "name": "5x Reverse Controls", "img": "Reverse Controls" },
+    { "id": "pup_invisible_ball", "star": 1, "count": 5, "diamonds": 5, "name": "5x Invisible Ball", "img": "Invisible Ball" },
+    { "id": "pup_mini_goal", "star": 1, "count": 5, "diamonds": 5, "name": "5x Mini Goal", "img": "Mini Goal" },
+    { "id": "pup_ice_ball", "star": 1, "count": 5, "diamonds": 5, "name": "5x Ice Ball", "img": "Ice Ball" },
+
+    // 2 STAR (10 Diamonds)
+    { "id": "pup_enlarged_goal", "star": 2, "count": 5, "diamonds": 10, "name": "5x Enlarged Goal", "img": "Enlarged Goal" },
+    { "id": "pup_double_goal", "star": 2, "count": 5, "diamonds": 10, "name": "5x Double Goal", "img": "Double Goal" },
+    { "id": "pup_locked_goal", "star": 2, "count": 5, "diamonds": 10, "name": "5x Locked Goal", "img": "Locked Goal" },
+    { "id": "pup_trap", "star": 2, "count": 5, "diamonds": 10, "name": "5x Trap", "img": "Trap" },
+    { "id": "pup_giant_player", "star": 2, "count": 5, "diamonds": 10, "name": "5x Giant Player", "img": "Giant Player" },
+    { "id": "pup_dynamite", "star": 2, "count": 5, "diamonds": 10, "name": "5x Dynamite", "img": "Dynamite" },
+    { "id": "pup_rocket_gun", "star": 2, "count": 5, "diamonds": 10, "name": "5x Rocket Gun", "img": "Rocket Gun" },
+
+    // 3 STAR (15 Diamonds)
+    { "id": "pup_paint_spray", "star": 3, "count": 5, "diamonds": 15, "name": "5x Paint Spray", "img": "Paint Spray" },
+    { "id": "pup_overcharge", "star": 3, "count": 5, "diamonds": 15, "name": "5x Overcharge", "img": "Overcharge" }
+  ],
+  "chests": [
+    { "id": "free_chest", "name": "Free Chest", "type": "Free Chest", "img": "Free Chest" },
+    { "id": "power_chest", "name": "PowerUp Chest", "type": "PowerUp Chest", "img": "free_power" },
+    { "id": "gold_chest", "name": "Gold Chest", "type": "Gold Chest", "img": "gold_chest" },
+    { "id": "diamond_chest", "name": "Diamond Chest", "type": "Diamond Chest", "img": "diamond_chest" },
+
+    // Bucket 1+
+    { "id": "rookie_chest", "name": "Rookie Chest", "type": "Rookie Chest", "img": "Rookie Chest", "diamonds": 30, "minBucket": 1 },
+    { "id": "pro_chest", "name": "Pro Chest", "type": "Pro Chest", "img": "Pro Chest", "diamonds": 80, "minBucket": 1 },
+
+    // Bucket 3+
+    { "id": "champion_chest", "name": "Champion Chest", "type": "Champion Chest", "img": "Champion Chest", "diamonds": 150, "minBucket": 3 },
+
+    // Bucket 4+
+    { "id": "legendary_chest", "name": "Legendary Chest", "type": "Legendary Chest", "img": "Legendary Chest", "diamonds": 300, "minBucket": 4 }
+  ]
 };
 
 

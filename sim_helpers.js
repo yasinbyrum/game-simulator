@@ -87,6 +87,11 @@ function getAnyImgTag(name, size = 40) {
     if (puData && puData.some(p => p.n === name)) return getPngTag(name, size);
     let chestData = getSafe('chestConfigs');
     if (chestData && Object.keys(chestData).includes(name)) return getPngTag(name, size);
+
+    // Explicit checks for Reward Chests
+    if (name === "Gold Chest") return getPngTag("gold_chest", size);
+    if (name === "Diamond Chest") return getPngTag("diamond_chest", size);
+
     let arenaData = getSafe('arenaData');
     let cleanArenaName = name.replace(" Unlock", "");
     if (arenaData && arenaData.some(a => a.n === cleanArenaName)) return getPngTag(cleanArenaName, size);

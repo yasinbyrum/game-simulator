@@ -332,7 +332,7 @@ function simulateGame(inputs) {
                         // FALLBACK: All valid chars for this Rarity (up to current bucket) are MAXED.
                         // Convert to Gold as per user request ("duplicate kart vermemeye çalışacağız").
                         addRes("Gold", 50, "Maxed Char Fallback");
-                        lootLog.push(`50 Gold (All ${r} chars maxed)`);
+                        lootLog.push(`50 Gold`);
                     }
                 }
             });
@@ -495,13 +495,13 @@ function simulateGame(inputs) {
         }
         if (cands.length > 0) {
             let c = cands[Math.floor(Math.random() * cands.length)];
+            let oldLevel = state.powerUps[c.n].level;
             state.powerUps[c.n].amount -= c.req;
             state.gold -= c.cost;
             state.powerUps[c.n].level = c.nxt;
             track('goldSinks', 'PowerUp Upgrade', c.cost);
             addRes("XP", c.xp, "PowerUp Upgrade");
-            addLog("UPGRADE", `PowerUp ${c.n} -> Lvl ${c.nxt}`, `Cost: ${c.cost}`);
-            addLog("UPGRADE", `PowerUp ${c.n} -> Lvl ${c.nxt}`, `Cost: ${c.cost}`);
+            addLog("UPGRADE", `⬆️ PowerUp ${c.n} Lvl ${oldLevel} -> Lvl ${c.nxt}`, `Cost: ${c.cost}`);
             state.totalUpgrades++;
             state.totalPupUpgrades++;
             checkLevelUp();

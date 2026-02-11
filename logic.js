@@ -24,7 +24,8 @@ const fileMap = {
     'scriptedChests': 'data_core.js',
     'missionCompletion': 'data_core.js',
     'startConfig': 'data_core.js',
-    'slotUnlockData': 'data_core.js'
+    'slotUnlockData': 'data_core.js',
+    'marketConfig': 'data_core.js'
 };
 
 // Excel Library Loader
@@ -66,8 +67,35 @@ let currentMissionBucket = 1;
 let currentWinBucket = 1;
 let currentWEBucket = 1;
 let currentDailyFixedBucket = 1;
-let playerInventory = {}, playerPowerUps = {};
+var playerInventory = {};
+var playerPowerUps = {};
+// Global Resources State
+window.playerResources = {
+    gold: getUiVal('simStartGold', 1000),
+    diamonds: getUiVal('simStartGems', 100),
+    dailyChests: {}
+};
+
+// Simple Logger
+window.addLog = function (source, title, msg, img) {
+    console.log(`[${source}] ${title}: ${msg}`);
+    let logEl = document.getElementById('logArea'); // Main Dashboard Log
+    if (logEl) {
+        let entry = document.createElement('div');
+        entry.style.borderBottom = "1px solid #333";
+        entry.style.padding = "5px 0";
+        let date = new Date().toLocaleTimeString();
+        entry.innerHTML = `<span style="color:#aaa; font-size:0.8rem;">[${date}]</span> <b>${title}</b>: ${msg}`;
+        if (logEl.firstChild) logEl.insertBefore(entry, logEl.firstChild);
+        else logEl.appendChild(entry);
+    }
+};
+
+// --- CONSTANTS ---
 const rarityWeight = { "Rookie": 1, "Pro": 2, "Champion": 3, "Legendary": 4, "Exclusive": 5 };
+
+// --- SIMULATION CONFIG ---
+// simConfig is loaded from data_core.js via getSafe
 
 // ==========================================
 // DATA ALIASES (FIX FOR MISSING VARIABLES)
@@ -145,6 +173,7 @@ window.nav = function (id) {
     else if (id === 'win-rewards') { renderWinRewards(); injectSaveButton('win-rewards', 'winRewardData'); }
     else if (id === 'chest-config') { renderChestTabs(); renderChestConfigViz(); renderScriptedChestUI(); updateManualBucketOptions(); injectSaveButton('chest-config', ['chestConfigs', 'simConfig']); injectExcelButtons('chest-config', 'chestConfigs'); }
     else if (id === 'power-ups') { renderPowerUps(); renderSlotConfig(); injectSaveButton('power-ups', ['powerUpData', 'slotUnlockData']); injectExcelButtons('power-ups', 'powerUpData'); }
+    else if (id === 'market') { renderMarket(); injectSaveButton('market', 'marketConfig'); }
 };
 
 function attachCharFilters() {
@@ -307,16 +336,123 @@ function renderScriptedChestUI() {
         if (document.getElementById('scAmt2')) document.getElementById('scAmt2').value = sc[0].c2a;
     }
 }
-window.updateScriptedChest = function () {
-    let sc = getSafe('scriptedChests');
-    if (sc && sc[0]) {
-        sc[0].gold = parseInt(document.getElementById('scGold').value) || 0;
-        sc[0].c1n = document.getElementById('scChar1').value;
-        sc[0].c1a = parseInt(document.getElementById('scAmt1').value) || 0;
-        sc[0].c2n = document.getElementById('scChar2').value;
-        sc[0].c2a = parseInt(document.getElementById('scAmt2').value) || 0;
+// ==========================================
+// MARKET RENDER LOGIC
+// ==========================================
+window.currentMarketTab = 'chests';
+window.currentMarketBucket = 1;
+
+window.renderMarket = function () {
+    let el = document.getElementById('market');
+    if (!el) return;
+
+    // Build Skeleton if empty (Updated Header Layout)
+    if (el.innerHTML.trim() === "") {
+        el.innerHTML = `
+        <div class="card">
+            <div class="market-header" style="flex-direction:column; align-items:flex-start; gap:15px;">
+                <div style="font-size:1.4rem; font-weight:bold; display:flex; align-items:center; gap:10px;">
+                    🛒 Market
+                </div>
+                <div class="bucket-tabs" id="marketBucketTabs" style="margin:0;"></div>
+            </div>
+            <div class="market-tabs">
+                <button class="tab-btn active" id="mt_chests" onclick="setMarketTab('chests')">📦 Chests</button>
+                <button class="tab-btn" id="mt_gold" onclick="setMarketTab('gold')">💰 Gold</button>
+                <button class="tab-btn" id="mt_powers" onclick="setMarketTab('powers')">⚡ Power Packs</button>
+            </div>
+            <div id="marketGrid" class="market-grid"></div>
+        </div>`;
     }
-};
+
+    // Render Buckets
+    createTabs('marketBucketTabs', 'setMarketBucket', window.currentMarketBucket);
+
+    // Update active tab
+    ['chests', 'gold', 'powers'].forEach(t => {
+        let btn = document.getElementById('mt_' + t);
+        if (btn) {
+            if (t === window.currentMarketTab) btn.classList.add('active');
+            else btn.classList.remove('active');
+        }
+    });
+
+    renderMarketItems();
+}
+
+window.setMarketTab = function (t) { window.currentMarketTab = t; renderMarket(); }
+window.setMarketBucket = function (b) { window.currentMarketBucket = b; renderMarket(); }
+
+window.renderMarketItems = function () {
+    let grid = document.getElementById('marketGrid');
+    if (!grid) return;
+
+    let config = getSafe('marketConfig');
+    if (!config) { grid.innerHTML = "<div style='grid-column:1/-1; text-align:center; padding:20px;'>No market data found.</div>"; return; }
+
+    let items = [];
+    if (window.currentMarketTab === 'chests') items = config.chests || [];
+    else if (window.currentMarketTab === 'gold') items = config.goldPackages || [];
+    else if (window.currentMarketTab === 'powers') items = config.powerPacks || [];
+
+    if (items.length === 0) {
+        grid.innerHTML = "<div style='grid-column:1/-1; text-align:center; padding:20px; color:#aaa;'>No items in this category.</div>";
+        return;
+    }
+
+    grid.innerHTML = items.map(item => {
+        let imgName = item.img || item.name;
+
+        // Price Tag Logic
+        let priceTag = "";
+        let contentTag = "";
+
+        if (window.currentMarketTab === 'gold') {
+            priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
+            contentTag = `<div style="font-size:1.3rem; font-weight:800; color:#fbbf24; margin-top:5px;">${item.gold.toLocaleString()} Gold</div>`;
+        } else if (window.currentMarketTab === 'powers') {
+            priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
+            // Removed redundant text as requested
+        } else {
+            // Chests
+            priceTag = `<div class="market-item-price price-free">OPEN</div>`;
+            // Removed redundant text as requested
+        }
+
+        return `
+        <div class="market-item" onclick="buyMarketItem('${item.id}')" style="cursor:pointer;">
+            <div class="market-item-name">${item.name}</div>
+            <div style="margin:10px 0;">
+                ${getPngTag(imgName, 100)}
+            </div>
+            ${priceTag}
+            ${contentTag}
+        </div>
+        `;
+    }).join('');
+}
+
+window.buyMarketItem = function (id) {
+    let config = getSafe('marketConfig');
+    if (!config) return;
+
+    // Find Item
+    let item = null;
+    ['chests', 'goldPackages', 'powerPacks'].forEach(cat => {
+        if (item) return;
+        if (config[cat]) {
+            let found = config[cat].find(x => x.id === id);
+            if (found) item = found;
+        }
+    });
+
+    if (!item) { console.error("Item not found:", id); return; }
+
+    // Placeholder Logic
+    addLog("MARKET", `Clicked ${item.name}`, "Purchase logic coming next.");
+    // alert(`You clicked ${item.name}. Purchase logic implemented in next step.`);
+}
+
 
 function renderInventory() {
     const el = document.getElementById('inventoryBody'), elP = document.getElementById('pupInventoryBody');
@@ -817,25 +953,28 @@ window.renderInventory = function () {
     }
 };
 
-window.simulateManualChestOpen = function () {
-    let type = document.getElementById('manualChestType').value;
-    let b = parseInt(document.getElementById('manualChestBucket').value);
-    let count = parseInt(document.getElementById('manualChestCount').value);
-    let logEl = document.getElementById('manualChestLog');
+window.simulateManualChestOpen = function (typeArg, bucketArg, logIdArg) {
+    let type = typeArg || document.getElementById('manualChestType').value;
+    let b = bucketArg || parseInt(document.getElementById('manualChestBucket').value);
+    let count = 1; // Default to 1 for market calls
+    if (!typeArg) count = parseInt(document.getElementById('manualChestCount').value); // Use input only if no arg provided
+
+    let logEl = logIdArg ? document.getElementById(logIdArg) : document.getElementById('manualChestLog');
     let configs = getSafe('chestConfigs');
     let conf = configs ? (configs[type] || configs["Rookie Chest"]) : null;
     if (!conf) return (logEl.innerHTML = "Chest Configs not loaded.");
 
     // Ensure State Exists
-    if (!window.lastSimState) {
-        window.lastSimState = { gold: 0, diamonds: 0, inventory: {}, powerUps: {} };
+    if (!window.playerResources) {
+        window.playerResources = { gold: 0, diamonds: 0 };
     }
-    let state = window.lastSimState;
+    // Note: state.inventory is now playerInventory (global)
+    // state.powerUps is now playerPowerUps (global)
 
     let report = `Opener: ${count}x ${type} (B${b})\n`;
     for (let i = 0; i < count; i++) {
         let chestGold = conf.gold['b' + b] || conf.gold['b1'] || 0;
-        state.gold = (state.gold || 0) + chestGold; // Update Gold
+        window.playerResources.gold = (window.playerResources.gold || 0) + chestGold; // Update Gold
 
         let chestItems = [];
         if (conf.customType === "PowerUp") {
@@ -852,9 +991,9 @@ window.simulateManualChestOpen = function () {
                 let chosen = candidates[Math.floor(Math.random() * candidates.length)];
 
                 // Update PowerUp State
-                if (!state.powerUps[chosen.n]) state.powerUps[chosen.n] = { amount: 0, level: 0, star: chosen.s, unlocked: false };
-                state.powerUps[chosen.n].amount += amt;
-                if (!state.powerUps[chosen.n].unlocked) state.powerUps[chosen.n].unlocked = true; // Auto unlock on first drop? Or separate logic? Assuming unlock.
+                if (!playerPowerUps[chosen.n]) playerPowerUps[chosen.n] = { amount: 0, level: 0, star: chosen.s, unlocked: false };
+                playerPowerUps[chosen.n].amount += amt;
+                if (!playerPowerUps[chosen.n].unlocked) playerPowerUps[chosen.n].unlocked = true; // Auto unlock on first drop? Or separate logic? Assuming unlock.
 
                 chestItems.push(`(${star}★) ${chosen.n} x${amt}`);
             }
@@ -871,8 +1010,8 @@ window.simulateManualChestOpen = function () {
                         let char = filtered[Math.floor(Math.random() * filtered.length)];
 
                         // Update Character State
-                        if (!state.inventory[char.n]) state.inventory[char.n] = { cards: 0, level: 1, rarity: char.r };
-                        state.inventory[char.n].cards += amt;
+                        if (!playerInventory[char.n]) playerInventory[char.n] = { cards: 0, level: 1, rarity: char.r };
+                        playerInventory[char.n].cards += amt;
 
                         chestItems.push(`${char.n} x${amt}`);
                     }
@@ -884,13 +1023,22 @@ window.simulateManualChestOpen = function () {
     }
 
     // Update UI
-    if (typeof renderSimInventory === 'function') renderSimInventory(state.inventory);
-    if (typeof renderSimPowerUps === 'function') renderSimPowerUps(state.powerUps);
+    if (typeof renderSimInventory === 'function') renderSimInventory(playerInventory);
+    if (typeof renderSimPowerUps === 'function') renderSimPowerUps(playerPowerUps);
 
     // Update Dashboard
-    if (document.getElementById('resGold')) document.getElementById('resGold').innerText = state.gold;
+    if (document.getElementById('resGold')) document.getElementById('resGold').innerText = window.playerResources.gold;
 
-    logEl.innerHTML = report;
+    if (logIdArg) {
+        let entry = document.createElement('div');
+        entry.style.borderBottom = "1px solid #333";
+        entry.style.padding = "5px 0";
+        entry.innerHTML = `<span style="color:#aaa; font-size:0.8rem;">[${new Date().toLocaleTimeString()}]</span> ` + report.replace(/\n/g, '<br/>');
+        if (logEl.firstChild) logEl.insertBefore(entry, logEl.firstChild);
+        else logEl.appendChild(entry);
+    } else {
+        logEl.innerHTML = report;
+    }
 }
 
 // runSimulation moved to logic_sim.js
@@ -1300,6 +1448,393 @@ function loadGame() {
 // ==========================================
 // INITIALIZATION
 // ==========================================
+// ==========================================
+// MARKET RENDER LOGIC
+// ==========================================
+window.currentMarketTab = 'chests';
+window.currentMarketBucket = 1;
+
+window.renderMarket = function () {
+    let el = document.getElementById('market');
+    if (!el) return;
+
+    // Build Skeleton if empty
+    if (el.innerHTML.trim() === "") {
+        el.innerHTML = `
+        <div class="card">
+            <div class="market-header" style="flex-direction:column; align-items:flex-start; gap:15px;">
+                <div style="font-size:1.4rem; font-weight:bold; display:flex; align-items:center; gap:10px;">
+                    🛒 Market
+                </div>
+                <div class="bucket-tabs" id="marketBucketTabs" style="margin:0;"></div>
+            </div>
+            <div class="market-tabs">
+                <button class="tab-btn active" id="mt_chests" onclick="setMarketTab('chests')">📦 Chests</button>
+                <button class="tab-btn" id="mt_gold" onclick="setMarketTab('gold')">💰 Gold</button>
+                <button class="tab-btn" id="mt_powers" onclick="setMarketTab('powers')">⚡ Power Packs</button>
+            </div>
+            <div id="marketGrid" class="market-grid"></div>
+            <!-- Market Logs Container -->
+            <div id="marketLogs" style="margin-top:20px; max-height:750px; overflow-y:auto; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; display:none; font-family:monospace;"></div>
+        </div>`;
+    }
+
+    // Render Buckets
+    createTabs('marketBucketTabs', 'setMarketBucket', window.currentMarketBucket);
+
+    // Update active tab
+    ['chests', 'gold', 'powers'].forEach(t => {
+        let btn = document.getElementById('mt_' + t);
+        if (btn) {
+            if (t === window.currentMarketTab) btn.classList.add('active');
+            else btn.classList.remove('active');
+        }
+    });
+
+    renderMarketItems();
+
+    // Fake Rich Mode (User Request)
+    if (document.getElementById('resGems')) document.getElementById('resGems').innerText = "10,000";
+    if (document.getElementById('resGold')) document.getElementById('resGold').innerText = "100,000";
+}
+
+window.setMarketTab = function (t) { window.currentMarketTab = t; renderMarket(); }
+window.setMarketBucket = function (b) { window.currentMarketBucket = b; renderMarket(); }
+
+window.renderMarketItems = function () {
+    let grid = document.getElementById('marketGrid');
+    if (!grid) return;
+
+    let config = getSafe('marketConfig');
+    if (!config) { grid.innerHTML = "<div style='grid-column:1/-1; text-align:center; padding:20px;'>No market data found.</div>"; return; }
+
+    let items = [];
+    if (window.currentMarketTab === 'chests') {
+        items = config.chests || [];
+        // Filter by Bucket
+        items = items.filter(i => !i.minBucket || window.currentMarketBucket >= i.minBucket);
+    }
+    else if (window.currentMarketTab === 'gold') items = config.goldPackages || [];
+    else if (window.currentMarketTab === 'powers') items = config.powerPacks || [];
+
+    if (items.length === 0) {
+        grid.innerHTML = "<div style='grid-column:1/-1; text-align:center; padding:20px; color:#aaa;'>No items in this category.</div>";
+        return;
+    }
+
+    grid.innerHTML = items.map(item => {
+        let imgName = item.img || item.name;
+
+        // Price Tag Logic
+        let priceTag = "";
+        let contentTag = "";
+        let isFreePremium = ['Rookie Chest', 'Pro Chest', 'Champion Chest', 'Legendary Chest'].includes(item.name);
+
+        if (window.currentMarketTab === 'gold') {
+            priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
+            contentTag = `<div style="font-size:1.3rem; font-weight:800; color:#fbbf24; margin-top:5px;">${item.gold.toLocaleString()} Gold</div>`;
+        } else if (window.currentMarketTab === 'powers') {
+            priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
+            let stars = "";
+            for (let i = 0; i < (item.star || 1); i++) stars += "⭐";
+            contentTag = `<div style="font-size:1rem; margin-top:5px;">${stars}</div>`;
+        } else {
+            // Chests
+            if (item.id === 'gold_chest' || item.id === 'diamond_chest') {
+                // Reward Chests - Check Daily Limit
+                let configKey = (item.id === 'gold_chest') ? 'goldChest' : 'diamondChest';
+                let current = (window.playerResources && window.playerResources.dailyChests && window.playerResources.dailyChests[configKey]) || 0;
+                let limit = 2; // Fixed limit
+                let isMaxed = current >= limit;
+
+                let btnText = isMaxed ? "MAX" : "OPEN";
+                let btnClass = isMaxed ? "btn-open-chest disabled" : "btn-open-chest";
+                // If maxed, disable click. If not, normal click.
+                let onClick = isMaxed ? "" : `onclick="event.stopPropagation(); buyMarketItem('${item.id}')"`;
+                let style = isMaxed ? "background:#555; cursor:not-allowed;" : "";
+
+                priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds || 0}</div>`; // Should be 0 for these?
+                // Actually Gold/Diamond chests in marketConfig have 0 diamonds usually? Or are they hidden?
+                // data_core: Gold Chest has no diamond price listed in snippet?
+                // If they have no diamond price, maybe handled differently. 
+                // data_core snippet: { "id": "gold_chest", ... "img": "gold_chest" } - no price.
+
+                // Fix: If no diamonds, show free/open?
+                if (!item.diamonds) {
+                    priceTag = `<div class="market-item-price price-free">FREE</div>`;
+                }
+
+                contentTag = `<button class="${btnClass}" style="${style}" ${onClick}>${btnText}</button>`;
+                if (isMaxed) {
+                    contentTag += `<div style="font-size:0.9rem; color:#aaa; margin-top:5px;">Daily Limit: ${current}/${limit}</div>`;
+                }
+
+            } else if (item.id === 'free_chest' || item.id === 'power_chest') {
+                // Daily Free Chests
+                let current = (window.playerResources && window.playerResources.dailyChests && window.playerResources.dailyChests[item.id]) || 0;
+                let limit = 2;
+                let isMaxed = current >= limit;
+
+                let btnText = isMaxed ? "MAX" : "OPEN";
+                let btnClass = "market-item-price price-free";
+                let style = isMaxed ? "background:#555;" : "";
+
+                // For these, the "Price Tag" acts as the button/status
+                priceTag = `<div class="${btnClass}" style="${style}">${btnText}</div>`;
+                contentTag = `<div style="font-size:0.9rem; color:#aaa; margin-top:5px;">Daily Limit: ${current}/${limit}</div>`;
+
+            } else if (isFreePremium) {
+                // Free Premium Chests (Visual Override)
+                priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
+                contentTag = `<button class="btn-open-chest" onclick="event.stopPropagation(); buyMarketItem('${item.id}')">OPEN</button>`;
+            } else if (item.diamonds) {
+                // Regular Premium Chests
+                priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
+                contentTag = `<button class="btn-open-chest" onclick="event.stopPropagation(); buyMarketItem('${item.id}')">OPEN</button>`;
+            } else {
+                // Fallback
+                priceTag = `<div class="market-item-price price-free">OPEN</div>`;
+                contentTag = ``;
+            }
+        }
+
+        return `
+        <div class="market-item" onclick="buyMarketItem('${item.id}')" style="cursor:pointer;">
+            <div class="market-item-name">${item.name}</div>
+            <div style="margin:10px 0;">
+                ${getPngTag(imgName, 100)}
+            </div>
+            ${priceTag}
+            ${contentTag}
+        </div>
+        `;
+    }).join('');
+}
+
+
+window.buyMarketItem = function (id) {
+    let config = getSafe('marketConfig');
+    if (!config) return;
+
+    // Find Item
+    let item = null;
+    ['chests', 'goldPackages', 'powerPacks'].forEach(cat => {
+        if (item) return;
+        if (config[cat]) {
+            let found = config[cat].find(x => x.id === id);
+            if (found) item = found;
+        }
+    });
+
+    if (!item) { console.error('Item not found:', id); return; }
+
+    // Activate Log
+    let logEl = document.getElementById('marketLogs');
+    if (logEl) logEl.style.display = 'block';
+
+    // CHEST LOGIC
+    if (window.currentMarketTab === 'chests') {
+        let bucket = window.currentMarketBucket;
+
+        // Gold & Diamond Chests (Custom Logic)
+        if (id === 'gold_chest') {
+            openRewardChest('goldChest', bucket, 'Gold Chest', item.img || 'gold_chest');
+            return;
+        }
+        if (id === 'diamond_chest') {
+            openRewardChest('diamondChest', bucket, 'Diamond Chest', item.img || 'diamond_chest');
+            return;
+        }
+
+        // Free & PowerUp Chests
+        if (id === 'free_chest' || id === 'power_chest') {
+            // Check Daily Limit
+            if (!window.playerResources.dailyChests) window.playerResources.dailyChests = {};
+            let current = window.playerResources.dailyChests[id] || 0;
+            if (current >= 2) {
+                alert("Daily Limit Reached (2/2)");
+                return;
+            }
+
+            if (typeof simulateManualChestOpen === 'function') {
+                simulateManualChestOpen(item.type, bucket, 'marketLogs');
+
+                // Increment Limit
+                window.playerResources.dailyChests[id] = current + 1;
+                renderMarketItems(); // Update UI string
+            }
+            return;
+        }
+
+        // Premium Chests
+        if (item.diamonds) {
+            const freePremium = ['Rookie Chest', 'Pro Chest', 'Champion Chest', 'Legendary Chest'];
+            let isFree = freePremium.includes(item.name);
+            let cost = isFree ? 0 : item.diamonds;
+
+            if (window.playerResources.diamonds >= cost) {
+                window.playerResources.diamonds -= cost;
+
+                // NEW: Call standalone openMarketChest logic
+                openMarketChest(item.type, bucket, item.name, item.img);
+
+                if (cost > 0) {
+                    addLog("MARKET", `Bought ${item.name}`, `Spent ${cost} Diamonds`);
+                } else {
+                    addLog("MARKET", `Opened ${item.name}`, `Free Open`);
+                }
+
+                // Manual Log Entry for deduction
+                if (logEl && cost > 0) {
+                    let entry = document.createElement('div');
+                    entry.style.borderBottom = "1px solid #333";
+                    entry.style.padding = "5px 0";
+                    entry.innerHTML = `<span style="color:#aaa; font-size:0.8rem;">[${new Date().toLocaleTimeString()}]</span> Spent ${cost} Diamonds for ${item.name}`;
+                    logEl.appendChild(entry); // Append to bottom (FIFO)
+                    logEl.scrollTop = logEl.scrollHeight;
+                }
+
+                renderMarket();
+                if (document.getElementById('resGems')) document.getElementById('resGems').innerText = window.playerResources.diamonds;
+                if (document.getElementById('resGold')) document.getElementById('resGold').innerText = window.playerResources.gold;
+            } else {
+                addLog("MARKET", "Not enough diamonds", `Need ${item.diamonds}`);
+                alert(`Need ${item.diamonds} Diamonds!`);
+            }
+            return;
+        }
+    }
+
+    addLog("MARKET", `Clicked ${item.name}`, "Purchase logic coming next.");
+}
+
+function openMarketChest(chestType, bucket, chestName, imgName) {
+    let chestConfigs = getSafe('chestConfigs');
+    if (!chestConfigs || !chestConfigs[chestType]) {
+        console.error("Chest Config not found:", chestType);
+        return;
+    }
+
+    let c = chestConfigs[chestType];
+    let lootLog = [];
+
+    // 1. CARDS
+    if (c.slotProbs) {
+        c.slotProbs.forEach(slot => {
+            let probs = slot['b' + bucket] || slot['b1'];
+            if (!probs) return;
+
+            let roll = Math.random() * 100;
+            let r = (roll < probs.R) ? "Rookie" : (roll < probs.R + probs.P) ? "Pro" : (roll < probs.R + probs.P + probs.C) ? "Champion" : "Legendary";
+            let amt = c.amounts[r]['b' + bucket] || c.amounts[r]['b1'];
+
+            let pool = getSafe('charPoolData');
+            if (pool) {
+                let validChars = pool.filter(ch => ch.b <= bucket && ch.r === r);
+                if (validChars.length > 0) {
+                    let char = validChars[Math.floor(Math.random() * validChars.length)];
+                    // Global Inventory
+                    if (!playerInventory[char.n]) {
+                        playerInventory[char.n] = { rarity: char.r, level: 1, cards: 0, bucket: char.b };
+                        lootLog.push(`${char.n} (New!) x${amt}`);
+                    } else {
+                        playerInventory[char.n].cards += amt;
+                        lootLog.push(`${char.n} x${amt}`);
+                    }
+                } else {
+                    // Fallback Gold
+                    window.playerResources.gold += 50;
+                    lootLog.push("50 Gold (Fallback)");
+                }
+            }
+        });
+    }
+
+    // 2. GOLD
+    if (c.goldMin) {
+        let gMin = c.goldMin['b' + bucket] || c.goldMin['b1'] || 0;
+        let gMax = c.goldMax['b' + bucket] || c.goldMax['b1'] || 0;
+        if (gMax > 0) {
+            let amt = Math.floor(Math.random() * (gMax - gMin + 1)) + gMin;
+            window.playerResources.gold += amt;
+            lootLog.push(`${amt} Gold`);
+        }
+    }
+
+    // Display Log
+    let logEl = document.getElementById('marketLogs');
+    if (logEl) {
+        logEl.style.display = 'block';
+        let entry = document.createElement('div');
+        entry.style.borderBottom = "1px solid #333";
+        entry.style.padding = "10px 0";
+        // Image
+        let imgTag = (typeof getPngTag === 'function') ? getPngTag(imgName || chestName, 50) : '';
+        entry.innerHTML = `
+            <div style="display:flex; gap:10px; align-items:center;">
+                ${imgTag}
+                <div>
+                    <div style="font-weight:bold; color:#fbbf24;">${chestName} Opened</div>
+                    <div style="font-size:0.85rem; color:#ddd;">${lootLog.join(', ')}</div>
+                </div>
+            </div>
+        `;
+        if (logEl.children.length > 1) logEl.appendChild(entry); // Append to bottom
+        else logEl.appendChild(entry);
+        logEl.scrollTop = logEl.scrollHeight;
+    }
+}
+
+function openRewardChest(configKey, bucket, name, imgName) {
+    let rc = getSafe('rewardChestConfig');
+    if (!rc || !rc[configKey]) return;
+
+    // Check Daily Limit
+    if (!window.playerResources.dailyChests) window.playerResources.dailyChests = {};
+    if (!window.playerResources.dailyChests[configKey]) window.playerResources.dailyChests[configKey] = 0;
+
+    let limit = rc[configKey].dailyLimit || 2;
+    if (window.playerResources.dailyChests[configKey] >= limit) {
+        alert("Daily limit reached for this chest!");
+        return;
+    }
+
+    window.playerResources.dailyChests[configKey]++;
+    let current = window.playerResources.dailyChests[configKey];
+
+    let amount = rc[configKey]['b' + bucket];
+    if (!amount) return;
+
+    let logMsg = `${name} Claimed (${current}/${limit})`;
+
+    if (configKey === 'goldChest') {
+        // addRes function? Replace with direct modification
+        window.playerResources.gold += amount;
+        if (document.getElementById('resGold')) document.getElementById('resGold').innerText = window.playerResources.gold;
+    } else {
+        window.playerResources.diamonds += amount;
+        if (document.getElementById('resGems')) document.getElementById('resGems').innerText = window.playerResources.diamonds;
+    }
+
+    // Log with Image
+    addLog("CHEST", logMsg, `Received ${amount} ${configKey === 'goldChest' ? 'Gold' : 'Diamonds'}`, imgName);
+
+    // Market Log
+    let logEl = document.getElementById('marketLogs');
+    if (logEl) {
+        logEl.style.display = 'block';
+        let entry = document.createElement('div');
+        entry.style.borderBottom = "1px solid #333";
+        entry.style.padding = "5px 0";
+        // Attempt to show image in market log too
+        let imgTag = (typeof getPngTag === 'function') ? getPngTag(imgName, 30) : '';
+        entry.innerHTML = `<span style="color:#aaa; font-size:0.8rem;">[${new Date().toLocaleTimeString()}]</span> ${imgTag} ${logMsg} -> +${amount}`;
+
+        logEl.appendChild(entry);
+        logEl.scrollTop = logEl.scrollHeight;
+    }
+}
+
 function initApp() {
     console.log("🚀 App Initialized (vFixed)");
     try {
