@@ -38,7 +38,9 @@ http.createServer(function (request, response) {
                     const newDataJSON = JSON.stringify(postData.data, null, 2);
 
                     // Regex: "let/var degisken = ... ;" ya da dosya sonuna kadar olan kismi bulur
-                    const regex = new RegExp(`((?:let|var)\\s+${varName}\\s*=\\s*)([\\s\\S]*?)(\\n\\s*(?:let|const|var|\\/\\/)|$)`);
+                    // Regex: "let/var degisken = ... ;" -> Find until next var/let/const declaration or EOF
+                    // FIX: Removed // from lookahead to prevent stopping on comments inside the object
+                    const regex = new RegExp(`((?:let|var)\\s+${varName}\\s*=\\s*)([\\s\\S]*?)(\\n\\s*(?:let|const|var)|$)`);
 
                     let newContent;
                     if (regex.test(fileContent)) {

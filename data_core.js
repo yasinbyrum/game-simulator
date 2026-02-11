@@ -29,6 +29,15 @@ var simConfig = {
 
 
 
+
+
+
+
+
+
+
+
+
 // DAILY LOGIN REWARDS (User Request: Taiga on Day 2 & 4)
 var loginConfig = {
   "fixed": [
@@ -1832,3 +1841,6 @@ var shopConfig = {
     "b1": 1.0, "b2": 1.5, "b3": 2.5, "b4": 4.0, "b5": 6.0
   }
 };
+
+
+
