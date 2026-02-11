@@ -173,7 +173,14 @@ window.nav = function (id) {
     else if (id === 'win-rewards') { renderWinRewards(); injectSaveButton('win-rewards', 'winRewardData'); }
     else if (id === 'chest-config') { renderChestTabs(); renderChestConfigViz(); renderScriptedChestUI(); updateManualBucketOptions(); injectSaveButton('chest-config', ['chestConfigs', 'simConfig']); injectExcelButtons('chest-config', 'chestConfigs'); }
     else if (id === 'power-ups') { renderPowerUps(); renderSlotConfig(); injectSaveButton('power-ups', ['powerUpData', 'slotUnlockData']); injectExcelButtons('power-ups', 'powerUpData'); }
+    else if (id === 'power-ups') { renderPowerUps(); renderSlotConfig(); injectSaveButton('power-ups', ['powerUpData', 'slotUnlockData']); injectExcelButtons('power-ups', 'powerUpData'); }
     else if (id === 'market') { renderMarket(); injectSaveButton('market', 'marketConfig'); }
+
+    // Fix Fake Rich Mode Leak
+    if (id !== 'market') {
+        if (document.getElementById('resGems')) document.getElementById('resGems').innerText = window.playerResources.diamonds.toLocaleString();
+        if (document.getElementById('resGold')) document.getElementById('resGold').innerText = window.playerResources.gold.toLocaleString();
+    }
 };
 
 function attachCharFilters() {
@@ -1751,7 +1758,16 @@ function openMarketChest(chestType, bucket, chestName, imgName) {
     }
 
     // 2. GOLD
-    if (c.goldMin) {
+    // FIXED GOLD (Most chests use this now)
+    if (c.gold) {
+        let gAmt = c.gold['b' + bucket] || c.gold['b1'] || 0;
+        if (gAmt > 0) {
+            window.playerResources.gold += gAmt;
+            lootLog.push(`${gAmt} Gold`);
+        }
+    }
+    // RANGE GOLD (Legacy or specific chests)
+    else if (c.goldMin) {
         let gMin = c.goldMin['b' + bucket] || c.goldMin['b1'] || 0;
         let gMax = c.goldMax['b' + bucket] || c.goldMax['b1'] || 0;
         if (gMax > 0) {
