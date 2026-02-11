@@ -1872,6 +1872,31 @@ function initApp() {
         loadGame(); // LOAD DATA NOW
         nav('dashboard');
         if (typeof renderPlayerProfile === 'function') renderPlayerProfile();
+
+        // UI LOGIC: Link Missions & Ads
+        const missionsToggle = document.getElementById('simDoMissions');
+        const adToggle = document.getElementById('simDoWE');
+        if (missionsToggle && adToggle) {
+            missionsToggle.addEventListener('change', () => {
+                if (!missionsToggle.checked) {
+                    adToggle.checked = false;
+                    adToggle.disabled = true;
+                    // Visual feedback for disabled state if needed, but 'disabled' attr usually enough
+                    adToggle.parentElement.style.opacity = "0.5";
+                } else {
+                    adToggle.disabled = false;
+                    adToggle.parentElement.style.opacity = "1";
+                    // adToggle.checked = true; // Optional: Auto-enable? User didn't specify. Keeping it manual or previous state.
+                }
+            });
+            // Run once on init to set correct state
+            if (!missionsToggle.checked) {
+                adToggle.checked = false;
+                adToggle.disabled = true;
+                adToggle.parentElement.style.opacity = "0.5";
+            }
+        }
+
         console.log("✅ Initialization Complete");
         document.body.classList.add('read-only');
     } catch (e) {
