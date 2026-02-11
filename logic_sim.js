@@ -299,6 +299,9 @@ function simulateGame(inputs) {
                 let r = (roll < probs.R) ? "Rookie" : (roll < probs.R + probs.P) ? "Pro" : (roll < probs.R + probs.P + probs.C) ? "Champion" : "Legendary";
                 let amt = c.amounts[r]['b' + bucket] || c.amounts[r]['b1'];
 
+                // FIX: If amount is 0 (e.g. empty slot prob like Rookie Chest Slot 4 in B1), skip
+                if (!amt || amt <= 0) return;
+
                 if (inputs.charPool) {
                     // Filter Logic:
                     // 1. Match Rarity & Bucket Cap
@@ -320,7 +323,7 @@ function simulateGame(inputs) {
                     // Start Logic
                     if (validChars.length > 0) {
                         let char = validChars[Math.floor(Math.random() * validChars.length)];
-                        // Give Cards
+                        // Give cards logic...
                         if (!state.inventory[char.n]) {
                             state.inventory[char.n] = { rarity: char.r, level: 1, cards: 0, bucket: char.b };
                             lootLog.push(`${char.n} (New!) x${amt}`);
@@ -824,7 +827,7 @@ function simulateGame(inputs) {
                 totalPower = statsForLevel.reduce((sum, val) => sum + val, 0);
             }
         }
-
+        // Fallback for Locked Chars or missing data => 0
         if (totalPower > best.p) best = { n: n, p: totalPower, lvl: c.level };
     });
 
@@ -978,11 +981,16 @@ function renderSimInventory(inv) {
         let rowClass = "";
 
         // Calculate Total Power from stats
+        // Calculate Total Power from stats
         let totalPower = 0;
-        if (window.charStatsData && window.charStatsData[c.n]) {
-            let statsForLevel = window.charStatsData[c.n][c.level - 1]; // Level 1 = index 0
+        // Fix: Use window.charStatsData directly if available, else inputs.charStatsData (if passed)
+        // Since we are in renderSimInventory, we might not have 'inputs' in scope if called from outside?
+        // Actually, renderSimInventory is a helper, but logic_sim has access to window.
+        let statsData = window.charStatsData || (typeof getSafe === 'function' ? getSafe('charStatsData') : null);
+
+        if (c.level > 0 && statsData && statsData[c.n]) {
+            let statsForLevel = statsData[c.n][c.level - 1];
             if (statsForLevel && Array.isArray(statsForLevel)) {
-                // statsForLevel = [Size, Speed, Jump, Shoot]
                 totalPower = statsForLevel.reduce((sum, val) => sum + val, 0);
             }
         }
