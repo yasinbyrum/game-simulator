@@ -164,668 +164,661 @@
                             <label class="switch" style="transform:scale(0.8);"><input type="checkbox" id="simDoWE"
                                     checked><span class="slider"></span></label>
                         </div>
+                        <div class="sim-input-group" style="align-items:center;">
+                            <label style="margin-bottom:2px;">Missions</label>
+                            <label class="switch" style="transform:scale(0.8);"><input type="checkbox"
+                                    id="simDoMissions" checked><span class="slider"></span></label>
+                        </div>
+                        <div class="sim-input-group" style="align-items:center;">
+                            <label style="margin-bottom:2px;">LdrBrd</label>
+                            <label class="switch" style="transform:scale(0.8);"><input type="checkbox"
+                                    id="simDoLeaderboard"><span class="slider"></span></label>
+                        </div>
 
-                    </div>
-                    <div class="sim-input-group" style="align-items:center;">
-                        <label style="margin-bottom:2px;">Ad</label>
-                        <label class="switch" style="transform:scale(0.8);"><input type="checkbox" id="simDoWE"
-                                checked><span class="slider"></span></label>
-                    </div>
-                    <div class="sim-input-group" style="align-items:center;">
-                        <label style="margin-bottom:2px;">Missions</label>
-                        <label class="switch" style="transform:scale(0.8);"><input type="checkbox" id="simDoMissions"
-                                checked><span class="slider"></span></label>
-                    </div>
-                    <div class="sim-input-group" style="align-items:center;">
-                        <label style="margin-bottom:2px;">LdrBrd</label>
-                        <label class="switch" style="transform:scale(0.8);"><input type="checkbox"
-                                id="simDoLeaderboard"><span class="slider"></span></label>
                     </div>
 
                 </div>
+            </div>
 
+            <div class="card log-card-container">
+                <div class="card-header">Logs</div>
+                <div id="simLogs">System Ready.</div>
             </div>
         </div>
 
-        <div class="card log-card-container">
-            <div class="card-header">Logs</div>
-            <div id="simLogs">System Ready.</div>
-        </div>
-    </div>
 
-
-    <div id="bot-intelligence" class="content-area">
-        <div class="card">
-            <div class="card-header">🤖 Bot AI Configuration</div>
-            <div style="padding:15px; overflow-x:auto;">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Bot ID</th>
-                            <th>Name</th>
-                            <th>Difficulty (Penalty/Bonus)</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody id="botAiBody"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div id="matchmaking" class="content-area">
-        <div class="card">
-            <div class="card-header">⚔️ Matchmaking Rules (Cup Ranges)</div>
-            <div style="padding:15px; overflow-x:auto;">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Min Cups</th>
-                            <th>Max Cups</th>
-                            <th>Bot Distribution (%)</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="mmBody"></tbody>
-                </table>
-                <div style="margin-top:10px; font-size:0.9rem; color:#aaa;">* Percentages must sum to 100 for proper
-                    distribution. Format: <code>bot_id: %</code></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="chest-config" class="content-area">
-        <div class="card">
-            <div class="card-header">📦 Scripted Chest</div>
-            <div style="padding:15px;">
-                <div class="sc-grid" id="scUI">
-                    <div class="sim-input-group"><label>Gold</label><input type="number" class="edit" id="scGold"
-                            onchange="updateScriptedChest()" style="width:80px"></div>
-                    <div class="sim-input-group"><label>Char 1</label><select id="scChar1" class="edit"
-                            style="width:120px" onchange="updateScriptedChest()"></select></div>
-                    <div class="sim-input-group"><label>Amt 1</label><input type="number" class="edit" id="scAmt1"
-                            onchange="updateScriptedChest()" style="width:60px"></div>
-                    <div class="sim-input-group"><label>Char 2</label><select id="scChar2" class="edit"
-                            style="width:120px" onchange="updateScriptedChest()"></select></div>
-                    <div class="sim-input-group"><label>Amt 2</label><input type="number" class="edit" id="scAmt2"
-                            onchange="updateScriptedChest()" style="width:60px"></div>
+        <div id="bot-intelligence" class="content-area">
+            <div class="card">
+                <div class="card-header">🤖 Bot AI Configuration</div>
+                <div style="padding:15px; overflow-x:auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Bot ID</th>
+                                <th>Name</th>
+                                <th>Difficulty (Penalty/Bonus)</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody id="botAiBody"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
-        <div class="card">
-            <div class="card-header">📦 Random Chest Rates<div class="toolbar"></div>
+
+        <div id="matchmaking" class="content-area">
+            <div class="card">
+                <div class="card-header">⚔️ Matchmaking Rules (Cup Ranges)</div>
+                <div style="padding:15px; overflow-x:auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Min Cups</th>
+                                <th>Max Cups</th>
+                                <th>Bot Distribution (%)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mmBody"></tbody>
+                    </table>
+                    <div style="margin-top:10px; font-size:0.9rem; color:#aaa;">* Percentages must sum to 100 for proper
+                        distribution. Format: <code>bot_id: %</code></div>
+                </div>
             </div>
-            <div class="bucket-tabs" id="chestTabs"></div>
-            <div id="chestVizContainer" style="padding:15px;"></div>
         </div>
 
-        <div class="card public-card" style="border:1px solid #a855f7;">
-            <div class="card-header">🧰 Manual Chest Opener</div>
-            <div style="padding:15px;">
-                <div class="flex-row" style="align-items: flex-end;">
-                    <div class="sim-input-group">
-                        <label>Chest Type</label>
-                        <select class="edit" id="manualChestType" style="width:150px;"
-                            onchange="updateManualBucketOptions()">
-                            <option value="Rookie Chest">Rookie Chest</option>
-                            <option value="Pro Chest">Pro Chest</option>
-                            <option value="Champion Chest">Champion Chest</option>
-                            <option value="Legendary Chest">Legendary Chest</option>
-                            <option value="Free Chest">Free Chest</option>
-                            <option value="PowerUp Chest">PowerUp Chest</option>
+        <div id="chest-config" class="content-area">
+            <div class="card">
+                <div class="card-header">📦 Scripted Chest</div>
+                <div style="padding:15px;">
+                    <div class="sc-grid" id="scUI">
+                        <div class="sim-input-group"><label>Gold</label><input type="number" class="edit" id="scGold"
+                                onchange="updateScriptedChest()" style="width:80px"></div>
+                        <div class="sim-input-group"><label>Char 1</label><select id="scChar1" class="edit"
+                                style="width:120px" onchange="updateScriptedChest()"></select></div>
+                        <div class="sim-input-group"><label>Amt 1</label><input type="number" class="edit" id="scAmt1"
+                                onchange="updateScriptedChest()" style="width:60px"></div>
+                        <div class="sim-input-group"><label>Char 2</label><select id="scChar2" class="edit"
+                                style="width:120px" onchange="updateScriptedChest()"></select></div>
+                        <div class="sim-input-group"><label>Amt 2</label><input type="number" class="edit" id="scAmt2"
+                                onchange="updateScriptedChest()" style="width:60px"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">📦 Random Chest Rates<div class="toolbar"></div>
+                </div>
+                <div class="bucket-tabs" id="chestTabs"></div>
+                <div id="chestVizContainer" style="padding:15px;"></div>
+            </div>
+
+            <div class="card public-card" style="border:1px solid #a855f7;">
+                <div class="card-header">🧰 Manual Chest Opener</div>
+                <div style="padding:15px;">
+                    <div class="flex-row" style="align-items: flex-end;">
+                        <div class="sim-input-group">
+                            <label>Chest Type</label>
+                            <select class="edit" id="manualChestType" style="width:150px;"
+                                onchange="updateManualBucketOptions()">
+                                <option value="Rookie Chest">Rookie Chest</option>
+                                <option value="Pro Chest">Pro Chest</option>
+                                <option value="Champion Chest">Champion Chest</option>
+                                <option value="Legendary Chest">Legendary Chest</option>
+                                <option value="Free Chest">Free Chest</option>
+                                <option value="PowerUp Chest">PowerUp Chest</option>
+                            </select>
+                        </div>
+                        <div class="sim-input-group">
+                            <label>Bucket</label>
+                            <select class="edit" id="manualChestBucket" style="width:100px;">
+                            </select>
+                        </div>
+                        <div class="sim-input-group"><label>Count</label><input type="number" class="edit"
+                                id="manualChestCount" value="1" style="width:60px;"></div>
+                        <button class="btn btn-run" onclick="simulateManualChestOpen()">OPEN</button>
+                    </div>
+                    <div id="manualChestLog"
+                        style="margin-top:15px; background:rgba(0,0,0,0.3); padding:10px; border-radius:4px; font-family:'Consolas',monospace; min-height:50px; white-space: pre-wrap; font-size:0.9rem; color:#e2e8f0;">
+                        Ready...</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="market" class="content-area"></div>
+
+        <div id="inventory" class="content-area">
+            <div class="card">
+                <div class="card-header">🎒 Character Inventory</div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th style="text-align:center;">Rarity</th>
+                                <th style="text-align:center;">Level</th>
+                                <th style="text-align:center;">Bucket</th>
+                                <th style="text-align:center;">Total Power</th>
+                                <th>Progress</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">⚡ Power Up Inventory</div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th style="text-align:center;">Star</th>
+                                <th style="text-align:center;">Level</th>
+                                <th style="text-align:center;">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pupInventoryBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="char-editor" class="content-area">
+            <div class="card" style="overflow-x:auto;">
+                <div class="card-header">
+                    <div>✏️ Character Stats</div>
+                    <div class="toolbar">
+                        <select class="filter-select" id="editorBucketSelect" onchange="renderCharEditor()">
+                            <option value="All">All Buckets</option>
+                            <option value="1">B1</option>
+                            <option value="2">B2</option>
+                            <option value="3">B3</option>
+                            <option value="4">B4</option>
+                            <option value="5">B5</option>
+                        </select>
+                        <select class="filter-select" id="editorRaritySelect" onchange="renderCharEditor()">
+                            <option value="All">All Rarities</option>
+                            <option value="Rookie">Rookie</option>
+                            <option value="Pro">Pro</option>
+                            <option value="Champion">Champion</option>
+                            <option value="Legendary">Legendary</option>
+                            <option value="Exclusive">Exclusive</option>
                         </select>
                     </div>
-                    <div class="sim-input-group">
-                        <label>Bucket</label>
-                        <select class="edit" id="manualChestBucket" style="width:100px;">
+                </div>
+                <!-- Wide table wrapper -->
+                <div class="table-wrapper" style="max-width:100%; overflow-x:auto;">
+                    <table id="charStatsTable" style="margin-bottom:0; min-width: 1500px;">
+                        <thead id="charStatsHead"></thead>
+                        <tbody id="charStatsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="char-power" class="content-area">
+            <div class="card">
+                <div class="card-header">
+                    🔥 Character Total Powers
+                    <div class="toolbar">
+                        <select class="filter-select" id="charBucketSelect" onchange="renderCharPower()">
+                            <option value="All">All Buckets</option>
+                            <option value="1">B1</option>
+                            <option value="2">B2</option>
+                            <option value="3">B3</option>
+                            <option value="4">B4</option>
+                            <option value="5">B5</option>
+                        </select>
+                        <select class="filter-select" id="charRaritySelect" onchange="renderCharPower()">
+                            <option value="All">All Rarities</option>
+                            <option value="Rookie">Rookie</option>
+                            <option value="Pro">Pro</option>
+                            <option value="Champion">Champion</option>
+                            <option value="Legendary">Legendary</option>
+                            <option value="Exclusive">Exclusive</option>
                         </select>
                     </div>
-                    <div class="sim-input-group"><label>Count</label><input type="number" class="edit"
-                            id="manualChestCount" value="1" style="width:60px;"></div>
-                    <button class="btn btn-run" onclick="simulateManualChestOpen()">OPEN</button>
                 </div>
-                <div id="manualChestLog"
-                    style="margin-top:15px; background:rgba(0,0,0,0.3); padding:10px; border-radius:4px; font-family:'Consolas',monospace; min-height:50px; white-space: pre-wrap; font-size:0.9rem; color:#e2e8f0;">
-                    Ready...</div>
-            </div>
-        </div>
-    </div>
-
-    <div id="market" class="content-area"></div>
-
-    <div id="inventory" class="content-area">
-        <div class="card">
-            <div class="card-header">🎒 Character Inventory</div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th style="text-align:center;">Rarity</th>
-                            <th style="text-align:center;">Level</th>
-                            <th style="text-align:center;">Bucket</th>
-                            <th style="text-align:center;">Total Power</th>
-                            <th>Progress</th>
-                        </tr>
-                    </thead>
-                    <tbody id="inventoryBody"></tbody>
-                </table>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-header">⚡ Power Up Inventory</div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th style="text-align:center;">Star</th>
-                            <th style="text-align:center;">Level</th>
-                            <th style="text-align:center;">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody id="pupInventoryBody"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div id="char-editor" class="content-area">
-        <div class="card" style="overflow-x:auto;">
-            <div class="card-header">
-                <div>✏️ Character Stats</div>
-                <div class="toolbar">
-                    <select class="filter-select" id="editorBucketSelect" onchange="renderCharEditor()">
-                        <option value="All">All Buckets</option>
-                        <option value="1">B1</option>
-                        <option value="2">B2</option>
-                        <option value="3">B3</option>
-                        <option value="4">B4</option>
-                        <option value="5">B5</option>
-                    </select>
-                    <select class="filter-select" id="editorRaritySelect" onchange="renderCharEditor()">
-                        <option value="All">All Rarities</option>
-                        <option value="Rookie">Rookie</option>
-                        <option value="Pro">Pro</option>
-                        <option value="Champion">Champion</option>
-                        <option value="Legendary">Legendary</option>
-                        <option value="Exclusive">Exclusive</option>
-                    </select>
+                <div class="table-wrapper">
+                    <table id="charPowerTable">
+                        <thead>
+                            <tr>
+                                <th style="width:220px;">Character</th>
+                                <th style="text-align:center; width:60px;">Bucket</th>
+                                <th style="text-align:center; width:80px;">Rarity</th>
+                                <th style="text-align:center; width:40px;">L1</th>
+                                <th style="text-align:center; width:40px;">L2</th>
+                                <th style="text-align:center; width:40px;">L3</th>
+                                <th style="text-align:center; width:40px;">L4</th>
+                                <th style="text-align:center; width:40px;">L5</th>
+                                <th style="text-align:center; width:40px;">L6</th>
+                                <th style="text-align:center; width:40px;">L7</th>
+                                <th style="text-align:center; width:40px;">L8</th>
+                                <th style="text-align:center; width:40px;">L9</th>
+                                <th style="text-align:center; width:40px;">L10</th>
+                                <th style="text-align:center; width:40px;">L11</th>
+                                <th style="text-align:center; width:40px;">L12</th>
+                            </tr>
+                        </thead>
+                        <tbody id="charPowerBody"></tbody>
+                    </table>
                 </div>
             </div>
-            <!-- Wide table wrapper -->
-            <div class="table-wrapper" style="max-width:100%; overflow-x:auto;">
-                <table id="charStatsTable" style="margin-bottom:0; min-width: 1500px;">
-                    <thead id="charStatsHead"></thead>
-                    <tbody id="charStatsBody"></tbody>
-                </table>
-            </div>
         </div>
-    </div>
 
-    <div id="char-power" class="content-area">
-        <div class="card">
-            <div class="card-header">
-                🔥 Character Total Powers
-                <div class="toolbar">
-                    <select class="filter-select" id="charBucketSelect" onchange="renderCharPower()">
-                        <option value="All">All Buckets</option>
-                        <option value="1">B1</option>
-                        <option value="2">B2</option>
-                        <option value="3">B3</option>
-                        <option value="4">B4</option>
-                        <option value="5">B5</option>
-                    </select>
-                    <select class="filter-select" id="charRaritySelect" onchange="renderCharPower()">
-                        <option value="All">All Rarities</option>
-                        <option value="Rookie">Rookie</option>
-                        <option value="Pro">Pro</option>
-                        <option value="Champion">Champion</option>
-                        <option value="Legendary">Legendary</option>
-                        <option value="Exclusive">Exclusive</option>
-                    </select>
+        <div id="arenas" class="content-area">
+            <div class="card">
+                <div class="card-header">🏟️ Arenas<div class="toolbar"></div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Arena Name</th>
+                                <th>Req Level</th>
+                            </tr>
+                        </thead>
+                        <tbody id="arenasBody"></tbody>
+                    </table>
                 </div>
             </div>
-            <div class="table-wrapper">
-                <table id="charPowerTable">
-                    <thead>
-                        <tr>
-                            <th style="width:220px;">Character</th>
-                            <th style="text-align:center; width:60px;">Bucket</th>
-                            <th style="text-align:center; width:80px;">Rarity</th>
-                            <th style="text-align:center; width:40px;">L1</th>
-                            <th style="text-align:center; width:40px;">L2</th>
-                            <th style="text-align:center; width:40px;">L3</th>
-                            <th style="text-align:center; width:40px;">L4</th>
-                            <th style="text-align:center; width:40px;">L5</th>
-                            <th style="text-align:center; width:40px;">L6</th>
-                            <th style="text-align:center; width:40px;">L7</th>
-                            <th style="text-align:center; width:40px;">L8</th>
-                            <th style="text-align:center; width:40px;">L9</th>
-                            <th style="text-align:center; width:40px;">L10</th>
-                            <th style="text-align:center; width:40px;">L11</th>
-                            <th style="text-align:center; width:40px;">L12</th>
-                        </tr>
-                    </thead>
-                    <tbody id="charPowerBody"></tbody>
-                </table>
+        </div>
+        <div id="cup-road" class="content-area">
+            <div class="card">
+                <div class="card-header">🏆 Cup Road<div class="toolbar"></div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="30"></th>
+                                <th>Cups</th>
+                                <th>Reward 1</th>
+                                <th>Amt 1</th>
+                                <th>Reward 2</th>
+                                <th>Amt 2</th>
+                                <th>Feat</th>
+                                <th width="30"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="cupBody"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
+        <div id="level-up" class="content-area">
+            <div class="card">
+                <div class="card-header">🆙 Level Up Rewards<div class="toolbar"></div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="30"></th>
+                                <th>Lvl</th>
+                                <th>XP Req</th>
+                                <th>Reward 1</th>
+                                <th>Amt</th>
+                                <th>Reward 2</th>
+                                <th>Amt</th>
+                                <th>Unlock</th>
+                                <th width="30"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="lvlBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="xp-gain" class="content-area">
+            <div class="card">
+                <div class="card-header">⚡ Upgrade XP<div class="toolbar"></div>
+                </div>
+                <div class="bucket-tabs" id="xpTabs"></div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Lvl</th>
+                                <th>Rookie</th>
+                                <th>Pro</th>
+                                <th>Champ</th>
+                                <th>Leg</th>
+                                <th>Exc</th>
+                            </tr>
+                        </thead>
+                        <tbody id="xpBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="gold-req" class="content-area">
+            <div class="card">
+                <div class="card-header">💰 Upgrade Cost<div class="toolbar"></div>
+                </div>
+                <div class="bucket-tabs" id="goldTabs"></div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Lvl</th>
+                                <th>Rookie</th>
+                                <th>Pro</th>
+                                <th>Champ</th>
+                                <th>Leg</th>
+                                <th>Exc</th>
+                            </tr>
+                        </thead>
+                        <tbody id="goldBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="card-req" class="content-area">
+            <div class="card">
+                <div class="card-header">🃏 Card Reqs<div class="toolbar"></div>
+                </div>
+                <div class="bucket-tabs" id="cardTabs"></div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Lvl</th>
+                                <th>Rookie</th>
+                                <th>Pro</th>
+                                <th>Champ</th>
+                                <th>Leg</th>
+                                <th>Exc</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cardBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
-    <div id="arenas" class="content-area">
-        <div class="card">
-            <div class="card-header">🏟️ Arenas<div class="toolbar"></div>
+        <div id="power-ups" class="content-area">
+            <div class="card">
+                <div class="card-header">🔓 Slot Unlock Requirements<div class="toolbar"></div>
+                </div>
+                <div style="padding:15px;" id="slotConfigContainer"></div>
             </div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Arena Name</th>
-                            <th>Req Level</th>
-                        </tr>
-                    </thead>
-                    <tbody id="arenasBody"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div id="cup-road" class="content-area">
-        <div class="card">
-            <div class="card-header">🏆 Cup Road<div class="toolbar"></div>
-            </div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th width="30"></th>
-                            <th>Cups</th>
-                            <th>Reward 1</th>
-                            <th>Amt 1</th>
-                            <th>Reward 2</th>
-                            <th>Amt 2</th>
-                            <th>Feat</th>
-                            <th width="30"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="cupBody"></tbody>
-                </table>
+            <div class="card">
+                <div class="card-header">🔥 Power Ups<div class="toolbar"></div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Star</th>
+                                <th>L2 Cost/XP</th>
+                                <th>L3 Cost/XP</th>
+                                <th>L4 Cost/XP</th>
+                                <th>L5 Cost/XP</th>
+                            </tr>
+                        </thead>
+                        <tbody id="powerUpBody"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
-    <div id="level-up" class="content-area">
-        <div class="card">
-            <div class="card-header">🆙 Level Up Rewards<div class="toolbar"></div>
-            </div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th width="30"></th>
-                            <th>Lvl</th>
-                            <th>XP Req</th>
-                            <th>Reward 1</th>
-                            <th>Amt</th>
-                            <th>Reward 2</th>
-                            <th>Amt</th>
-                            <th>Unlock</th>
-                            <th width="30"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="lvlBody"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div id="xp-gain" class="content-area">
-        <div class="card">
-            <div class="card-header">⚡ Upgrade XP<div class="toolbar"></div>
-            </div>
-            <div class="bucket-tabs" id="xpTabs"></div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Lvl</th>
-                            <th>Rookie</th>
-                            <th>Pro</th>
-                            <th>Champ</th>
-                            <th>Leg</th>
-                            <th>Exc</th>
-                        </tr>
-                    </thead>
-                    <tbody id="xpBody"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div id="gold-req" class="content-area">
-        <div class="card">
-            <div class="card-header">💰 Upgrade Cost<div class="toolbar"></div>
-            </div>
-            <div class="bucket-tabs" id="goldTabs"></div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Lvl</th>
-                            <th>Rookie</th>
-                            <th>Pro</th>
-                            <th>Champ</th>
-                            <th>Leg</th>
-                            <th>Exc</th>
-                        </tr>
-                    </thead>
-                    <tbody id="goldBody"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div id="card-req" class="content-area">
-        <div class="card">
-            <div class="card-header">🃏 Card Reqs<div class="toolbar"></div>
-            </div>
-            <div class="bucket-tabs" id="cardTabs"></div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Lvl</th>
-                            <th>Rookie</th>
-                            <th>Pro</th>
-                            <th>Champ</th>
-                            <th>Leg</th>
-                            <th>Exc</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cardBody"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
 
-    <div id="power-ups" class="content-area">
-        <div class="card">
-            <div class="card-header">🔓 Slot Unlock Requirements<div class="toolbar"></div>
-            </div>
-            <div style="padding:15px;" id="slotConfigContainer"></div>
-        </div>
-        <div class="card">
-            <div class="card-header">🔥 Power Ups<div class="toolbar"></div>
-            </div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Star</th>
-                            <th>L2 Cost/XP</th>
-                            <th>L3 Cost/XP</th>
-                            <th>L4 Cost/XP</th>
-                            <th>L5 Cost/XP</th>
-                        </tr>
-                    </thead>
-                    <tbody id="powerUpBody"></tbody>
-                </table>
+        <div id="leaderboard" class="content-area">
+            <div class="card">
+                <div class="card-header">🏅 Leaderboard Config<div class="toolbar"></div>
+                </div>
+                <div class="bucket-tabs" id="lbTabs"></div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Reward 1</th>
+                                <th>Amt 1</th>
+                                <th>Reward 2</th>
+                                <th>Amt 2</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lbBody"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
+        <div id="win-rewards" class="content-area">
+            <div class="card">
+                <div class="card-header">🏆 Win Rewards<div class="toolbar"></div>
+                </div>
+                <div class="bucket-tabs" id="winRewardTabs"></div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Win</th>
+                                <th>Type</th>
+                                <th>Amt</th>
+                                <th>Type2</th>
+                                <th>Amt</th>
+                            </tr>
+                        </thead>
+                        <tbody id="winRewardBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
-    <div id="leaderboard" class="content-area">
-        <div class="card">
-            <div class="card-header">🏅 Leaderboard Config<div class="toolbar"></div>
-            </div>
-            <div class="bucket-tabs" id="lbTabs"></div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>Reward 1</th>
-                            <th>Amt 1</th>
-                            <th>Reward 2</th>
-                            <th>Amt 2</th>
-                        </tr>
-                    </thead>
-                    <tbody id="lbBody"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div id="win-rewards" class="content-area">
-        <div class="card">
-            <div class="card-header">🏆 Win Rewards<div class="toolbar"></div>
-            </div>
-            <div class="bucket-tabs" id="winRewardTabs"></div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Win</th>
-                            <th>Type</th>
-                            <th>Amt</th>
-                            <th>Type2</th>
-                            <th>Amt</th>
-                        </tr>
-                    </thead>
-                    <tbody id="winRewardBody"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div id="chest-config" class="content-area">
-        <div class="card">
-            <div class="card-header">📦 Chest Configuration & Rates<div class="toolbar"></div>
-            </div>
-            <div class="bucket-tabs" id="chestTabs"></div>
-            <div style="padding:15px; display:flex; gap:20px; flex-wrap:wrap;">
-                <div style="flex:1; min-width:300px;">
-                    <h4 style="margin-top:0;">Chest Contents Viz</h4>
-                    <div id="chestViz"
-                        style="background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; min-height:150px;">
+        <div id="chest-config" class="content-area">
+            <div class="card">
+                <div class="card-header">📦 Chest Configuration & Rates<div class="toolbar"></div>
+                </div>
+                <div class="bucket-tabs" id="chestTabs"></div>
+                <div style="padding:15px; display:flex; gap:20px; flex-wrap:wrap;">
+                    <div style="flex:1; min-width:300px;">
+                        <h4 style="margin-top:0;">Chest Contents Viz</h4>
+                        <div id="chestViz"
+                            style="background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; min-height:150px;">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="card">
-            <div class="card-header">📜 Scripted Chest Sequence (Cycle)<div class="toolbar"></div>
-            </div>
-            <div style="padding:15px;">
-                <div style="margin-bottom:10px; display:flex; gap:10px; align-items:center;">
-                    <label>Force Bucket:</label>
-                    <select id="manualBucketSelect" class="edit" style="width:100px;"
-                        onchange="renderScriptedChestUI()">
-                        <!-- Options populated by JS -->
-                    </select>
+            <div class="card">
+                <div class="card-header">📜 Scripted Chest Sequence (Cycle)<div class="toolbar"></div>
                 </div>
-                <div id="scriptedChestContainer" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="daily-login" class="content-area">
-        <div class="card">
-            <div class="card-header">📅 Daily Login<div class="toolbar"></div>
-            </div>
-            <div class="bucket-tabs" id="dailyTabs"></div>
-            <div class="bucket-tabs" id="dailyBucketTabs" style="display:none;"></div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Day</th>
-                            <th>Reward</th>
-                            <th>Amt</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dailyBody"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div id="watch-earn" class="content-area">
-        <div class="card">
-            <div class="card-header">📺 Watch & Earn<div class="toolbar"></div>
-            </div>
-            <div class="bucket-tabs" id="weTabs"></div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Step</th>
-                            <th>Type</th>
-                            <th>Amt</th>
-                        </tr>
-                    </thead>
-                    <tbody id="weBody"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div id="reward-chests" class="content-area">
-        <div class="card">
-            <div class="card-header">🎁 Reward Chests<div class="toolbar"></div>
-            </div>
-            <div style="padding: 20px;">
-                <!-- Gold Chest Section -->
-                <div
-                    style="margin-bottom: 30px; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3);">
-                    <div style="font-weight:bold; color:var(--gold); font-size:1.3rem; margin-bottom:15px;">💰 Gold
-                        Chest (Max 2/day)</div>
-                    <div class="table-wrapper">
-                        <table style="width:100%; font-size:1.15rem;">
-                            <thead>
-                                <tr>
-                                    <th>Bucket 1</th>
-                                    <th>Bucket 2</th>
-                                    <th>Bucket 3</th>
-                                    <th>Bucket 4</th>
-                                    <th>Bucket 5</th>
-                                </tr>
-                            </thead>
-                            <tbody id="goldChestBody">
-                                <!-- Populated by renderRewardChests() -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Diamond Chest Section -->
-                <div
-                    style="background: rgba(168,85,247,0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(168,85,247,0.3);">
-                    <div style="font-weight:bold; color:#a855f7; font-size:1.3rem; margin-bottom:15px;">💎 Diamond
-                        Chest (Max 2/day)</div>
-                    <div class="table-wrapper">
-                        <table style="width:100%; font-size:1.15rem;">
-                            <thead>
-                                <tr>
-                                    <th>Bucket 1</th>
-                                    <th>Bucket 2</th>
-                                    <th>Bucket 3</th>
-                                    <th>Bucket 4</th>
-                                    <th>Bucket 5</th>
-                                </tr>
-                            </thead>
-                            <tbody id="diamondChestBody">
-                                <!-- Populated by renderRewardChests() -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="missions" class="content-area">
-        <div class="card">
-            <div class="card-header">🎯 Daily Missions & Grand Prize<div class="toolbar"></div>
-            </div>
-            <div class="bucket-tabs" id="missionTabs"></div>
-
-            <div style="padding: 15px; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border);">
-                <div style="font-weight:bold; color:var(--gold); margin-bottom:10px;">🏆 Grand Prize (9/9 Reward)
-                </div>
-                <div class="flex-row">
-                    <div class="sim-input-group">
-                        <label>Reward 1</label>
-                        <select class="edit" id="mrType1" style="width:130px"
-                            onchange="updateGrandPrizeUI('r1t', this.value)">
-                            <option value="Rookie Chest">Rookie Chest</option>
-                            <option value="Pro Chest">Pro Chest</option>
-                            <option value="Champion Chest">Champion Chest</option>
-                            <option value="Legendary Chest">Legendary Chest</option>
+                <div style="padding:15px;">
+                    <div style="margin-bottom:10px; display:flex; gap:10px; align-items:center;">
+                        <label>Force Bucket:</label>
+                        <select id="manualBucketSelect" class="edit" style="width:100px;"
+                            onchange="renderScriptedChestUI()">
+                            <!-- Options populated by JS -->
                         </select>
                     </div>
-                    <div class="sim-input-group">
-                        <label>Amount</label>
-                        <input type="number" class="edit" id="mrAmt1" style="width:60px"
-                            onchange="updateGrandPrizeUI('r1a', this.value)">
-                    </div>
-                    <div class="sim-input-group">
-                        <label>Reward 2</label>
-                        <select class="edit" id="mrType2" style="width:130px"
-                            onchange="updateGrandPrizeUI('r2t', this.value)">
-                            <option value="Gold">Gold</option>
-                            <option value="Diamonds">Diamonds</option>
-                        </select>
-                    </div>
-                    <div class="sim-input-group">
-                        <label>Amount</label>
-                        <input type="number" class="edit" id="mrAmt2" style="width:60px"
-                            onchange="updateGrandPrizeUI('r2a', this.value)">
-                    </div>
+                    <div id="scriptedChestContainer" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
                 </div>
             </div>
+        </div>
 
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Task</th>
-                            <th>Req</th>
-                            <th>Rew</th>
-                            <th>Amt</th>
-                            <th>XP</th>
-                        </tr>
-                    </thead>
-                    <tbody id="missionBody"></tbody>
-                </table>
+        <div id="daily-login" class="content-area">
+            <div class="card">
+                <div class="card-header">📅 Daily Login<div class="toolbar"></div>
+                </div>
+                <div class="bucket-tabs" id="dailyTabs"></div>
+                <div class="bucket-tabs" id="dailyBucketTabs" style="display:none;"></div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Reward</th>
+                                <th>Amt</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dailyBody"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="player-profile" class="content-area">
-        <div class="card">
-            <div class="card-header">👤 Player Profile</div>
-            <div style="padding:20px; text-align:center; color:#888;">
-                Player Profile Configuration (Coming Soon)
-            </div>
-        </div>
-    </div>
-    <div id="monte-carlo" class="content-area">
-        <div class="card">
-            <div class="card-header">🎲 Monte Carlo Simulation</div>
-            <div style="padding:15px; display:flex; gap:15px; align-items:center;">
-                <div class="sim-input-group">
-                    <label>Iterations</label>
-                    <input type="number" id="mcIterations" value="100" class="edit" style="width:80px">
+        <div id="watch-earn" class="content-area">
+            <div class="card">
+                <div class="card-header">📺 Watch & Earn<div class="toolbar"></div>
                 </div>
-                <button class="btn btn-run" onclick="runMonteCarlo()">▶ START BATCH SIMULATION</button>
-                <div id="mcStatus" style="margin-left:auto; font-weight:bold; color:var(--accent);">Ready</div>
-            </div>
-            <div id="mcResults" style="padding:15px; border-top:1px solid #444; min-height:200px;">
-                <div style="text-align:center; color:#888; margin-top:50px;">Run simulation to see aggregate
-                    results.
+                <div class="bucket-tabs" id="weTabs"></div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Step</th>
+                                <th>Type</th>
+                                <th>Amt</th>
+                            </tr>
+                        </thead>
+                        <tbody id="weBody"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
-    </div>
+
+        <div id="reward-chests" class="content-area">
+            <div class="card">
+                <div class="card-header">🎁 Reward Chests<div class="toolbar"></div>
+                </div>
+                <div style="padding: 20px;">
+                    <!-- Gold Chest Section -->
+                    <div
+                        style="margin-bottom: 30px; background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3);">
+                        <div style="font-weight:bold; color:var(--gold); font-size:1.3rem; margin-bottom:15px;">💰 Gold
+                            Chest (Max 2/day)</div>
+                        <div class="table-wrapper">
+                            <table style="width:100%; font-size:1.15rem;">
+                                <thead>
+                                    <tr>
+                                        <th>Bucket 1</th>
+                                        <th>Bucket 2</th>
+                                        <th>Bucket 3</th>
+                                        <th>Bucket 4</th>
+                                        <th>Bucket 5</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="goldChestBody">
+                                    <!-- Populated by renderRewardChests() -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Diamond Chest Section -->
+                    <div
+                        style="background: rgba(168,85,247,0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(168,85,247,0.3);">
+                        <div style="font-weight:bold; color:#a855f7; font-size:1.3rem; margin-bottom:15px;">💎 Diamond
+                            Chest (Max 2/day)</div>
+                        <div class="table-wrapper">
+                            <table style="width:100%; font-size:1.15rem;">
+                                <thead>
+                                    <tr>
+                                        <th>Bucket 1</th>
+                                        <th>Bucket 2</th>
+                                        <th>Bucket 3</th>
+                                        <th>Bucket 4</th>
+                                        <th>Bucket 5</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="diamondChestBody">
+                                    <!-- Populated by renderRewardChests() -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="missions" class="content-area">
+            <div class="card">
+                <div class="card-header">🎯 Daily Missions & Grand Prize<div class="toolbar"></div>
+                </div>
+                <div class="bucket-tabs" id="missionTabs"></div>
+
+                <div style="padding: 15px; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border);">
+                    <div style="font-weight:bold; color:var(--gold); margin-bottom:10px;">🏆 Grand Prize (9/9 Reward)
+                    </div>
+                    <div class="flex-row">
+                        <div class="sim-input-group">
+                            <label>Reward 1</label>
+                            <select class="edit" id="mrType1" style="width:130px"
+                                onchange="updateGrandPrizeUI('r1t', this.value)">
+                                <option value="Rookie Chest">Rookie Chest</option>
+                                <option value="Pro Chest">Pro Chest</option>
+                                <option value="Champion Chest">Champion Chest</option>
+                                <option value="Legendary Chest">Legendary Chest</option>
+                            </select>
+                        </div>
+                        <div class="sim-input-group">
+                            <label>Amount</label>
+                            <input type="number" class="edit" id="mrAmt1" style="width:60px"
+                                onchange="updateGrandPrizeUI('r1a', this.value)">
+                        </div>
+                        <div class="sim-input-group">
+                            <label>Reward 2</label>
+                            <select class="edit" id="mrType2" style="width:130px"
+                                onchange="updateGrandPrizeUI('r2t', this.value)">
+                                <option value="Gold">Gold</option>
+                                <option value="Diamonds">Diamonds</option>
+                            </select>
+                        </div>
+                        <div class="sim-input-group">
+                            <label>Amount</label>
+                            <input type="number" class="edit" id="mrAmt2" style="width:60px"
+                                onchange="updateGrandPrizeUI('r2a', this.value)">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Task</th>
+                                <th>Req</th>
+                                <th>Rew</th>
+                                <th>Amt</th>
+                                <th>XP</th>
+                            </tr>
+                        </thead>
+                        <tbody id="missionBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="player-profile" class="content-area">
+            <div class="card">
+                <div class="card-header">👤 Player Profile</div>
+                <div style="padding:20px; text-align:center; color:#888;">
+                    Player Profile Configuration (Coming Soon)
+                </div>
+            </div>
+        </div>
+        <div id="monte-carlo" class="content-area">
+            <div class="card">
+                <div class="card-header">🎲 Monte Carlo Simulation</div>
+                <div style="padding:15px; display:flex; gap:15px; align-items:center;">
+                    <div class="sim-input-group">
+                        <label>Iterations</label>
+                        <input type="number" id="mcIterations" value="100" class="edit" style="width:80px">
+                    </div>
+                    <button class="btn btn-run" onclick="runMonteCarlo()">▶ START BATCH SIMULATION</button>
+                    <div id="mcStatus" style="margin-left:auto; font-weight:bold; color:var(--accent);">Ready</div>
+                </div>
+                <div id="mcResults" style="padding:15px; border-top:1px solid #444; min-height:200px;">
+                    <div style="text-align:center; color:#888; margin-top:50px;">Run simulation to see aggregate
+                        results.
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
