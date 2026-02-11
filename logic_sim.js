@@ -332,10 +332,18 @@ function simulateGame(inputs) {
                             lootLog.push(`${char.n} x${amt}`);
                         }
                     } else {
-                        // FALLBACK: All valid chars for this Rarity (up to current bucket) are MAXED.
-                        // Convert to Gold as per user request ("duplicate kart vermemeye çalışacağız").
-                        addRes("Gold", 50, "Maxed Char Fallback");
-                        lootLog.push(`50 Gold`);
+                        // DISTINGUISH FALLBACK REASON
+                        // 1. None existed in pool for this Bucket/Rarity?
+                        // 2. All were maxed?
+                        let initialCandidates = inputs.charPool.filter(ch => ch.b <= bucket && ch.r === r);
+                        if (initialCandidates.length === 0) {
+                            addRes("Gold", 50, "No Char Available (Fallback)");
+                            lootLog.push(`50 Gold (No ${r} in B${bucket})`);
+                        } else {
+                            // They existed but were filtered out (Maxed or Locked)
+                            addRes("Gold", 50, "Maxed Char Fallback");
+                            lootLog.push(`50 Gold (Duplicate)`);
+                        }
                     }
                 }
             });
