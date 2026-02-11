@@ -824,7 +824,8 @@ function simulateGame(inputs) {
             let statsForLevel = inputs.charStatsData[n][c.level - 1]; // Level 1 = index 0
             if (statsForLevel && Array.isArray(statsForLevel)) {
                 // statsForLevel = [Size, Speed, Jump, Shoot]
-                totalPower = statsForLevel.reduce((sum, val) => sum + val, 0);
+                let sum = statsForLevel.reduce((s, val) => s + val, 0);
+                totalPower = Math.round(sum / 4);
             }
         }
         // Fallback for Locked Chars or missing data => 0
@@ -991,7 +992,8 @@ function renderSimInventory(inv) {
         if (c.level > 0 && statsData && statsData[c.n]) {
             let statsForLevel = statsData[c.n][c.level - 1];
             if (statsForLevel && Array.isArray(statsForLevel)) {
-                totalPower = statsForLevel.reduce((sum, val) => sum + val, 0);
+                let sum = statsForLevel.reduce((s, val) => s + val, 0);
+                totalPower = Math.round(sum / 4);
             }
         }
 
