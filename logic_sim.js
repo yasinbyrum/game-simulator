@@ -883,7 +883,18 @@ window.runSimulation = function () {
     // 2. Run Core Simulation
     let finalState = simulateGame(inputs);
 
-    // 3. Render Results
+    // 3. PERSIST STATE (User Request: "Garip bir durum oluyor" fix)
+    // Update global state so navigation doesn't reset Top Bar
+    if (!window.playerResources) window.playerResources = {};
+    window.playerResources.gold = finalState.gold;
+    window.playerResources.diamonds = finalState.diamonds;
+    window.playerResources.xp = finalState.xp || 0;
+
+    // Also sync inventory for consistency if manual tools are used
+    window.playerInventory = finalState.inventory;
+    window.playerPowerUps = finalState.powerUps;
+
+    // 4. Render Results
     renderSimulationResults(finalState, inputs);
 };
 
