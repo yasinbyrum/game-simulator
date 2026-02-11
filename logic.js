@@ -1500,9 +1500,15 @@ window.renderMarket = function () {
 
     renderMarketItems();
 
-    // Fake Rich Mode (User Request)
-    if (document.getElementById('resGems')) document.getElementById('resGems').innerText = "10,000";
-    if (document.getElementById('resGold')) document.getElementById('resGold').innerText = "100,000";
+    // MARKET SANDBOX LOGIC (User Request)
+    // Initialize Market Resources if not present, OR reset them on entry?
+    // User: "10000 gold ve 10000 diamond sadece market sayfasında eklenecekti"
+    // We'll reset them to the requested Sandbox values every time we enter Market.
+    window.marketResources = { gold: 100000, diamonds: 10000 };
+
+    // Update Top Bar with Sandbox Values
+    if (document.getElementById('resGems')) document.getElementById('resGems').innerText = window.marketResources.diamonds.toLocaleString();
+    if (document.getElementById('resGold')) document.getElementById('resGold').innerText = window.marketResources.gold.toLocaleString();
 }
 
 window.setMarketTab = function (t) { window.currentMarketTab = t; renderMarket(); }
@@ -1679,8 +1685,12 @@ window.buyMarketItem = function (id) {
             let isFree = freePremium.includes(item.name);
             let cost = isFree ? 0 : item.diamonds;
 
-            if (window.playerResources.diamonds >= cost) {
-                window.playerResources.diamonds -= cost;
+            // MARKET SANDBOX: Use marketResources instead of playerResources
+            let currentRes = window.marketResources || { diamonds: 0, gold: 0 };
+
+            if (currentRes.diamonds >= cost) {
+                // Deduct from Sandbox
+                window.marketResources.diamonds -= cost;
 
                 // NEW: Call standalone openMarketChest logic
                 openMarketChest(item.type, bucket, item.name, item.img);
@@ -1691,19 +1701,9 @@ window.buyMarketItem = function (id) {
                     addLog("MARKET", `Opened ${item.name}`, `Free Open`);
                 }
 
-                // Manual Log Entry for deduction
-                if (logEl && cost > 0) {
-                    let entry = document.createElement('div');
-                    entry.style.borderBottom = "1px solid #333";
-                    entry.style.padding = "5px 0";
-                    entry.innerHTML = `<span style="color:#aaa; font-size:0.8rem;">[${new Date().toLocaleTimeString()}]</span> Spent ${cost} Diamonds for ${item.name}`;
-                    logEl.appendChild(entry); // Append to bottom (FIFO)
-                    logEl.scrollTop = logEl.scrollHeight;
-                }
-
-                renderMarket();
-                if (document.getElementById('resGems')) document.getElementById('resGems').innerText = window.playerResources.diamonds;
-                if (document.getElementById('resGold')) document.getElementById('resGold').innerText = window.playerResources.gold;
+                // Update UI immediately
+                if (document.getElementById('resGems')) document.getElementById('resGems').innerText = window.marketResources.diamonds.toLocaleString();
+                if (document.getElementById('resGold')) document.getElementById('resGold').innerText = window.marketResources.gold.toLocaleString();
             } else {
                 addLog("MARKET", "Not enough diamonds", `Need ${item.diamonds}`);
                 alert(`Need ${item.diamonds} Diamonds!`);
@@ -1750,7 +1750,10 @@ function openMarketChest(chestType, bucket, chestName, imgName) {
                     }
                 } else {
                     // Fallback Gold
-                    window.playerResources.gold += 50;
+                    // MARKET SANDBOX: Add to marketResources
+                    if (window.marketResources) window.marketResources.gold += 50;
+                    else window.playerResources.gold += 50;
+
                     lootLog.push("50 Gold (Fallback)");
                 }
             }
@@ -1762,7 +1765,10 @@ function openMarketChest(chestType, bucket, chestName, imgName) {
     if (c.gold) {
         let gAmt = c.gold['b' + bucket] || c.gold['b1'] || 0;
         if (gAmt > 0) {
-            window.playerResources.gold += gAmt;
+            // MARKET SANDBOX: Add to marketResources
+            if (window.marketResources) window.marketResources.gold += gAmt;
+            else window.playerResources.gold += gAmt;
+
             lootLog.push(`${gAmt} Gold`);
         }
     }
@@ -1772,7 +1778,11 @@ function openMarketChest(chestType, bucket, chestName, imgName) {
         let gMax = c.goldMax['b' + bucket] || c.goldMax['b1'] || 0;
         if (gMax > 0) {
             let amt = Math.floor(Math.random() * (gMax - gMin + 1)) + gMin;
-            window.playerResources.gold += amt;
+
+            // MARKET SANDBOX: Add to marketResources
+            if (window.marketResources) window.marketResources.gold += amt;
+            else window.playerResources.gold += amt;
+
             lootLog.push(`${amt} Gold`);
         }
     }
@@ -1824,12 +1834,17 @@ function openRewardChest(configKey, bucket, name, imgName) {
     let logMsg = `${name} Claimed (${current}/${limit})`;
 
     if (configKey === 'goldChest') {
-        // addRes function? Replace with direct modification
-        window.playerResources.gold += amount;
-        if (document.getElementById('resGold')) document.getElementById('resGold').innerText = window.playerResources.gold;
+        // MARKET SANDBOX: Add to marketResources
+        if (window.marketResources) window.marketResources.gold += amount;
+        else window.playerResources.gold += amount; // Fallback if logic used outside market (shouldn't be for this func context)
+
+        if (document.getElementById('resGold')) document.getElementById('resGold').innerText = (window.marketResources ? window.marketResources.gold : window.playerResources.gold).toLocaleString();
     } else {
-        window.playerResources.diamonds += amount;
-        if (document.getElementById('resGems')) document.getElementById('resGems').innerText = window.playerResources.diamonds;
+        // MARKET SANDBOX: Add to marketResources
+        if (window.marketResources) window.marketResources.diamonds += amount;
+        else window.playerResources.diamonds += amount;
+
+        if (document.getElementById('resGems')) document.getElementById('resGems').innerText = (window.marketResources ? window.marketResources.diamonds : window.playerResources.diamonds).toLocaleString();
     }
 
     // Log with Image

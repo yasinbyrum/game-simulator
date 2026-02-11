@@ -520,6 +520,7 @@ function simulateGame(inputs) {
 
         // Missions Helper
         const checkMissionsNow = (matchesPlayed = 0) => {
+            if (!inputs.doMissions) return;
             let currentBucket = getBucket(state.maxAchievedCups);
             // Safety check for empty mission data
             if (!inputs.missionDataAll) return;

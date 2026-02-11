@@ -119,7 +119,10 @@ function getSimulationInputs() {
         dailyFreeChests: getUiVal('simDailyFreeChests', 2),
         doWE: getUiVal('simDoWE', true),
         dailyGoldChests: getUiVal('simDailyGoldChests', 2),
+        dailyGoldChests: getUiVal('simDailyGoldChests', 2),
         dailyDiamondChests: getUiVal('simDailyDiamondChests', 2),
+        doMissions: getUiVal('simDoMissions', true),
+        doLeaderboard: getUiVal('simDoLeaderboard', false),
 
         // Game Data (Read-only access)
         startCfg: {
