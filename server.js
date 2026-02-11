@@ -35,6 +35,9 @@ http.createServer(function (request, response) {
 
                     // 2. DeÄŸiÅŸkeni Bul ve DeÄŸiÅŸtir (Regex)
                     const varName = postData.varName;
+                    // Debug Log
+                    console.log(`[UPDATE] Request: ${varName} in ${postData.filename}`);
+
                     const newDataJSON = JSON.stringify(postData.data, null, 2);
 
                     // Regex: "let/var degisken = ... ;" ya da dosya sonuna kadar olan kismi bulur
@@ -44,10 +47,10 @@ http.createServer(function (request, response) {
 
                     let newContent;
                     if (regex.test(fileContent)) {
-                        // DeÄŸiÅŸken varsa deÄŸiÅŸtir
+                        console.log(`[UPDATE] Regex Match Found. Replacing...`);
                         newContent = fileContent.replace(regex, `$1${newDataJSON};\n$3`);
                     } else {
-                        // DeÄŸiÅŸken yoksa dosyanÄ±n sonuna ekle
+                        console.log(`[UPDATE] Regex FAILED. Appending to end.`);
                         newContent = fileContent + `\n\nlet ${varName} = ${newDataJSON};`;
                     }
 

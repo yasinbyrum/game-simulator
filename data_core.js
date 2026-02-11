@@ -18,6 +18,7 @@ var simConfig = {
   "dailyFreeChestLimit": 2
 };
 
+
 var loginConfig = {
   "fixed": [
     { "day": 1, "type": "Gold", "amt": 100 },
@@ -960,7 +961,7 @@ var chestConfigs = {
         "b2": 0,
         "b3": 0,
         "b4": 2,
-        "b5": 0
+        "b5": 2
       }
     },
     "slotProbs": [
