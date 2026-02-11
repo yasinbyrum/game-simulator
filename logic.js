@@ -62,6 +62,38 @@ window.updateVal = function (pathStr, val) {
     } catch (e) { console.error("Update Error:", e); }
 };
 
+// Update both B1 and B2 to the same value (sync rule)
+// Usage 1 (gold/amounts): updateB1B2('chestConfigs[`Rookie Chest`].gold', 50)
+//   → sets .b1 = 50 and .b2 = 50
+// Usage 2 (slotProbs):    updateB1B2('chestConfigs[`Rookie Chest`].slotProbs[0].', 75, 'R')
+//   → sets .b1.R = 75 and .b2.R = 75
+window.updateB1B2 = function (basePath, val, subKey) {
+    try {
+        let finalVal = val;
+        if (!isNaN(parseInt(val)) && val !== '' && val !== '-') finalVal = parseInt(val);
+
+        if (subKey) {
+            // slotProbs pattern: basePath ends with '.' e.g. "chestConfigs[`X`].slotProbs[0]."
+            eval(`${basePath}b1.${subKey} = ${JSON.stringify(finalVal)}`);
+            eval(`${basePath}b2.${subKey} = ${JSON.stringify(finalVal)}`);
+        } else {
+            // gold/amounts pattern: basePath is the object e.g. "chestConfigs[`X`].gold"
+            eval(`${basePath}.b1 = ${JSON.stringify(finalVal)}`);
+            eval(`${basePath}.b2 = ${JSON.stringify(finalVal)}`);
+        }
+
+        // Mark save button as dirty
+        let rootVar = basePath.split('.')[0] || basePath.split('[')[0];
+        let allSaveBtns = document.querySelectorAll('.btn-save-sys');
+        allSaveBtns.forEach(btn => {
+            if (btn.id.includes(rootVar)) {
+                btn.innerHTML = "💾 SAVE *";
+                btn.style.background = "#ef4444";
+            }
+        });
+    } catch (e) { console.error("updateB1B2 Error:", e); }
+};
+
 let currentDailyBucket = 1, currentXpBucket = 1, currentGoldBucket = 1, currentCardBucket = 1, currentChestTab = "Rookie Chest", currentLBBucket = 1;
 let currentMissionBucket = 1;
 let currentWinBucket = 1;

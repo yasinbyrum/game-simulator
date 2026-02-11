@@ -36,7 +36,9 @@ http.createServer(function (request, response) {
                     // 2. DeÄŸiÅŸkeni Bul ve DeÄŸiÅŸtir (Regex)
                     const varName = postData.varName;
                     // Debug Log
+                    // Debug Log
                     console.log(`[UPDATE] Request: ${varName} in ${postData.filename}`);
+                    console.log(`[UPDATE] Target File: ${filePath}`);
 
                     const newDataJSON = JSON.stringify(postData.data, null, 2);
 
