@@ -15,116 +15,95 @@ const mimeTypes = {
 
 console.log(`ðŸš€ AKILLI SUNUCU BAÅžLATILDI: http://localhost:${PORT}`);
 
+// --- FILE WRITE QUEUE (prevents race conditions) ---
+const fileQueues = new Map(); // filePath -> Promise chain
+
+function processUpdate(filePath, varName, newData) {
+    // Chain this update after any pending updates for the same file
+    const prev = fileQueues.get(filePath) || Promise.resolve();
+    const next = prev.then(() => new Promise((resolve, reject) => {
+        fs.readFile(filePath, 'utf8', (err, fileContent) => {
+            if (err) { reject(err); return; }
+
+            const newDataJSON = JSON.stringify(newData, null, 2);
+
+            // Find "var varName =" or "let varName ="
+            const patterns = ['var ' + varName + ' =', 'let ' + varName + ' =', 'var ' + varName + '=', 'let ' + varName + '='];
+            let declStart = -1;
+            for (const pat of patterns) {
+                const idx = fileContent.indexOf(pat);
+                if (idx !== -1) { declStart = idx; break; }
+            }
+
+            let newContent;
+            if (declStart === -1) {
+                console.log(`[UPDATE] Variable "${varName}" NOT FOUND. Appending.`);
+                newContent = fileContent + '\n\nvar ' + varName + ' = ' + newDataJSON + ';\n';
+            } else {
+                let eqPos = fileContent.indexOf('=', declStart);
+                let valueStart = eqPos + 1;
+                while (valueStart < fileContent.length && /\s/.test(fileContent[valueStart])) valueStart++;
+
+                let depth = 0, i = valueStart, started = false;
+                let inString = false, strChar = '', escaped = false;
+
+                while (i < fileContent.length) {
+                    const ch = fileContent[i];
+                    if (escaped) { escaped = false; i++; continue; }
+                    if (ch === '\\') { escaped = true; i++; continue; }
+                    if (inString) { if (ch === strChar) inString = false; i++; continue; }
+                    if (ch === '"' || ch === "'") { inString = true; strChar = ch; i++; continue; }
+                    if (ch === '{' || ch === '[') { depth++; started = true; }
+                    if (ch === '}' || ch === ']') { depth--; }
+                    if (started && depth === 0) {
+                        i++;
+                        while (i < fileContent.length && /[\s;]/.test(fileContent[i]) && fileContent[i] !== '\n' && fileContent[i] !== '\r') i++;
+                        if (i < fileContent.length && fileContent[i] === ';') i++;
+                        break;
+                    }
+                    i++;
+                }
+
+                let before = fileContent.substring(0, declStart);
+                let after = fileContent.substring(i);
+                newContent = before + 'var ' + varName + ' = ' + newDataJSON + ';' + after;
+                console.log(`[UPDATE] ${varName}: found at ${declStart}, ends at ${i}. Replaced.`);
+            }
+
+            fs.writeFile(filePath, newContent, (writeErr) => {
+                if (writeErr) { reject(writeErr); return; }
+                console.log('[DISK UPDATED] ' + varName);
+                resolve();
+            });
+        });
+    }));
+    fileQueues.set(filePath, next.catch(() => { })); // Don't let errors break the chain
+    return next;
+}
+
 http.createServer(function (request, response) {
 
-    // --- 1. AKILLI KAYIT SÄ°STEMÄ° (SERVER-SIDE EDIT) ---
+    // --- 1. SAVE SYSTEM (QUEUED) ---
     if (request.method === 'POST' && request.url === '/update-data') {
         let body = '';
         request.on('data', chunk => body += chunk.toString());
         request.on('end', () => {
             try {
-                const postData = JSON.parse(body); // { filename, varName, data }
+                const postData = JSON.parse(body);
                 const filePath = path.join(__dirname, path.basename(postData.filename));
+                const varName = postData.varName;
+                console.log(`[QUEUE] ${varName} -> ${filePath}`);
 
-                // 1. DosyayÄ± Diskten Oku (Cache derdi yok!)
-                fs.readFile(filePath, 'utf8', (err, fileContent) => {
-                    if (err) {
-                        console.error("âŒ Okuma HatasÄ±:", err);
-                        response.writeHead(500); response.end('Read Error'); return;
-                    }
-
-                    // 2. Find and Replace Variable (Robust Bracket-Counting)
-                    const varName = postData.varName;
-                    console.log(`[UPDATE] Request: ${varName} in ${postData.filename}`);
-                    console.log(`[UPDATE] Target File: ${filePath}`);
-
-                    const newDataJSON = JSON.stringify(postData.data, null, 2);
-
-                    // Find "var varName =" or "let varName ="
-                    const patterns = [`var ${varName} =`, `let ${varName} =`, `var ${varName}=`, `let ${varName}=`];
-                    let declStart = -1;
-                    let declPrefix = '';
-                    for (const pat of patterns) {
-                        const idx = fileContent.indexOf(pat);
-                        if (idx !== -1) {
-                            declStart = idx;
-                            declPrefix = pat.endsWith('=') ? pat + ' ' : pat;
-                            break;
-                        }
-                    }
-
-                    let newContent;
-                    if (declStart === -1) {
-                        console.log(`[UPDATE] Variable "${varName}" NOT FOUND. Appending.`);
-                        newContent = fileContent + `\n\nvar ${varName} = ${newDataJSON};\n`;
-                    } else {
-                        // Find the start of the value (after "=")
-                        let eqPos = fileContent.indexOf('=', declStart);
-                        let valueStart = eqPos + 1;
-                        // Skip whitespace after =
-                        while (valueStart < fileContent.length && /\s/.test(fileContent[valueStart])) valueStart++;
-
-                        // Count brackets to find end of value
-                        let depth = 0;
-                        let i = valueStart;
-                        let started = false;
-                        const openBrackets = new Set(['{', '[']);
-                        const closeBrackets = new Set(['}', ']']);
-                        let inString = false;
-                        let strChar = '';
-                        let escaped = false;
-
-                        while (i < fileContent.length) {
-                            const ch = fileContent[i];
-
-                            if (escaped) { escaped = false; i++; continue; }
-                            if (ch === '\\') { escaped = true; i++; continue; }
-
-                            if (inString) {
-                                if (ch === strChar) inString = false;
-                                i++; continue;
-                            }
-
-                            if (ch === '"' || ch === "'") {
-                                inString = true; strChar = ch; i++; continue;
-                            }
-
-                            if (openBrackets.has(ch)) { depth++; started = true; }
-                            if (closeBrackets.has(ch)) { depth--; }
-
-                            if (started && depth === 0) {
-                                // Found the closing bracket
-                                i++; // include the closing bracket
-                                // Skip optional semicolon
-                                while (i < fileContent.length && /[\s;]/.test(fileContent[i]) && fileContent[i] !== '\n' && fileContent[i] !== '\r') i++;
-                                if (i < fileContent.length && fileContent[i] === ';') i++;
-                                break;
-                            }
-                            i++;
-                        }
-
-                        let valueEnd = i;
-                        let before = fileContent.substring(0, declStart);
-                        let after = fileContent.substring(valueEnd);
-
-                        newContent = before + `var ${varName} = ${newDataJSON};` + after;
-                        console.log(`[UPDATE] Variable found at pos ${declStart}, value ends at ${valueEnd}. Replaced.`);
-                    }
-
-                    // 3. Write File Back
-                    fs.writeFile(filePath, newContent, (writeErr) => {
-                        if (writeErr) {
-                            console.error("Write Error:", writeErr);
-                            response.writeHead(500); response.end('Write Error');
-                        } else {
-                            console.log(`✅ [DISK UPDATED] File: ${postData.filename} | Var: ${varName}`);
-                            response.writeHead(200); response.end('Success');
-                        }
+                processUpdate(filePath, varName, postData.data)
+                    .then(() => {
+                        response.writeHead(200); response.end('Success');
+                    })
+                    .catch((err) => {
+                        console.error('Save Error:', err);
+                        response.writeHead(500); response.end('Error');
                     });
-                });
-
             } catch (e) {
-                console.error("JSON Parse HatasÄ±:", e);
+                console.error("JSON Parse Error:", e);
                 response.writeHead(400); response.end('Invalid Data');
             }
         });
