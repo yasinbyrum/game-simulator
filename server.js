@@ -33,36 +33,91 @@ http.createServer(function (request, response) {
                         response.writeHead(500); response.end('Read Error'); return;
                     }
 
-                    // 2. DeÄŸiÅŸkeni Bul ve DeÄŸiÅŸtir (Regex)
+                    // 2. Find and Replace Variable (Robust Bracket-Counting)
                     const varName = postData.varName;
-                    // Debug Log
-                    // Debug Log
                     console.log(`[UPDATE] Request: ${varName} in ${postData.filename}`);
                     console.log(`[UPDATE] Target File: ${filePath}`);
 
                     const newDataJSON = JSON.stringify(postData.data, null, 2);
 
-                    // Regex: "let/var degisken = ... ;" ya da dosya sonuna kadar olan kismi bulur
-                    // Regex: "let/var degisken = ... ;" -> Find until next var/let/const declaration or EOF
-                    // FIX: Removed // from lookahead to prevent stopping on comments inside the object
-                    const regex = new RegExp(`((?:let|var)\\s+${varName}\\s*=\\s*)([\\s\\S]*?)(\\n\\s*(?:let|const|var)|$)`);
-
-                    let newContent;
-                    if (regex.test(fileContent)) {
-                        console.log(`[UPDATE] Regex Match Found. Replacing...`);
-                        newContent = fileContent.replace(regex, `$1${newDataJSON};\n$3`);
-                    } else {
-                        console.log(`[UPDATE] Regex FAILED. Appending to end.`);
-                        newContent = fileContent + `\n\nlet ${varName} = ${newDataJSON};`;
+                    // Find "var varName =" or "let varName ="
+                    const patterns = [`var ${varName} =`, `let ${varName} =`, `var ${varName}=`, `let ${varName}=`];
+                    let declStart = -1;
+                    let declPrefix = '';
+                    for (const pat of patterns) {
+                        const idx = fileContent.indexOf(pat);
+                        if (idx !== -1) {
+                            declStart = idx;
+                            declPrefix = pat.endsWith('=') ? pat + ' ' : pat;
+                            break;
+                        }
                     }
 
-                    // 3. DosyayÄ± Geri Yaz
+                    let newContent;
+                    if (declStart === -1) {
+                        console.log(`[UPDATE] Variable "${varName}" NOT FOUND. Appending.`);
+                        newContent = fileContent + `\n\nvar ${varName} = ${newDataJSON};\n`;
+                    } else {
+                        // Find the start of the value (after "=")
+                        let eqPos = fileContent.indexOf('=', declStart);
+                        let valueStart = eqPos + 1;
+                        // Skip whitespace after =
+                        while (valueStart < fileContent.length && /\s/.test(fileContent[valueStart])) valueStart++;
+
+                        // Count brackets to find end of value
+                        let depth = 0;
+                        let i = valueStart;
+                        let started = false;
+                        const openBrackets = new Set(['{', '[']);
+                        const closeBrackets = new Set(['}', ']']);
+                        let inString = false;
+                        let strChar = '';
+                        let escaped = false;
+
+                        while (i < fileContent.length) {
+                            const ch = fileContent[i];
+
+                            if (escaped) { escaped = false; i++; continue; }
+                            if (ch === '\\') { escaped = true; i++; continue; }
+
+                            if (inString) {
+                                if (ch === strChar) inString = false;
+                                i++; continue;
+                            }
+
+                            if (ch === '"' || ch === "'") {
+                                inString = true; strChar = ch; i++; continue;
+                            }
+
+                            if (openBrackets.has(ch)) { depth++; started = true; }
+                            if (closeBrackets.has(ch)) { depth--; }
+
+                            if (started && depth === 0) {
+                                // Found the closing bracket
+                                i++; // include the closing bracket
+                                // Skip optional semicolon
+                                while (i < fileContent.length && /[\s;]/.test(fileContent[i]) && fileContent[i] !== '\n' && fileContent[i] !== '\r') i++;
+                                if (i < fileContent.length && fileContent[i] === ';') i++;
+                                break;
+                            }
+                            i++;
+                        }
+
+                        let valueEnd = i;
+                        let before = fileContent.substring(0, declStart);
+                        let after = fileContent.substring(valueEnd);
+
+                        newContent = before + `var ${varName} = ${newDataJSON};` + after;
+                        console.log(`[UPDATE] Variable found at pos ${declStart}, value ends at ${valueEnd}. Replaced.`);
+                    }
+
+                    // 3. Write File Back
                     fs.writeFile(filePath, newContent, (writeErr) => {
                         if (writeErr) {
-                            console.error("âŒ Yazma HatasÄ±:", writeErr);
+                            console.error("Write Error:", writeErr);
                             response.writeHead(500); response.end('Write Error');
                         } else {
-                            console.log(`âœ… [DÄ°SK GÃœNCELLENDÄ°] Dosya: ${postData.filename} | DeÄŸiÅŸken: ${varName}`);
+                            console.log(`✅ [DISK UPDATED] File: ${postData.filename} | Var: ${varName}`);
                             response.writeHead(200); response.end('Success');
                         }
                     });

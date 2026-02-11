@@ -20,6 +20,7 @@ var simConfig = {
 
 
 
+
 var loginConfig = {
   "fixed": [
     { "day": 1, "type": "Gold", "amt": 100 },
