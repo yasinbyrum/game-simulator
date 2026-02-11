@@ -858,7 +858,7 @@ function renderProgressionTable(id, typeKey, bucket) {
 }
 
 
-window.updateManualBucketOptions = function () { const chestType = document.getElementById('manualChestType').value; const bucketSelect = document.getElementById('manualChestBucket'); if (!bucketSelect) return; let options = ""; if (chestType === "PowerUp Chest") { options = `<option value="1">B1</option><option value="2">B2</option><option value="3">B3</option><option value="4">B4</option><option value="5">B5</option>`; } else { options = `<option value="1">B1-B2</option><option value="3">B3</option><option value="4">B4</option><option value="5">B5</option>`; } bucketSelect.innerHTML = options; };
+window.updateManualBucketOptions = function () { const chestType = document.getElementById('manualChestType').value; const bucketSelect = document.getElementById('manualChestBucket'); if (!bucketSelect) return; let options = `<option value="1">B1</option><option value="2">B2</option><option value="3">B3</option><option value="4">B4</option><option value="5">B5</option>`; bucketSelect.innerHTML = options; };
 function renderChestTabs() { const el = document.getElementById('chestTabs'); let d = getSafe('chestConfigs'); if (el && d) el.innerHTML = Object.keys(d).map(k => `<button class="tab-btn ${currentChestTab === k ? 'active' : ''}" onclick="currentChestTab='${k}';renderChestTabs();renderChestConfigViz()">${k}</button>`).join(''); }
 function renderChestConfigViz() {
     let d = getSafe('chestConfigs'), el = document.getElementById('chestVizContainer'); if (!el || !d) return; let c = d[currentChestTab]; if (!c) return;
