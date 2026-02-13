@@ -231,7 +231,11 @@ function simulateGame(inputs) {
         // FIX: Allow Scripted Chest to pass even if not in conf
         if ((!conf || !conf[type]) && type !== "Scripted Chest" && type !== "PowerUp Chest") return;
 
-        track('chestSources', type, 1);
+        // FIX: Breakdown Chest Sources (Ad vs Non-Ad)
+        let trackKey = type;
+        if (source === "Watch & Earn") trackKey += " (Ad)";
+        track('chestSources', trackKey, 1);
+
         let c = conf ? conf[type] : null;
         // FIX: Use maxAchievedCups to determine loot bucket so drops don't degrade
         let bucket = getBucket(state.maxAchievedCups || state.cups);
