@@ -362,18 +362,94 @@ function renderScriptedChestUI() {
 
     let s1 = document.getElementById('scChar1');
     let s2 = document.getElementById('scChar2');
+    let s3 = document.getElementById('scChar3');
+    let t3 = document.getElementById('scType3');
+
     if (p && s1 && s1.options.length === 0) {
         let o = p.map(c => `<option value="${c.n}">${c.n}</option>`).join('');
-        s1.innerHTML = o; s2.innerHTML = o;
+        s1.innerHTML = o; s2.innerHTML = o; s3.innerHTML = o;
     }
 
     if (sc && sc[0]) {
         if (document.getElementById('scGold')) document.getElementById('scGold').value = sc[0].gold;
-        if (document.getElementById('scChar1')) document.getElementById('scChar1').value = sc[0].c1n;
+
+        if (s1) s1.value = sc[0].c1n;
         if (document.getElementById('scAmt1')) document.getElementById('scAmt1').value = sc[0].c1a;
-        if (document.getElementById('scChar2')) document.getElementById('scChar2').value = sc[0].c2n;
+
+        if (s2) s2.value = sc[0].c2n;
         if (document.getElementById('scAmt2')) document.getElementById('scAmt2').value = sc[0].c2a;
+
+        // Slot 3
+        if (t3) {
+            let isRandom = (sc[0].c3n === "Random B1");
+            t3.value = isRandom ? "Random B1" : "Specific";
+
+            if (s3) {
+                if (isRandom) {
+                    s3.innerHTML = `<option value="Random B1">Random B1 Pool</option>`;
+                    s3.disabled = true;
+                } else {
+                    if (s3.options.length <= 1) { // Refill if it was cleared
+                        let o = p.map(c => `<option value="${c.n}">${c.n}</option>`).join('');
+                        s3.innerHTML = o;
+                    }
+                    s3.disabled = false;
+                    s3.value = sc[0].c3n || (p[0] ? p[0].n : "");
+                }
+            }
+        }
+        if (document.getElementById('scAmt3')) document.getElementById('scAmt3').value = sc[0].c3a || 0;
     }
+}
+
+function updateScriptedChest() {
+    let sc = getSafe('scriptedChests');
+    if (!sc || !sc[0]) return;
+
+    sc[0].gold = parseInt(document.getElementById('scGold').value) || 0;
+
+    sc[0].c1n = document.getElementById('scChar1').value;
+    sc[0].c1a = parseInt(document.getElementById('scAmt1').value) || 0;
+
+    sc[0].c2n = document.getElementById('scChar2').value;
+    sc[0].c2a = parseInt(document.getElementById('scAmt2').value) || 0;
+
+    // Slot 3
+    let elT3 = document.getElementById('scType3');
+    let t3 = elT3 ? elT3.value : "Specific";
+
+    if (t3 === "Random B1") {
+        sc[0].c3n = "Random B1";
+        // Ensure pool exists if missing
+        if (!sc[0].c3pool) sc[0].c3pool = [{ "n": "James", "w": 50 }, { "n": "Bruce", "w": 50 }];
+    } else {
+        // Only read char dropdown if Specific
+        let elC3 = document.getElementById('scChar3');
+        if (elC3) {
+            // FIX: If switching from Random to Specific, the dropdown is disabled or has "Random B1"
+            if (elC3.disabled || elC3.value === "Random B1") {
+                let pool = getSafe('charPoolData');
+                sc[0].c3n = (pool && pool[0]) ? pool[0].n : "Axel";
+            } else {
+                sc[0].c3n = elC3.value;
+            }
+        }
+    }
+
+    let elA3 = document.getElementById('scAmt3');
+    if (elA3) {
+        let val = parseInt(elA3.value);
+        sc[0].c3a = isNaN(val) ? 0 : val;
+    }
+
+    // Re-render to update UI state (enable/disable dropdowns)
+    renderScriptedChestUI();
+
+    // Debug Log
+    console.log("Saving Scripted Chest:", JSON.stringify(sc[0]));
+
+    // Save
+    if (typeof saveToLocal === 'function') saveToLocal();
 }
 // ==========================================
 // MARKET RENDER LOGIC

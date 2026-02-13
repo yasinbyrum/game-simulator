@@ -36,7 +36,12 @@ function simulateGame(inputs) {
 
     // Helper: Add Log
     const addLog = (type, msg, det, imgName = null) => {
+        // Structured log for JSON export
+        if (!state.logArray) state.logArray = [];
+        state.logArray.push({ type, msg, detail: det || '', day: state.currentDay || 0 });
+
         if (type === "DAY HEADER") {
+            state.currentDay = parseInt(msg.replace("DAY ", "")) || 0;
             state.logs += `<div class="log-event-row evt-day-header" style="text-align:center; font-size:1.4rem; font-weight:bold; margin:30px 0 15px 0; color:var(--accent); border-bottom:2px solid #444; padding-bottom:5px; text-shadow:0 0 10px rgba(0,0,0,0.5);">📊 ${msg} 📊</div>`;
             return;
         }
@@ -64,9 +69,9 @@ function simulateGame(inputs) {
         state.powerUps[p.n] = { star: p.s, level: 1, amount: 0, unlocked: isStarter };
     });
 
-    // Initialize Inventory (Rookie Bucket 1)
+    // Initialize Inventory (Bucket 1 characters — start at Level 0, unlock at c[0] cards)
     inputs.charPool.forEach(c => {
-        if (c.r === "Rookie" && c.b === 1) { state.inventory[c.n] = { rarity: c.r, level: 1, cards: 0, bucket: c.b }; }
+        if (c.b === 1) { state.inventory[c.n] = { rarity: c.r, level: 0, cards: 0, bucket: c.b }; }
     });
     if (state.powerUps["Rocket Gun"]) { state.powerUps["Rocket Gun"].unlocked = true; state.powerUps["Rocket Gun"].amount = 3; }
     if (state.powerUps["Giant Player"]) { state.powerUps["Giant Player"].unlocked = true; state.powerUps["Giant Player"].amount = 3; }
@@ -79,6 +84,17 @@ function simulateGame(inputs) {
         if (state.powerUps["Rocket Gun"]) state.powerUps["Rocket Gun"].level = 2;
         addLog("UPGRADE", "Onboarding First Step", `Rocket Gun Force Upgrade to Lvl 2. Gold: ${oldG}-${cost} = ${state.gold} Gold. XP +20`);
     }
+
+    // AUTO-UNLOCK HELPER: Level 0 → Level 1 when cards >= c[0]
+    const tryAutoUnlock = (name) => {
+        let ch = state.inventory[name];
+        if (!ch || ch.level > 0) return;
+        let cumReq = getCumulativeCardReq(name, 1);
+        if (ch.cards >= cumReq) {
+            ch.level = 1;
+            addLog("UNLOCK", `${name} Unlocked!`, `Reached ${ch.cards}/${cumReq} cards → Level 1`);
+        }
+    };
 
     // INTERNAL HELPERS
     const getBucket = (c) => { let b = 1; for (let i = 0; i < inputs.cupRoadData.length; i++) { if (c >= inputs.cupRoadData[i].cup && inputs.cupRoadData[i].feat && inputs.cupRoadData[i].feat.includes("Bucket")) { let p = inputs.cupRoadData[i].feat.split(' '); if (p[1]) b = Math.max(b, parseInt(p[1])); } } return b; };
@@ -193,11 +209,13 @@ function simulateGame(inputs) {
             addLog("SHOP", `Bought ${item.name}`, `Cost: ${item.cost} ${item.currency}`);
             if (item.type === "Free") { addRes(item.resType, item.resAmt, "Shop Free"); }
             else if (item.type === "Card") {
-                if (state.inventory[item.name]) state.inventory[item.name].cards += item.amt;
-                else {
+                if (state.inventory[item.name]) {
+                    state.inventory[item.name].cards += item.amt;
+                } else {
                     let meta = inputs.charPool.find(c => c.n === item.name);
-                    state.inventory[item.name] = { rarity: meta ? meta.r : "Rookie", level: 1, cards: item.amt, bucket: 1 };
+                    state.inventory[item.name] = { rarity: meta ? meta.r : "Rookie", level: 0, cards: item.amt, bucket: meta ? meta.b : 1 };
                 }
+                tryAutoUnlock(item.name);
             } else if (item.type === "PowerUp") {
                 if (state.powerUps[item.name]) state.powerUps[item.name].amount += item.amt;
             } else if (item.type === "Chest") {
@@ -236,22 +254,49 @@ function simulateGame(inputs) {
                 // Char 1
                 if (sc.c1n && sc.c1a > 0) {
                     if (!state.inventory[sc.c1n]) {
-                        state.inventory[sc.c1n] = { rarity: "Rookie", level: 1, cards: sc.c1a, bucket: 1 }; // Defaulting
+                        let meta = inputs.charPool.find(ch => ch.n === sc.c1n);
+                        state.inventory[sc.c1n] = { rarity: meta ? meta.r : "Rookie", level: 0, cards: sc.c1a, bucket: meta ? meta.b : 1 };
                         lootLog.push(`${sc.c1n} (New!) x${sc.c1a}`);
                     } else {
                         state.inventory[sc.c1n].cards += sc.c1a;
                         lootLog.push(`${sc.c1n} x${sc.c1a}`);
                     }
+                    tryAutoUnlock(sc.c1n);
                 }
                 // Char 2
                 if (sc.c2n && sc.c2a > 0) {
                     if (!state.inventory[sc.c2n]) {
-                        state.inventory[sc.c2n] = { rarity: "Rookie", level: 1, cards: sc.c2a, bucket: 1 };
+                        let meta = inputs.charPool.find(ch => ch.n === sc.c2n);
+                        state.inventory[sc.c2n] = { rarity: meta ? meta.r : "Rookie", level: 0, cards: sc.c2a, bucket: meta ? meta.b : 1 };
                         lootLog.push(`${sc.c2n} (New!) x${sc.c2a}`);
                     } else {
                         state.inventory[sc.c2n].cards += sc.c2a;
                         lootLog.push(`${sc.c2n} x${sc.c2a}`);
                     }
+                    tryAutoUnlock(sc.c2n);
+                }
+                // Char 3
+                if (sc.c3n && sc.c3a > 0) {
+                    let c3Name = sc.c3n;
+                    // Random B1: pick from weighted pool
+                    if (c3Name === "Random B1" && sc.c3pool && sc.c3pool.length > 0) {
+                        let totalW = sc.c3pool.reduce((s, p) => s + p.w, 0);
+                        let roll = Math.random() * totalW;
+                        let cumul = 0;
+                        for (let p of sc.c3pool) {
+                            cumul += p.w;
+                            if (roll < cumul) { c3Name = p.n; break; }
+                        }
+                    }
+                    if (!state.inventory[c3Name]) {
+                        let meta = inputs.charPool.find(ch => ch.n === c3Name);
+                        state.inventory[c3Name] = { rarity: meta ? meta.r : "Pro", level: 0, cards: sc.c3a, bucket: meta ? meta.b : 1 };
+                        lootLog.push(`${c3Name} (New!) x${sc.c3a}`);
+                    } else {
+                        state.inventory[c3Name].cards += sc.c3a;
+                        lootLog.push(`${c3Name} x${sc.c3a}`);
+                    }
+                    tryAutoUnlock(c3Name);
                 }
             } else {
                 lootLog.push("Scripted Chest Data Missing");
@@ -325,12 +370,13 @@ function simulateGame(inputs) {
                         let char = validChars[Math.floor(Math.random() * validChars.length)];
                         // Give cards logic...
                         if (!state.inventory[char.n]) {
-                            state.inventory[char.n] = { rarity: char.r, level: 1, cards: 0, bucket: char.b };
+                            state.inventory[char.n] = { rarity: char.r, level: 0, cards: amt, bucket: char.b };
                             lootLog.push(`${char.n} (New!) x${amt}`);
                         } else {
                             state.inventory[char.n].cards += amt;
                             lootLog.push(`${char.n} x${amt}`);
                         }
+                        tryAutoUnlock(char.n);
                     } else {
                         // DISTINGUISH FALLBACK REASON
                         // 1. None existed in pool for this Bucket/Rarity?
@@ -467,15 +513,16 @@ function simulateGame(inputs) {
         let cands = [];
         for (let n in state.inventory) {
             let ch = state.inventory[n];
+            if (ch.level < 1) continue; // Skip locked (Level 0) chars
             let nxtL = ch.level + 1;
             let cost = getUpgradeCost(n, nxtL);
-            let req = getReqForLevel(n, nxtL);
-            if (ch.cards >= req && state.gold >= cost) cands.push({ n, cost, req, nxtL });
+            let cumReq = getCumulativeCardReq(n, nxtL);
+            if (ch.cards >= cumReq && state.gold >= cost) cands.push({ n, cost, cumReq, nxtL });
         }
         if (cands.length > 0) {
             let c = cands[Math.floor(Math.random() * cands.length)];
             let oldGold = state.gold;
-            state.inventory[c.n].cards -= c.req;
+            // Cards are NOT subtracted — cumulative tracking
             state.gold -= c.cost;
             state.inventory[c.n].level = c.nxtL;
             let newGold = state.gold;
@@ -487,7 +534,7 @@ function simulateGame(inputs) {
             // Detailed Log: Lvl X -> Y | Cost | Gold Rem | XP
             let nxt = c.nxtL;
             let prev = nxt - 1;
-            addLog("UPGRADE", `${c.n} Lvl ${prev} -> Lvl ${nxt}`, `Cost: ${c.cost} Gold (Rem: ${newGold}) | +${xp} XP`);
+            addLog("UPGRADE", `${c.n} Lvl ${prev} -> Lvl ${nxt}`, `Cards: ${state.inventory[c.n].cards}/${c.cumReq} | Cost: ${c.cost} Gold (Rem: ${newGold}) | +${xp} XP`);
             checkLevelUp();
         }
     };
@@ -643,6 +690,7 @@ function simulateGame(inputs) {
                                 addLog("LOGIN", rewardSource, `${charName} (New!) x${rew.amt}`);
                             }
                         }
+                        tryAutoUnlock(charName);
                     }
                 }
             }
@@ -957,7 +1005,149 @@ function renderSimulationResults(state, inputs) {
     // Update Inventory UIs
     if (typeof renderSimInventory === 'function') renderSimInventory(state.inventory);
     if (typeof renderSimPowerUps === 'function') renderSimPowerUps(state.powerUps);
+
+    // Show Export JSON Button in header
+    let exportBtn = document.getElementById('exportJsonBtn');
+    if (exportBtn) exportBtn.style.display = 'inline-block';
 }
+
+// ==========================================
+// EXPORT SIMULATION DATA AS JSON
+// ==========================================
+window.exportSimulationJSON = function () {
+    let state = window.lastSimState;
+    if (!state) {
+        alert("No simulation data found. Please run a simulation first.");
+        return;
+    }
+
+    let inputs = getSimulationInputs();
+
+    // Build structured export object
+    let exportData = {
+        meta: {
+            exportDate: new Date().toISOString(),
+            version: "2.0",
+            description: "Full simulation export with game configs for AI analysis"
+        },
+        simulationParams: {
+            days: inputs.days,
+            dailyMatches: inputs.dailyMatches,
+            winRate: inputs.winRate,
+            adsRange: { min: inputs.minAds, max: inputs.maxAds },
+            goalsRange: { min: inputs.minGoals, max: inputs.maxGoals },
+            charUpgradeChance: inputs.charUpgradeChance,
+            pupUpgradeChance: inputs.pupUpgradeChance,
+            dailyPUChests: inputs.dailyPUChests,
+            dailyFreeChests: inputs.dailyFreeChests,
+            dailyGoldChests: inputs.dailyGoldChests,
+            dailyDiamondChests: inputs.dailyDiamondChests,
+            doWatchEarn: inputs.doWE,
+            doMissions: inputs.doMissions,
+            startGold: inputs.startCfg ? inputs.startCfg.gold : 0,
+            startDiamonds: inputs.startCfg ? inputs.startCfg.diamonds : 0
+        },
+        finalState: {
+            level: state.level,
+            xp: state.xp,
+            xpToNext: state.xpNext,
+            gold: state.gold,
+            diamonds: state.diamonds,
+            cups: state.cups,
+            maxCups: state.maxAchievedCups,
+            totalWins: state.totalWins || 0,
+            totalLosses: state.totalLosses || 0,
+            totalChestsOpened: state.totalChestsOpened || 0,
+            totalCardsEarned: state.totalCardsEarned || 0,
+            totalMissions: state.totalMissions,
+            avgMissionsPerDay: state.avgMissions,
+            totalAds: state.totalAds,
+            totalUpgrades: state.totalUpgrades,
+            totalPupUpgrades: state.totalPupUpgrades,
+            totalPowerUpsUsed: state.totalPowerUpsUsed,
+            unlockedSlots: state.unlockedSlots,
+            bestCharacter: {
+                name: state.bestCharName,
+                level: state.bestCharLevel,
+                power: state.bestCharPower
+            }
+        },
+        inventory: {},
+        powerUps: {},
+        tracking: state.stats || {},
+        // FULL GAME CONFIG DATA (for AI analysis)
+        gameData: {
+            charPool: inputs.charPool || [],
+            charProgressionData: inputs.charProgressionData || {},
+            charStatsData: inputs.charStatsData || {},
+            powerUpData: inputs.powerUpData || [],
+            chestConfigs: inputs.chestConfigs || {},
+            cupRoadData: inputs.cupRoadData || [],
+            levelData: inputs.levelData || [],
+            winRewards: inputs.winRewardsAll || {},
+            missionData: inputs.missionDataAll || {},
+            missionCompletion: inputs.missionCompAll || {},
+            loginConfig: inputs.loginConfig || {},
+            watchEarnConfig: inputs.weConfig || {},
+            shopConfig: inputs.shopConfig || {},
+            matchmakingData: inputs.matchmakingData || [],
+            botData: inputs.botData || [],
+            scriptedChests: inputs.scriptedChests || [],
+            rewardChestConfig: inputs.rewardChestConfig || {},
+            slotUnlockData: inputs.slotUnlockData || [],
+            simConfig: inputs.simConfig || {}
+        },
+        logs: []
+    };
+
+    // Detailed inventory with cumulative info
+    for (let name in state.inventory) {
+        let ch = state.inventory[name];
+        let cumReqNext = ch.level > 0 ? getCumulativeCardReq(name, ch.level + 1) : getCumulativeCardReq(name, 1);
+        exportData.inventory[name] = {
+            rarity: ch.rarity,
+            level: ch.level,
+            cards: ch.cards,
+            cardsNeededForNext: cumReqNext,
+            bucket: ch.bucket,
+            isLocked: ch.level === 0,
+            canUpgrade: ch.level > 0 && ch.cards >= cumReqNext
+        };
+    }
+
+    // PowerUps
+    for (let name in state.powerUps) {
+        let pu = state.powerUps[name];
+        exportData.powerUps[name] = {
+            star: pu.star,
+            level: pu.level,
+            amount: pu.amount,
+            unlocked: pu.unlocked
+        };
+    }
+
+    // Parse logs from HTML to structured array
+    if (state.logArray && Array.isArray(state.logArray)) {
+        exportData.logs = state.logArray;
+    } else if (state.logs) {
+        // Fallback: store raw HTML (less ideal)
+        exportData.logs = state.logs;
+    }
+
+    // Download as JSON file
+    let jsonStr = JSON.stringify(exportData, null, 2);
+    let blob = new Blob([jsonStr], { type: 'application/json' });
+    let url = URL.createObjectURL(blob);
+    let a = document.createElement('a');
+    a.href = url;
+    a.download = `sim_export_${new Date().toISOString().slice(0, 10)}_${exportData.simulationParams.days}d.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    console.log("✅ Simulation exported successfully!", exportData);
+};
 
 // WRAPPER: Single Run
 // (Already defined above as window.runSimulation, removing duplicates if any)
@@ -972,17 +1162,20 @@ function renderSimInventory(inv) {
     let chars = Object.keys(inv).map(n => ({ ...inv[n], n: n }));
 
     // Sort: Upgradable First, then Rarity, then Name
-    // To do Upgradable sort, we need reqs.
     chars.forEach(c => {
-        c.req = 9999;
-        if (progData && progData[c.n] && progData[c.n].c) {
-            // If Level 0 (Locked), target is Level 1 (idx 0).
-            // If Level 1, target is Level 2 (idx 1).
-            let targetLvl = c.level === 0 ? 1 : c.level + 1;
-            let idx = targetLvl - 1;
-            if (idx >= 0 && idx < progData[c.n].c.length) c.req = progData[c.n].c[idx];
+        // Determine display values based on level
+        if (c.level === 0) {
+            // Locked: target is unlock (c[0])
+            c.req = (progData && progData[c.n] && progData[c.n].c) ? progData[c.n].c[0] : 9999;
+            c.displayCards = c.cards;
+            c.displayReq = c.req;
+        } else {
+            // Unlocked: target is next level cumulative
+            c.displayReq = getCumulativeCardReq(c.n, c.level + 1);
+            c.displayCards = c.cards;
+            c.req = c.displayReq;
         }
-        c.canUpgrade = c.cards >= c.req;
+        c.canUpgrade = c.level > 0 && c.cards >= c.req;
     });
 
     chars.sort((a, b) => {
@@ -1017,32 +1210,16 @@ function renderSimInventory(inv) {
         }
 
         if (c.req !== 9999) {
-            let pct = Math.min(100, Math.floor((c.cards / c.req) * 100));
-            let infoText = `${c.cards} / ${c.req}`;
+            let pct = Math.min(100, Math.floor((c.displayCards / c.displayReq) * 100));
+            let infoText = `${c.displayCards} / ${c.displayReq}`;
             let btnHtml = "";
 
-            // CUMULATIVE DISPLAY LOGIC (User Request)
-            if (progData && progData[c.n] && progData[c.n].c) {
-                let costList = progData[c.n].c;
-                let prevCost = 0;
-                let limit = c.level - 1;
-                for (let i = 0; i < limit; i++) {
-                    if (costList[i]) prevCost += costList[i];
-                }
-
-                let totalCollected = prevCost + c.cards;
-                let totalReq = prevCost + c.req;
-
-                infoText = `${totalCollected} / ${totalReq}`;
-                pct = Math.min(100, Math.floor((totalCollected / totalReq) * 100));
-            }
-
             let barColor = "#3b82f6";
-            if (c.canUpgrade) {
+            if (c.level === 0) {
+                barColor = "#f59e0b"; // Amber for locked
+            } else if (c.canUpgrade) {
                 barColor = "#22c55e";
                 btnHtml = `<button class="btn btn-green" style="padding:4px 12px; margin-top:5px; width:100%; font-size:0.85rem;" onclick="upgradeCharacter('${c.n}')">⬆ Upgrade</button>`;
-            } else {
-                // infoText already set
             }
 
             progressHtml = `
@@ -1062,7 +1239,7 @@ function renderSimInventory(inv) {
                 <div style="transform:scale(1.2); filter:drop-shadow(0 4px 6px rgba(0,0,0,0.5));">${img}</div>
                 <div style="display:flex; flex-direction:column;">
                     <span style="font-weight:bold; font-size:1.1rem; color:#fff;">${c.n}</span>
-                    <span style="font-size:0.85rem; opacity:0.7;">Lvl ${c.level}</span>
+                    <span style="font-size:0.85rem; opacity:0.7;">${c.level === 0 ? '🔒 Locked' : 'Lvl ' + c.level}</span>
                 </div>
             </td>
             <td style="padding:8px; text-align:center;"><span class="rar-${c.rarity}" style="padding:2px 8px; border-radius:4px; font-size:0.85rem;">${c.rarity}</span></td>
@@ -1098,23 +1275,20 @@ window.upgradeCharacter = function (charName) {
         return;
     }
 
-    // Get Req
-    let idx = char.level - 1;
-    let req = 9999;
-    let goldReq = 0;
-
-    let costData = getSafe('upgradeCostData');
-    if (costData && idx < costData.length) goldReq = costData[idx];
-
-    if (progData[charName].c && idx < progData[charName].c.length) {
-        req = progData[charName].c[idx];
+    if (char.level < 1) {
+        console.warn("❌ Character is still locked (Level 0)");
+        return;
     }
 
-    console.log(`   Level: ${char.level}, Cards: ${char.cards}/${req}, Gold: ${state.gold}/${goldReq}`);
+    // Cumulative card requirement for next level
+    let nxtL = char.level + 1;
+    let cumReq = getCumulativeCardReq(charName, nxtL);
+    let goldReq = getUpgradeCost(charName, nxtL);
 
-    if (char.cards >= req && state.gold >= goldReq) {
-        // PERFOM UPGRADE
-        char.cards -= req;
+    console.log(`   Level: ${char.level}, Cards: ${char.cards}/${cumReq}, Gold: ${state.gold}/${goldReq}`);
+
+    if (char.cards >= cumReq && state.gold >= goldReq) {
+        // PERFORM UPGRADE — cards NOT subtracted (cumulative)
         state.gold -= goldReq;
         char.level++;
         console.log("   ✅ Upgrade SUCCESS!");
@@ -1125,7 +1299,7 @@ window.upgradeCharacter = function (charName) {
         if (document.getElementById('resLevel')) document.getElementById('resLevel').innerText = state.level;
     } else {
         console.warn("   ❌ Not enough resources");
-        alert(`Not enough cards or gold!\nCards: ${char.cards}/${req}\nGold: ${state.gold}/${goldReq}`);
+        alert(`Not enough cards or gold!\nCards: ${char.cards}/${cumReq}\nGold: ${state.gold}/${goldReq}`);
     }
 };
 // Duplicate removed

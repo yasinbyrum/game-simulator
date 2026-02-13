@@ -29,6 +29,20 @@ function getReqForLevel(name, lvl) {
     return 9999;
 }
 
+// Returns cumulative card requirement: sum of c[0..lvl-1]
+// e.g. getCumulativeCardReq("Axel", 1) = c[0] = 60 (unlock)
+//      getCumulativeCardReq("Axel", 2) = c[0]+c[1] = 150 (Level 2)
+//      getCumulativeCardReq("Axel", 3) = c[0]+c[1]+c[2] = 290 (Level 3)
+function getCumulativeCardReq(name, lvl) {
+    let d = getSafe('charProgressionData');
+    if (!d || !d[name] || !d[name].c) return 9999;
+    let total = 0;
+    for (let i = 0; i < lvl && i < d[name].c.length; i++) {
+        total += d[name].c[i];
+    }
+    return total || 9999;
+}
+
 function getUpgradeCost(name, lvl) {
     let d = getSafe('charProgressionData');
     if (d && d[name] && d[name].g) return d[name].g[lvl - 1] || 0;

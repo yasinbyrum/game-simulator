@@ -1765,7 +1765,13 @@ var chestConfigs = {
 
 
 let scriptedChests = [
-  { "id": "Scripted Chest", "gold": 50, "c1n": "Axel", "c1a": 60, "c2n": "Raven", "c2a": 60 }
+  {
+    "id": "Scripted Chest", "gold": 50,
+    "c1n": "Axel", "c1a": 60,
+    "c2n": "Raven", "c2a": 60,
+    "c3n": "Random B1", "c3a": 12,
+    "c3pool": [{ "n": "James", "w": 50 }, { "n": "Bruce", "w": 50 }]
+  }
 ];
 
 let startConfig = {

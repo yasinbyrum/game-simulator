@@ -18,6 +18,10 @@
         <div class="header-title">🛠 GAME ECONOMY <span style="color:var(--accent)">MASTER</span></div>
         <div class="header-right">
             <button class="btn btn-lock" id="lockBtn" onclick="toggleAdminMode()" title="Admin Unlock">🔒</button>
+            <button class="btn" id="exportJsonBtn" onclick="exportSimulationJSON()" title="Export Simulation Data"
+                style="display:none; background:linear-gradient(135deg, #6366f1, #8b5cf6); color:#fff; padding:6px 14px; border:none; border-radius:6px; font-size:0.8rem; cursor:pointer; font-weight:bold; box-shadow:0 2px 8px rgba(99,102,241,0.3); transition:all 0.2s;"
+                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">📥
+                Export</button>
             <button class="btn btn-run" onclick="runSimulation()">▶ RUN SIMULATION</button>
         </div>
     </header>
@@ -241,6 +245,15 @@
                         <div class="sim-input-group"><label>Char 2</label><select id="scChar2" class="edit"
                                 style="width:120px" onchange="updateScriptedChest()"></select></div>
                         <div class="sim-input-group"><label>Amt 2</label><input type="number" class="edit" id="scAmt2"
+                                onchange="updateScriptedChest()" style="width:60px"></div>
+                        <div class="sim-input-group"><label>Slot 3 Type</label><select id="scType3" class="edit"
+                                style="width:100px" onchange="updateScriptedChest()">
+                                <option value="Specific">Specific</option>
+                                <option value="Random B1">Random B1</option>
+                            </select></div>
+                        <div class="sim-input-group"><label>Char 3</label><select id="scChar3" class="edit"
+                                style="width:120px" onchange="updateScriptedChest()"></select></div>
+                        <div class="sim-input-group"><label>Amt 3</label><input type="number" class="edit" id="scAmt3"
                                 onchange="updateScriptedChest()" style="width:60px"></div>
                     </div>
                 </div>
