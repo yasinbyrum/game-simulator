@@ -233,8 +233,8 @@ function simulateGame(inputs) {
 
         track('chestSources', type, 1);
         let c = conf ? conf[type] : null;
-        // Use centralized helper that checks CUP ROAD FEATS (Bucket X)
-        let bucket = getBucket(state.cups);
+        // FIX: Use maxAchievedCups to determine loot bucket so drops don't degrade
+        let bucket = getBucket(state.maxAchievedCups || state.cups);
 
         let lootLog = [];
         // Scripted Chest Logic
@@ -387,8 +387,8 @@ function simulateGame(inputs) {
                             lootLog.push(`50 Gold (No ${r} in B${bucket})`);
                         } else {
                             // They existed but were filtered out (Maxed or Locked)
-                            addRes("Gold", 50, "Maxed Char Fallback");
-                            lootLog.push(`50 Gold (Duplicate)`);
+                            addRes("Gold", 50, "Maxed Character Conversion");
+                            lootLog.push(`50 Gold (Converted)`);
                         }
                     }
                 }
@@ -514,6 +514,11 @@ function simulateGame(inputs) {
         for (let n in state.inventory) {
             let ch = state.inventory[n];
             if (ch.level < 1) continue; // Skip locked (Level 0) chars
+
+            // FIX: Max Level Check
+            let maxLevel = (inputs.charProgressionData[n] && inputs.charProgressionData[n].c) ? inputs.charProgressionData[n].c.length : 12;
+            if (ch.level >= maxLevel) continue;
+
             let nxtL = ch.level + 1;
             let cost = getUpgradeCost(n, nxtL);
             let cumReq = getCumulativeCardReq(n, nxtL);
