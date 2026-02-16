@@ -1538,6 +1538,7 @@ window.renderPlayerProfile = function () {
                         <th style="padding:8px; text-align:center; width:50px; color:#ff4d4d;">Pwr</th>
                         <th style="padding:8px; text-align:center; width:50px; color:#ffd700;">Gold</th>
                         <th style="padding:8px; text-align:center; width:50px; color:#4deeea;">Dia</th>
+                        <th style="padding:8px; text-align:center; width:40px;">Action</th>
                     </tr>
                 </thead>
                 <tbody>`;
@@ -1567,6 +1568,12 @@ window.renderPlayerProfile = function () {
         let dia = p.diaChest !== undefined ? p.diaChest : 2;
         let pup = p.pupChest !== undefined ? p.pupChest : 2;
 
+        let deleteBtn = `
+            <button onclick="deletePlayerProfile('${k}')" style="background:#ef4444; color:white; border:none; border-radius:4px; padding:4px 8px; cursor:pointer;" title="Delete Profile">🗑️</button>
+        `;
+        // Prevent deleting the last profile or specific core ones if desired? 
+        // For now allow all, but maybe warn if it's the last one.
+
         html += `
         <tr style="border-bottom:1px solid #333;">
             <td style="padding:8px; font-weight:bold; color:var(--accent);">
@@ -1583,17 +1590,90 @@ window.renderPlayerProfile = function () {
             <td style="padding:4px;"><input type="number" value="${pup}" onchange="updateProfileVal('${k}', 'pupChest', this.value)" style="width:100%; text-align:center; background:#222; border:1px solid #444; color:#fff; padding:4px; border-radius:4px;"></td>
             <td style="padding:4px;"><input type="number" value="${gold}" onchange="updateProfileVal('${k}', 'goldChest', this.value)" style="width:100%; text-align:center; background:#222; border:1px solid #444; color:#fff; padding:4px; border-radius:4px;"></td>
             <td style="padding:4px;"><input type="number" value="${dia}" onchange="updateProfileVal('${k}', 'diaChest', this.value)" style="width:100%; text-align:center; background:#222; border:1px solid #444; color:#fff; padding:4px; border-radius:4px;"></td>
+            <td style="padding:4px; text-align:center;">${deleteBtn}</td>
         </tr>`;
     });
 
     html += `
-    <div style="padding:15px; text-align:right; display:flex; justify-content:flex-end; gap:10px; border-top:1px solid #333;">
-        <button onclick="resetPlayerProfiles()" class="btn" style="background:#ef4444;">⚠️ Reset Defaults</button>
-        <button onclick="savePlayerProfiles()" class="btn" style="background:#22c55e;">💾 Save Configuration</button>
+    <div style="padding:15px; text-align:right; display:flex; justify-content:space-between; align-items:center; gap:10px; border-top:1px solid #333;">
+        <button onclick="addPlayerProfile()" class="btn" style="background:var(--accent); color:#0f172a; font-weight:bold;">➕ Add New Profile</button>
+        <div style="display:flex; gap:10px;">
+            <button onclick="resetPlayerProfiles()" class="btn" style="background:#ef4444;">⚠️ Reset Defaults</button>
+            <button onclick="savePlayerProfiles()" class="btn" style="background:#22c55e;">💾 Save Configuration</button>
+        </div>
     </div>
     </div>`;
 
     el.innerHTML = html;
+
+    // Update Dashboard Dropdown
+    populateProfileSelect();
+};
+
+window.populateProfileSelect = function () {
+    let el = document.getElementById('simProfile');
+    if (!el) return;
+
+    let currentVal = el.value;
+    let profiles = window.playerProfiles || {};
+    let html = "";
+
+    Object.keys(profiles).forEach(k => {
+        let name = profiles[k].name || k;
+        html += `<option value="${k}">${name}</option>`;
+    });
+
+    el.innerHTML = html;
+
+    // Restore selection if it still exists
+    if (profiles[currentVal]) {
+        el.value = currentVal;
+    } else {
+        // Select first available
+        let first = Object.keys(profiles)[0];
+        if (first) el.value = first;
+    }
+};
+
+window.addPlayerProfile = function () {
+    let name = prompt("Enter name for new profile:", "New Profile");
+    if (!name) return;
+
+    let key = "custom_" + Date.now();
+    let newProfile = {
+        name: name,
+        match: 10,
+        win: 50,
+        charRate: 50,
+        pupRate: 50,
+        actDays: 7,
+        ads: 0,
+        freeChest: 2,
+        goldChest: 2,
+        diaChest: 2,
+        pupChest: 2
+    };
+
+    if (!window.playerProfiles) window.playerProfiles = {};
+    window.playerProfiles[key] = newProfile;
+
+    renderPlayerProfile(); // Re-render table and update dropdown
+    savePlayerProfiles(); // Optional: Auto-save? User requested manually saving button, but auto-save makes sense for structural changes.
+    // Let's stick to manual save for values, but maybe auto-save for structure is safer?
+    // I'll leave it to manual save to be consistent with the "Save Config" button.
+};
+
+window.deletePlayerProfile = function (key) {
+    if (Object.keys(window.playerProfiles).length <= 1) {
+        alert("Cannot delete the last profile!");
+        return;
+    }
+
+    if (confirm("Are you sure you want to delete this profile?")) {
+        delete window.playerProfiles[key];
+        renderPlayerProfile();
+        // savePlayerProfiles(); // Manual save preferred
+    }
 };
 
 window.updateProfileVal = function (key, field, val) {
@@ -1606,6 +1686,7 @@ window.updateProfileVal = function (key, field, val) {
 window.savePlayerProfiles = function () {
     if (window.playerProfiles) {
         localStorage.setItem('playerProfiles', JSON.stringify(window.playerProfiles));
+        populateProfileSelect(); // Ensure dropdown is sync
         alert("✅ Profiles Saved! Configuration will load automatically next time.");
     }
 };
@@ -1616,6 +1697,11 @@ window.resetPlayerProfiles = function () {
         location.reload();
     }
 };
+
+// Initial Population on Load
+document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(populateProfileSelect, 500); // Small delay to ensure HTML is ready
+});
 
 
 
