@@ -1498,33 +1498,122 @@ window.addProfile = function () {
 
 // Duplicate removed
 
-window.deleteProfile = function (idx) {
-    if (confirm("Delete this profile?")) {
-        playerProfiles.splice(idx, 1);
-        saveProfiles();
-        renderPlayerProfile();
+// ==========================================
+// PLAYER PROFILE RENDER LOGIC
+// ==========================================
+window.renderPlayerProfile = function () {
+    let el = document.getElementById('player-profile');
+    if (!el) return;
+
+    // Initialize if needed
+    if (!window.playerProfiles) {
+        el.innerHTML = "<div style='padding:20px; text-align:center;'>Loading Profiles...</div>";
+        return;
+    }
+
+    let profiles = window.playerProfiles;
+    let keys = Object.keys(profiles);
+
+    // Build Table
+    let html = `
+    <div class="card">
+        <div class="card-header">
+            👤 Player Profiles Configuration
+            <div style="font-size:0.9rem; color:#aaa; font-weight:normal;">Customize simulation presets (Auto-saved)</div>
+        </div>
+        <div class="table-wrapper">
+            <table style="width:100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background:rgba(255,255,255,0.05);">
+                        <th style="padding:8px; text-align:left; min-width:120px;">Profile Name</th>
+                        <th style="padding:8px; text-align:center; width:60px;">Matches</th>
+                        <th style="padding:8px; text-align:center; width:60px;">Win %</th>
+                        <th style="padding:8px; text-align:center; width:60px;">Char %</th>
+                        <th style="padding:8px; text-align:center; width:60px;">Pup %</th>
+                        <th style="padding:8px; text-align:center; min-width:100px;">Active Days</th>
+                        <th style="padding:8px; text-align:center; width:60px;">Ads</th>
+                        
+                        <!-- Chests Section -->
+                        <th style="padding:8px; text-align:center; width:50px; border-left:1px solid #444; color:var(--accent);">Free</th>
+                        <th style="padding:8px; text-align:center; width:50px; color:#ff4d4d;">Pwr</th>
+                        <th style="padding:8px; text-align:center; width:50px; color:#ffd700;">Gold</th>
+                        <th style="padding:8px; text-align:center; width:50px; color:#4deeea;">Dia</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+    keys.forEach(k => {
+        let p = profiles[k];
+
+        // Active Days Dropdown Logic
+        let actDays = parseInt(p.actDays) || 7;
+
+        let actOptions = "";
+        for (let d = 7; d >= 1; d--) {
+            let label = d === 7 ? "Every Day" : `${d} Days/Wk`;
+            let sel = actDays === d ? "selected" : "";
+            actOptions += `<option value="${d}" ${sel}>${label}</option>`;
+        }
+
+        let actSelect = `
+            <select onchange="updateProfileVal('${k}', 'actDays', this.value)" style="width:100%; text-align:center; background:#222; border:1px solid #444; color:#fff; padding:4px; border-radius:4px;">
+                ${actOptions}
+            </select>
+        `;
+
+        // Chest Defaults if missing
+        let free = p.freeChest !== undefined ? p.freeChest : 2;
+        let gold = p.goldChest !== undefined ? p.goldChest : 2;
+        let dia = p.diaChest !== undefined ? p.diaChest : 2;
+        let pup = p.pupChest !== undefined ? p.pupChest : 2;
+
+        html += `
+        <tr style="border-bottom:1px solid #333;">
+            <td style="padding:8px; font-weight:bold; color:var(--accent);">
+                ${p.name}
+            </td>
+            <td style="padding:4px;"><input type="number" value="${p.match}" onchange="updateProfileVal('${k}', 'match', this.value)" style="width:100%; text-align:center; background:#222; border:1px solid #444; color:#fff; padding:4px; border-radius:4px;"></td>
+            <td style="padding:4px;"><input type="number" value="${p.win}" onchange="updateProfileVal('${k}', 'win', this.value)" style="width:100%; text-align:center; background:#222; border:1px solid #444; color:#fff; padding:4px; border-radius:4px;"></td>
+            <td style="padding:4px;"><input type="number" value="${p.charRate}" onchange="updateProfileVal('${k}', 'charRate', this.value)" style="width:100%; text-align:center; background:#222; border:1px solid #444; color:#fff; padding:4px; border-radius:4px;"></td>
+            <td style="padding:4px;"><input type="number" value="${p.pupRate}" onchange="updateProfileVal('${k}', 'pupRate', this.value)" style="width:100%; text-align:center; background:#222; border:1px solid #444; color:#fff; padding:4px; border-radius:4px;"></td>
+            <td style="padding:4px;">${actSelect}</td>
+            <td style="padding:4px;"><input type="number" value="${p.ads}" onchange="updateProfileVal('${k}', 'ads', this.value)" style="width:100%; text-align:center; background:#222; border:1px solid #444; color:#fff; padding:4px; border-radius:4px;"></td>
+            
+            <td style="padding:4px; border-left:1px solid #444;"><input type="number" value="${free}" onchange="updateProfileVal('${k}', 'freeChest', this.value)" style="width:100%; text-align:center; background:#222; border:1px solid #444; color:#fff; padding:4px; border-radius:4px;"></td>
+            <td style="padding:4px;"><input type="number" value="${pup}" onchange="updateProfileVal('${k}', 'pupChest', this.value)" style="width:100%; text-align:center; background:#222; border:1px solid #444; color:#fff; padding:4px; border-radius:4px;"></td>
+            <td style="padding:4px;"><input type="number" value="${gold}" onchange="updateProfileVal('${k}', 'goldChest', this.value)" style="width:100%; text-align:center; background:#222; border:1px solid #444; color:#fff; padding:4px; border-radius:4px;"></td>
+            <td style="padding:4px;"><input type="number" value="${dia}" onchange="updateProfileVal('${k}', 'diaChest', this.value)" style="width:100%; text-align:center; background:#222; border:1px solid #444; color:#fff; padding:4px; border-radius:4px;"></td>
+        </tr>`;
+    });
+
+    html += `
+    <div style="padding:15px; text-align:right; display:flex; justify-content:flex-end; gap:10px; border-top:1px solid #333;">
+        <button onclick="resetPlayerProfiles()" class="btn" style="background:#ef4444;">⚠️ Reset Defaults</button>
+        <button onclick="savePlayerProfiles()" class="btn" style="background:#22c55e;">💾 Save Configuration</button>
+    </div>
+    </div>`;
+
+    el.innerHTML = html;
+};
+
+window.updateProfileVal = function (key, field, val) {
+    if (window.playerProfiles && window.playerProfiles[key]) {
+        window.playerProfiles[key][field] = parseInt(val) || 0;
+        // console.log(`Updated ${ key }.${ field } to ${ val } `);
     }
 };
 
-window.updateProfileVal = function (idx, key, val) {
-    playerProfiles[idx][key] = parseInt(val) || 0;
-    saveProfiles();
-};
-
-window.editProfileName = function (idx) {
-    let newName = prompt("Enter Profile Name:", playerProfiles[idx].name);
-    if (newName) {
-        playerProfiles[idx].name = newName;
-        saveProfiles();
-        renderPlayerProfile();
+window.savePlayerProfiles = function () {
+    if (window.playerProfiles) {
+        localStorage.setItem('playerProfiles', JSON.stringify(window.playerProfiles));
+        alert("✅ Profiles Saved! Configuration will load automatically next time.");
     }
 };
 
-window.resetProfiles = function () {
-    if (confirm("Reset all profiles to default?")) {
-        playerProfiles = JSON.parse(JSON.stringify(defaultProfiles));
-        saveProfiles();
-        renderPlayerProfile();
+window.resetPlayerProfiles = function () {
+    if (confirm("Are you sure you want to reset all profiles to default values?")) {
+        localStorage.removeItem('playerProfiles');
+        location.reload();
     }
 };
 
@@ -1609,8 +1698,8 @@ window.renderMarket = function () {
                 <button class="tab-btn" id="mt_powers" onclick="setMarketTab('powers')">⚡ Power Packs</button>
             </div>
             <div id="marketGrid" class="market-grid"></div>
-            <!-- Market Logs Container -->
-            <div id="marketLogs" style="margin-top:20px; max-height:750px; overflow-y:auto; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; display:none; font-family:monospace;"></div>
+            <!--Market Logs Container-- >
+        <div id="marketLogs" style="margin-top:20px; max-height:750px; overflow-y:auto; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; display:none; font-family:monospace;"></div>
         </div>`;
     }
 
@@ -1672,13 +1761,13 @@ window.renderMarketItems = function () {
         let isFreePremium = ['Rookie Chest', 'Pro Chest', 'Champion Chest', 'Legendary Chest'].includes(item.name);
 
         if (window.currentMarketTab === 'gold') {
-            priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
-            contentTag = `<div style="font-size:1.3rem; font-weight:800; color:#fbbf24; margin-top:5px;">${item.gold.toLocaleString()} Gold</div>`;
+            priceTag = `< div class="market-item-price price-diamond" >💎 ${item.diamonds}</div > `;
+            contentTag = `< div style = "font-size:1.3rem; font-weight:800; color:#fbbf24; margin-top:5px;" > ${item.gold.toLocaleString()} Gold</div > `;
         } else if (window.currentMarketTab === 'powers') {
-            priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
+            priceTag = `< div class="market-item-price price-diamond" >💎 ${item.diamonds}</div > `;
             let stars = "";
             for (let i = 0; i < (item.star || 1); i++) stars += "⭐";
-            contentTag = `<div style="font-size:1rem; margin-top:5px;">${stars}</div>`;
+            contentTag = `< div style = "font-size:1rem; margin-top:5px;" > ${stars}</div > `;
         } else {
             // Chests
             if (item.id === 'gold_chest' || item.id === 'diamond_chest') {
@@ -1691,10 +1780,10 @@ window.renderMarketItems = function () {
                 let btnText = isMaxed ? "MAX" : "OPEN";
                 let btnClass = isMaxed ? "btn-open-chest disabled" : "btn-open-chest";
                 // If maxed, disable click. If not, normal click.
-                let onClick = isMaxed ? "" : `onclick="event.stopPropagation(); buyMarketItem('${item.id}')"`;
+                let onClick = isMaxed ? "" : `onclick = "event.stopPropagation(); buyMarketItem('${item.id}')"`;
                 let style = isMaxed ? "background:#555; cursor:not-allowed;" : "";
 
-                priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds || 0}</div>`; // Should be 0 for these?
+                priceTag = `< div class="market-item-price price-diamond" >💎 ${item.diamonds || 0}</div > `; // Should be 0 for these?
                 // Actually Gold/Diamond chests in marketConfig have 0 diamonds usually? Or are they hidden?
                 // data_core: Gold Chest has no diamond price listed in snippet?
                 // If they have no diamond price, maybe handled differently. 
@@ -1702,12 +1791,12 @@ window.renderMarketItems = function () {
 
                 // Fix: If no diamonds, show free/open?
                 if (!item.diamonds) {
-                    priceTag = `<div class="market-item-price price-free">FREE</div>`;
+                    priceTag = `< div class="market-item-price price-free" > FREE</div > `;
                 }
 
-                contentTag = `<button class="${btnClass}" style="${style}" ${onClick}>${btnText}</button>`;
+                contentTag = `< button class="${btnClass}" style = "${style}" ${onClick}> ${btnText}</button > `;
                 if (isMaxed) {
-                    contentTag += `<div style="font-size:0.9rem; color:#aaa; margin-top:5px;">Daily Limit: ${current}/${limit}</div>`;
+                    contentTag += `< div style = "font-size:0.9rem; color:#aaa; margin-top:5px;" > Daily Limit: ${current} /${limit}</div > `;
                 }
 
             } else if (item.id === 'free_chest' || item.id === 'power_chest') {
@@ -1721,33 +1810,33 @@ window.renderMarketItems = function () {
                 let style = isMaxed ? "background:#555;" : "";
 
                 // For these, the "Price Tag" acts as the button/status
-                priceTag = `<div class="${btnClass}" style="${style}">${btnText}</div>`;
-                contentTag = `<div style="font-size:0.9rem; color:#aaa; margin-top:5px;">Daily Limit: ${current}/${limit}</div>`;
+                priceTag = `< div class="${btnClass}" style = "${style}" > ${btnText}</div > `;
+                contentTag = `< div style = "font-size:0.9rem; color:#aaa; margin-top:5px;" > Daily Limit: ${current} /${limit}</div > `;
 
             } else if (isFreePremium) {
                 // Free Premium Chests (Visual Override)
-                priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
-                contentTag = `<button class="btn-open-chest" onclick="event.stopPropagation(); buyMarketItem('${item.id}')">OPEN</button>`;
+                priceTag = `< div class="market-item-price price-diamond" >💎 ${item.diamonds}</div > `;
+                contentTag = `< button class="btn-open-chest" onclick = "event.stopPropagation(); buyMarketItem('${item.id}')" > OPEN</button > `;
             } else if (item.diamonds) {
                 // Regular Premium Chests
-                priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
-                contentTag = `<button class="btn-open-chest" onclick="event.stopPropagation(); buyMarketItem('${item.id}')">OPEN</button>`;
+                priceTag = `< div class="market-item-price price-diamond" >💎 ${item.diamonds}</div > `;
+                contentTag = `< button class="btn-open-chest" onclick = "event.stopPropagation(); buyMarketItem('${item.id}')" > OPEN</button > `;
             } else {
                 // Fallback
-                priceTag = `<div class="market-item-price price-free">OPEN</div>`;
+                priceTag = `< div class="market-item-price price-free" > OPEN</div > `;
                 contentTag = ``;
             }
         }
 
         return `
-        <div class="market-item" onclick="buyMarketItem('${item.id}')" style="cursor:pointer;">
+        < div class="market-item" onclick = "buyMarketItem('${item.id}')" style = "cursor:pointer;" >
             <div class="market-item-name">${item.name}</div>
             <div style="margin:10px 0;">
                 ${getPngTag(imgName, 100)}
             </div>
             ${priceTag}
             ${contentTag}
-        </div>
+        </div >
         `;
     }).join('');
 }
@@ -1824,23 +1913,23 @@ window.buyMarketItem = function (id) {
                 openMarketChest(item.type, bucket, item.name, item.img);
 
                 if (cost > 0) {
-                    addLog("MARKET", `Bought ${item.name}`, `Spent ${cost} Diamonds`);
+                    addLog("MARKET", `Bought ${item.name} `, `Spent ${cost} Diamonds`);
                 } else {
-                    addLog("MARKET", `Opened ${item.name}`, `Free Open`);
+                    addLog("MARKET", `Opened ${item.name} `, `Free Open`);
                 }
 
                 // Update UI immediately
                 if (document.getElementById('resGems')) document.getElementById('resGems').innerText = window.marketResources.diamonds.toLocaleString();
                 if (document.getElementById('resGold')) document.getElementById('resGold').innerText = window.marketResources.gold.toLocaleString();
             } else {
-                addLog("MARKET", "Not enough diamonds", `Need ${item.diamonds}`);
+                addLog("MARKET", "Not enough diamonds", `Need ${item.diamonds} `);
                 alert(`Need ${item.diamonds} Diamonds!`);
             }
             return;
         }
     }
 
-    addLog("MARKET", `Clicked ${item.name}`, "Purchase logic coming next.");
+    addLog("MARKET", `Clicked ${item.name} `, "Purchase logic coming next.");
 }
 
 function openMarketChest(chestType, bucket, chestName, imgName) {
@@ -1871,10 +1960,10 @@ function openMarketChest(chestType, bucket, chestName, imgName) {
                     // Global Inventory
                     if (!playerInventory[char.n]) {
                         playerInventory[char.n] = { rarity: char.r, level: 1, cards: 0, bucket: char.b };
-                        lootLog.push(`${char.n} (New!) x${amt}`);
+                        lootLog.push(`${char.n} (New!) x${amt} `);
                     } else {
                         playerInventory[char.n].cards += amt;
-                        lootLog.push(`${char.n} x${amt}`);
+                        lootLog.push(`${char.n} x${amt} `);
                     }
                 } else {
                     // Fallback Gold
@@ -1925,13 +2014,13 @@ function openMarketChest(chestType, bucket, chestName, imgName) {
         // Image
         let imgTag = (typeof getPngTag === 'function') ? getPngTag(imgName || chestName, 50) : '';
         entry.innerHTML = `
-            <div style="display:flex; gap:10px; align-items:center;">
-                ${imgTag}
-                <div>
-                    <div style="font-weight:bold; color:#fbbf24;">${chestName} Opened</div>
-                    <div style="font-size:0.85rem; color:#ddd;">${lootLog.join(', ')}</div>
-                </div>
-            </div>
+        < div style = "display:flex; gap:10px; align-items:center;" >
+            ${imgTag}
+    <div>
+        <div style="font-weight:bold; color:#fbbf24;">${chestName} Opened</div>
+        <div style="font-size:0.85rem; color:#ddd;">${lootLog.join(', ')}</div>
+    </div>
+            </div >
         `;
         if (logEl.children.length > 1) logEl.appendChild(entry); // Append to bottom
         else logEl.appendChild(entry);
@@ -1959,7 +2048,7 @@ function openRewardChest(configKey, bucket, name, imgName) {
     let amount = rc[configKey]['b' + bucket];
     if (!amount) return;
 
-    let logMsg = `${name} Claimed (${current}/${limit})`;
+    let logMsg = `${name} Claimed(${current} / ${limit})`;
 
     if (configKey === 'goldChest') {
         // MARKET SANDBOX: Add to marketResources
@@ -1976,7 +2065,7 @@ function openRewardChest(configKey, bucket, name, imgName) {
     }
 
     // Log with Image
-    addLog("CHEST", logMsg, `Received ${amount} ${configKey === 'goldChest' ? 'Gold' : 'Diamonds'}`, imgName);
+    addLog("CHEST", logMsg, `Received ${amount} ${configKey === 'goldChest' ? 'Gold' : 'Diamonds'} `, imgName);
 
     // Market Log
     let logEl = document.getElementById('marketLogs');
@@ -1987,7 +2076,7 @@ function openRewardChest(configKey, bucket, name, imgName) {
         entry.style.padding = "5px 0";
         // Attempt to show image in market log too
         let imgTag = (typeof getPngTag === 'function') ? getPngTag(imgName, 30) : '';
-        entry.innerHTML = `<span style="color:#aaa; font-size:0.8rem;">[${new Date().toLocaleTimeString()}]</span> ${imgTag} ${logMsg} -> +${amount}`;
+        entry.innerHTML = `< span style = "color:#aaa; font-size:0.8rem;" > [${new Date().toLocaleTimeString()}]</span > ${imgTag} ${logMsg} -> +${amount} `;
 
         logEl.appendChild(entry);
         logEl.scrollTop = logEl.scrollHeight;

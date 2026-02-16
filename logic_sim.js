@@ -85,20 +85,25 @@ function simulateGame(inputs) {
         addLog("UPGRADE", "Onboarding First Step", `Rocket Gun Force Upgrade to Lvl 2. Gold: ${oldG}-${cost} = ${state.gold} Gold. XP +20`);
     }
 
+    // INTERNAL HELPERS
+    const getBucket = (c) => { let b = 1; for (let i = 0; i < inputs.cupRoadData.length; i++) { if (c >= inputs.cupRoadData[i].cup && inputs.cupRoadData[i].feat && inputs.cupRoadData[i].feat.includes("Bucket")) { let p = inputs.cupRoadData[i].feat.split(' '); if (p[1]) b = Math.max(b, parseInt(p[1])); } } return b; };
+    // Use global versions from sim_helpers.js
+
     // AUTO-UNLOCK HELPER: Level 0 → Level 1 when cards >= c[0]
-    const tryAutoUnlock = (name) => {
+    // MODIFIED: Returns the unlock log instead of adding it directly, if deferred.
+    const tryAutoUnlock = (name, deferredLogs = []) => {
         let ch = state.inventory[name];
         if (!ch || ch.level > 0) return;
         let cumReq = getCumulativeCardReq(name, 1);
         if (ch.cards >= cumReq) {
             ch.level = 1;
-            addLog("UNLOCK", `${name} Unlocked!`, `Reached ${ch.cards}/${cumReq} cards → Level 1`);
+            deferredLogs.push({
+                type: "UNLOCK",
+                msg: `${name} Unlocked!`,
+                det: `Reached ${ch.cards}/${cumReq} cards → Level 1`
+            });
         }
     };
-
-    // INTERNAL HELPERS
-    const getBucket = (c) => { let b = 1; for (let i = 0; i < inputs.cupRoadData.length; i++) { if (c >= inputs.cupRoadData[i].cup && inputs.cupRoadData[i].feat && inputs.cupRoadData[i].feat.includes("Bucket")) { let p = inputs.cupRoadData[i].feat.split(' '); if (p[1]) b = Math.max(b, parseInt(p[1])); } } return b; };
-    // Use global versions from sim_helpers.js
 
     // --- NEW MATCHMAKING HELPERS ---
     const getOpponent = (currentCups) => {
@@ -209,19 +214,23 @@ function simulateGame(inputs) {
             addLog("SHOP", `Bought ${item.name}`, `Cost: ${item.cost} ${item.currency}`);
             if (item.type === "Free") { addRes(item.resType, item.resAmt, "Shop Free"); }
             else if (item.type === "Card") {
+                let deferredUnlocks = [];
                 if (state.inventory[item.name]) {
                     state.inventory[item.name].cards += item.amt;
                 } else {
                     let meta = inputs.charPool.find(c => c.n === item.name);
                     state.inventory[item.name] = { rarity: meta ? meta.r : "Rookie", level: 0, cards: item.amt, bucket: meta ? meta.b : 1 };
                 }
-                tryAutoUnlock(item.name);
+                tryAutoUnlock(item.name, deferredUnlocks);
             } else if (item.type === "PowerUp") {
                 if (state.powerUps[item.name]) state.powerUps[item.name].amount += item.amt;
             } else if (item.type === "Chest") {
                 openChest("Pro Chest", "Shop Purchase");
             }
         }
+
+        // Process deferred unlocks for Shop
+        deferredUnlocks.forEach(l => addLog(l.type, l.msg, l.det));
     };
 
     // ACTIONS
@@ -241,6 +250,8 @@ function simulateGame(inputs) {
         let bucket = getBucket(state.maxAchievedCups || state.cups);
 
         let lootLog = [];
+        let deferredUnlocks = []; // Store unlock events to log AFTER chest opening
+
         // Scripted Chest Logic
         if (type === "Scripted Chest") {
             let sc = inputs.scriptedChests.find(s => s.id === type); // Or match by name if needed
@@ -265,7 +276,7 @@ function simulateGame(inputs) {
                         state.inventory[sc.c1n].cards += sc.c1a;
                         lootLog.push(`${sc.c1n} x${sc.c1a}`);
                     }
-                    tryAutoUnlock(sc.c1n);
+                    tryAutoUnlock(sc.c1n, deferredUnlocks);
                 }
                 // Char 2
                 if (sc.c2n && sc.c2a > 0) {
@@ -277,7 +288,7 @@ function simulateGame(inputs) {
                         state.inventory[sc.c2n].cards += sc.c2a;
                         lootLog.push(`${sc.c2n} x${sc.c2a}`);
                     }
-                    tryAutoUnlock(sc.c2n);
+                    tryAutoUnlock(sc.c2n, deferredUnlocks);
                 }
                 // Char 3
                 if (sc.c3n && sc.c3a > 0) {
@@ -300,7 +311,7 @@ function simulateGame(inputs) {
                         state.inventory[c3Name].cards += sc.c3a;
                         lootLog.push(`${c3Name} x${sc.c3a}`);
                     }
-                    tryAutoUnlock(c3Name);
+                    tryAutoUnlock(c3Name, deferredUnlocks);
                 }
             } else {
                 lootLog.push("Scripted Chest Data Missing");
@@ -380,7 +391,7 @@ function simulateGame(inputs) {
                             state.inventory[char.n].cards += amt;
                             lootLog.push(`${char.n} x${amt}`);
                         }
-                        tryAutoUnlock(char.n);
+                        tryAutoUnlock(char.n, deferredUnlocks);
                     } else {
                         // DISTINGUISH FALLBACK REASON
                         // 1. None existed in pool for this Bucket/Rarity?
@@ -425,6 +436,11 @@ function simulateGame(inputs) {
             addLog("CHEST", `${source}: ${type}`, "");
         }
         addLog("CHEST", `${type} Opened`, lootLog.join(', '));
+
+        // Log Deferred Unlocks NOW
+        deferredUnlocks.forEach(l => {
+            addLog(l.type, l.msg, l.det);
+        });
     };
 
     const checkLevelUp = () => {
@@ -580,6 +596,13 @@ function simulateGame(inputs) {
     safeCheckMilestones(); // Initial Check (Cup 0)
 
     for (let d = 1; d <= inputs.days; d++) {
+        // Activity Check (Skip days based on profile)
+        if (Math.random() > (inputs.activityChance !== undefined ? inputs.activityChance : 1.0)) {
+            addLog("DAY HEADER", `DAY ${d} (Inactive)`, "Player did not play today.");
+            state.currentDay = d; // Still advance integer day
+            continue;
+        }
+
         addLog("DAY HEADER", `DAY ${d}`, "");
         let missionsToday = 0;
         let dailyMissionIndices = new Set();
@@ -699,7 +722,7 @@ function simulateGame(inputs) {
                                 addLog("LOGIN", rewardSource, `${charName} (New!) x${rew.amt}`);
                             }
                         }
-                        tryAutoUnlock(charName);
+                        tryAutoUnlock(charName); // Daily Login unlocks can be immediate, or defer if needed. Immediate is fine here.
                     }
                 }
             }
@@ -749,7 +772,7 @@ function simulateGame(inputs) {
                 wins++; state.cups += 30; cupsToday += 30; state.maxAchievedCups = Math.max(state.maxAchievedCups, state.cups);
 
                 // LOG MATCH RESULT FIRST
-                addLog("WIN", `Match ${m} Won`, matchLog);
+                addLog("WIN", `Match ${m} Won`, `${matchLog} | Cups: ${state.cups} 🏆`);
 
                 // CHECK MILESTONES
                 safeCheckMilestones();

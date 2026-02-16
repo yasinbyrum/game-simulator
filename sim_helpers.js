@@ -117,25 +117,77 @@ function getCharImgTag(name, size) { return getJpgTag(name, size); }
 function getPowerUpImgTag(name, size) { return getPngTag(name, size); }
 
 
+// Editable Player Profiles (Global State)
+const DEFAULT_PROFILES = {
+    "hardcore1": { name: "Hardcore 1", match: 20, win: 75, charRate: 50, pupRate: 50, actDays: 7, ads: 4, freeChest: 2, goldChest: 2, diaChest: 2, pupChest: 2 },
+    "hardcore2": { name: "Hardcore 2", match: 20, win: 75, charRate: 100, pupRate: 0, actDays: 7, ads: 4, freeChest: 2, goldChest: 2, diaChest: 2, pupChest: 2 },
+    "dedicated": { name: "Dedicated", match: 25, win: 45, charRate: 50, pupRate: 50, actDays: 7, ads: 4, freeChest: 2, goldChest: 2, diaChest: 2, pupChest: 2 },
+    "midcore1": { name: "Midcore 1", match: 8, win: 45, charRate: 50, pupRate: 50, actDays: 7, ads: 2, freeChest: 2, goldChest: 2, diaChest: 2, pupChest: 2 },
+    "midcore2": { name: "Midcore 2", match: 8, win: 45, charRate: 50, pupRate: 50, actDays: 3, ads: 2, freeChest: 2, goldChest: 2, diaChest: 2, pupChest: 2 },
+    "casual": { name: "Casual", match: 2, win: 40, charRate: 50, pupRate: 50, actDays: 2, ads: 1, freeChest: 2, goldChest: 2, diaChest: 2, pupChest: 2 }
+};
+
+// Load from LocalStorage or use Defaults
+try {
+    const saved = localStorage.getItem('playerProfiles');
+    let parsed = saved ? JSON.parse(saved) : null;
+
+    // Validate: Must be an object and have keys (e.g. "hardcore1")
+    if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+        window.playerProfiles = parsed;
+    } else {
+        // saved data was empty, null, or invalid structure
+        console.warn("Saved profiles invalid or empty. Using defaults.");
+        window.playerProfiles = JSON.parse(JSON.stringify(DEFAULT_PROFILES));
+    }
+} catch (e) {
+    console.warn("Failed to load profiles:", e);
+    window.playerProfiles = JSON.parse(JSON.stringify(DEFAULT_PROFILES));
+}
+
 function getSimulationInputs() {
+    // defaults
+    let days = getUiVal('simDays', 7);
+
+    // Profile Logic
+    let profileKey = "hardcore1"; // Default
+    let el = document.getElementById('simProfile');
+    if (el) profileKey = el.value;
+
+    // Fallback
+    let profiles = window.playerProfiles || {};
+    let p = profiles[profileKey] || profiles["hardcore1"] || {};
+
+    let actDays = parseInt(p.actDays) || 7;
+
     return {
-        // UI Inputs
-        days: getUiVal('simDays', 7),
-        dailyMatches: getUiVal('simMatches', 10),
-        winRate: getUiVal('simWinRate', 85),
-        minAds: getUiVal('simAdsMin', 4),
-        maxAds: getUiVal('simAdsMax', 4),
-        minGoals: getUiVal('simMinGoals', 3),
-        maxGoals: getUiVal('simMaxGoals', 8),
-        charUpgradeChance: getUiVal('simUpgradeFreq', 80),
-        pupUpgradeChance: getUiVal('simPupUpgradeFreq', 80),
-        dailyPUChests: getUiVal('simDailyPUChests', 2),
-        dailyFreeChests: getUiVal('simDailyFreeChests', 2),
-        doWE: getUiVal('simDoWE', true),
-        dailyGoldChests: getUiVal('simDailyGoldChests', 2),
-        dailyGoldChests: getUiVal('simDailyGoldChests', 2),
-        dailyDiamondChests: getUiVal('simDailyDiamondChests', 2),
-        doMissions: getUiVal('simDoMissions', true),
+        // UI Inputs - Driven by Profile
+        days: days,
+        dailyMatches: parseInt(p.match) || 0,
+        winRate: parseInt(p.win) || 50,
+        minAds: parseInt(p.ads) || 0,
+        maxAds: parseInt(p.ads) || 0,
+
+        // Activity Chance (0-1)
+        activityChance: actDays / 7.0,
+
+        // Defaults for removed inputs
+        minGoals: 3,
+        maxGoals: 8,
+
+        // Upgrade Ratios
+        charUpgradeChance: parseInt(p.charRate) || 50,
+        pupUpgradeChance: parseInt(p.pupRate) || 50,
+
+        // Chests (Driven by Profile)
+        dailyFreeChests: parseInt(p.freeChest) !== undefined ? parseInt(p.freeChest) : 2,
+        dailyGoldChests: parseInt(p.goldChest) !== undefined ? parseInt(p.goldChest) : 2,
+        dailyDiamondChests: parseInt(p.diaChest) !== undefined ? parseInt(p.diaChest) : 2,
+        dailyPUChests: parseInt(p.pupChest) !== undefined ? parseInt(p.pupChest) : 2,
+
+        // Flags
+        doWE: getUiVal('simDoWE', false), // User Toggle
+        doMissions: getUiVal('simDoMissions', false),
         doLeaderboard: getUiVal('simDoLeaderboard', false),
 
         // Game Data (Read-only access)

@@ -137,41 +137,30 @@
 
                         <div class="sim-input-group"><label>Days</label><input type="number" class="edit" id="simDays"
                                 value="7" style="width:50px"></div>
-                        <div class="sim-input-group"><label>Match/Day</label><input type="number" class="edit"
-                                id="simMatches" value="10" style="width:50px"></div>
-                        <div class="sim-input-group"><label>Win%</label><input type="number" class="edit"
-                                id="simWinRate" value="85" style="width:45px"></div>
-                        <div class="sim-input-group"><label>Min G.</label><input type="number" class="edit"
-                                id="simMinGoals" value="3" style="width:40px"></div>
-                        <div class="sim-input-group"><label>Max G.</label><input type="number" class="edit"
-                                id="simMaxGoals" value="8" style="width:40px"></div>
 
-                        <div style="width:1px; height:35px; background:var(--border); margin:0 5px;"></div>
-
-                        <div class="sim-input-group"><label>Chr Upg%</label><input type="number" class="edit"
-                                id="simUpgradeFreq" value="80" style="width:45px"></div>
-                        <div class="sim-input-group"><label>Pow Upg%</label><input type="number" class="edit"
-                                id="simPupUpgradeFreq" value="80" style="width:45px"></div>
-                        <div class="sim-input-group"><label>PU Chest</label><input type="number" class="edit"
-                                id="simDailyPUChests" value="2" style="width:40px"></div>
-                        <div class="sim-input-group"><label>Free Chest</label><input type="number" class="edit"
-                                id="simDailyFreeChests" value="2" style="width:40px"></div>
-                        <div class="sim-input-group"><label>Gold Chest</label><input type="number" class="edit"
-                                id="simDailyGoldChests" value="2" style="width:40px"></div>
-                        <div class="sim-input-group"><label>Dia Chest</label><input type="number" class="edit"
-                                id="simDailyDiamondChests" value="2" style="width:40px"></div>
+                        <div class="sim-input-group">
+                            <label>Profile</label>
+                            <select id="simProfile" class="edit" style="width:120px;">
+                                <option value="hardcore1">Hardcore 1</option>
+                                <option value="hardcore2">Hardcore 2</option>
+                                <option value="dedicated">Dedicated</option>
+                                <option value="midcore1">Midcore 1 (Daily)</option>
+                                <option value="midcore2">Midcore 2 (3d/wk)</option>
+                                <option value="casual">Casual (2d/wk)</option>
+                            </select>
+                        </div>
 
                         <div style="width:1px; height:35px; background:var(--border); margin:0 5px;"></div>
 
                         <div class="sim-input-group" style="align-items:center;">
-                            <label style="margin-bottom:2px;">Ad</label>
-                            <label class="switch" style="transform:scale(0.8);"><input type="checkbox" id="simDoWE"
-                                    checked><span class="slider"></span></label>
+                            <label style="margin-bottom:2px;">Ads</label>
+                            <label class="switch" style="transform:scale(0.8);"><input type="checkbox"
+                                    id="simDoWE"><span class="slider"></span></label>
                         </div>
                         <div class="sim-input-group" style="align-items:center;">
                             <label style="margin-bottom:2px;">Missions</label>
                             <label class="switch" style="transform:scale(0.8);"><input type="checkbox"
-                                    id="simDoMissions" checked><span class="slider"></span></label>
+                                    id="simDoMissions"><span class="slider"></span></label>
                         </div>
                         <div class="sim-input-group" style="align-items:center;">
                             <label style="margin-bottom:2px;">LdrBrd</label>
