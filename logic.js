@@ -1847,13 +1847,13 @@ window.renderMarketItems = function () {
         let isFreePremium = ['Rookie Chest', 'Pro Chest', 'Champion Chest', 'Legendary Chest'].includes(item.name);
 
         if (window.currentMarketTab === 'gold') {
-            priceTag = `< div class="market-item-price price-diamond" >💎 ${item.diamonds}</div > `;
-            contentTag = `< div style = "font-size:1.3rem; font-weight:800; color:#fbbf24; margin-top:5px;" > ${item.gold.toLocaleString()} Gold</div > `;
+            priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
+            contentTag = `<div style="font-size:1.3rem; font-weight:800; color:#fbbf24; margin-top:5px;">${item.gold.toLocaleString()} Gold</div>`;
         } else if (window.currentMarketTab === 'powers') {
-            priceTag = `< div class="market-item-price price-diamond" >💎 ${item.diamonds}</div > `;
+            priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
             let stars = "";
             for (let i = 0; i < (item.star || 1); i++) stars += "⭐";
-            contentTag = `< div style = "font-size:1rem; margin-top:5px;" > ${stars}</div > `;
+            contentTag = `<div style="font-size:1rem; margin-top:5px;">${stars}</div>`;
         } else {
             // Chests
             if (item.id === 'gold_chest' || item.id === 'diamond_chest') {
@@ -1866,10 +1866,10 @@ window.renderMarketItems = function () {
                 let btnText = isMaxed ? "MAX" : "OPEN";
                 let btnClass = isMaxed ? "btn-open-chest disabled" : "btn-open-chest";
                 // If maxed, disable click. If not, normal click.
-                let onClick = isMaxed ? "" : `onclick = "event.stopPropagation(); buyMarketItem('${item.id}')"`;
+                let onClick = isMaxed ? "" : `onclick="event.stopPropagation(); buyMarketItem('${item.id}')"`;
                 let style = isMaxed ? "background:#555; cursor:not-allowed;" : "";
 
-                priceTag = `< div class="market-item-price price-diamond" >💎 ${item.diamonds || 0}</div > `; // Should be 0 for these?
+                priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds || 0}</div>`; // Should be 0 for these?
                 // Actually Gold/Diamond chests in marketConfig have 0 diamonds usually? Or are they hidden?
                 // data_core: Gold Chest has no diamond price listed in snippet?
                 // If they have no diamond price, maybe handled differently. 
@@ -1877,12 +1877,12 @@ window.renderMarketItems = function () {
 
                 // Fix: If no diamonds, show free/open?
                 if (!item.diamonds) {
-                    priceTag = `< div class="market-item-price price-free" > FREE</div > `;
+                    priceTag = `<div class="market-item-price price-free">FREE</div>`;
                 }
 
-                contentTag = `< button class="${btnClass}" style = "${style}" ${onClick}> ${btnText}</button > `;
+                contentTag = `<button class="${btnClass}" style="${style}" ${onClick}>${btnText}</button>`;
                 if (isMaxed) {
-                    contentTag += `< div style = "font-size:0.9rem; color:#aaa; margin-top:5px;" > Daily Limit: ${current} /${limit}</div > `;
+                    contentTag += `<div style="font-size:0.9rem; color:#aaa; margin-top:5px;">Daily Limit: ${current} /${limit}</div>`;
                 }
 
             } else if (item.id === 'free_chest' || item.id === 'power_chest') {
@@ -1896,33 +1896,33 @@ window.renderMarketItems = function () {
                 let style = isMaxed ? "background:#555;" : "";
 
                 // For these, the "Price Tag" acts as the button/status
-                priceTag = `< div class="${btnClass}" style = "${style}" > ${btnText}</div > `;
-                contentTag = `< div style = "font-size:0.9rem; color:#aaa; margin-top:5px;" > Daily Limit: ${current} /${limit}</div > `;
+                priceTag = `<div class="${btnClass}" style="${style}">${btnText}</div>`;
+                contentTag = `<div style="font-size:0.9rem; color:#aaa; margin-top:5px;">Daily Limit: ${current} /${limit}</div>`;
 
             } else if (isFreePremium) {
                 // Free Premium Chests (Visual Override)
-                priceTag = `< div class="market-item-price price-diamond" >💎 ${item.diamonds}</div > `;
-                contentTag = `< button class="btn-open-chest" onclick = "event.stopPropagation(); buyMarketItem('${item.id}')" > OPEN</button > `;
+                priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
+                contentTag = `<button class="btn-open-chest" onclick="event.stopPropagation(); buyMarketItem('${item.id}')">OPEN</button>`;
             } else if (item.diamonds) {
                 // Regular Premium Chests
-                priceTag = `< div class="market-item-price price-diamond" >💎 ${item.diamonds}</div > `;
-                contentTag = `< button class="btn-open-chest" onclick = "event.stopPropagation(); buyMarketItem('${item.id}')" > OPEN</button > `;
+                priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
+                contentTag = `<button class="btn-open-chest" onclick="event.stopPropagation(); buyMarketItem('${item.id}')">OPEN</button>`;
             } else {
                 // Fallback
-                priceTag = `< div class="market-item-price price-free" > OPEN</div > `;
+                priceTag = `<div class="market-item-price price-free">OPEN</div>`;
                 contentTag = ``;
             }
         }
 
         return `
-        < div class="market-item" onclick = "buyMarketItem('${item.id}')" style = "cursor:pointer;" >
+        <div class="market-item" onclick="buyMarketItem('${item.id}')" style="cursor:pointer;">
             <div class="market-item-name">${item.name}</div>
             <div style="margin:10px 0;">
                 ${getPngTag(imgName, 100)}
             </div>
             ${priceTag}
             ${contentTag}
-        </div >
+        </div>
         `;
     }).join('');
 }
@@ -2100,7 +2100,7 @@ function openMarketChest(chestType, bucket, chestName, imgName) {
         // Image
         let imgTag = (typeof getPngTag === 'function') ? getPngTag(imgName || chestName, 50) : '';
         entry.innerHTML = `
-        < div style = "display:flex; gap:10px; align-items:center;" >
+        <div style="display:flex; gap:10px; align-items:center;">
             ${imgTag}
     <div>
         <div style="font-weight:bold; color:#fbbf24;">${chestName} Opened</div>
@@ -2162,7 +2162,7 @@ function openRewardChest(configKey, bucket, name, imgName) {
         entry.style.padding = "5px 0";
         // Attempt to show image in market log too
         let imgTag = (typeof getPngTag === 'function') ? getPngTag(imgName, 30) : '';
-        entry.innerHTML = `< span style = "color:#aaa; font-size:0.8rem;" > [${new Date().toLocaleTimeString()}]</span > ${imgTag} ${logMsg} -> +${amount} `;
+        entry.innerHTML = `<span style="color:#aaa; font-size:0.8rem;">[${new Date().toLocaleTimeString()}]</span> ${imgTag} ${logMsg} -> +${amount}`;
 
         logEl.appendChild(entry);
         logEl.scrollTop = logEl.scrollHeight;
