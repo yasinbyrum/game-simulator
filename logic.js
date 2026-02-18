@@ -1142,26 +1142,50 @@ window.simulateManualChestOpen = function (typeArg, bucketArg, logIdArg) {
                 let r = (roll < probs.R) ? "Rookie" : (roll < probs.R + probs.P) ? "Pro" : (roll < probs.R + probs.P + probs.C) ? "Champion" : "Legendary";
                 let amt = conf.amounts[r]['b' + b] || conf.amounts[r]['b1'];
                 let pool = getSafe('charPoolData');
-                if (pool) {
-                    // Filter: Must be in bucket, correct rarity, AND NOT ALREADY SELECTED
-                    let filtered = pool.filter(c => c.b <= b && c.r === r && !selectedChars.has(c.n));
 
-                    // Fallback: If no unique characters left (very rare), allow duplicates (or could strictly fail/give gold)
-                    if (filtered.length === 0) {
-                        filtered = pool.filter(c => c.b <= b && c.r === r);
+                if (pool) {
+                    // 1. Try to find unique char with Rolled Rarity
+                    let validChars = pool.filter(c => c.b <= b && c.r === r && !selectedChars.has(c.n));
+
+                    // 2. Fallback: If no unique chars of this rarity, try ANY unique char in bucket with >0 amount
+                    if (validChars.length === 0) {
+                        let potentialFallback = pool.filter(c => {
+                            if (c.b > b) return false;
+                            if (selectedChars.has(c.n)) return false;
+                            let a = conf.amounts[c.r]['b' + b] || conf.amounts[c.r]['b1'];
+                            return a > 0;
+                        });
+
+                        if (potentialFallback.length > 0) {
+                            validChars = potentialFallback;
+                            // Note: Expected rarity 'r' is now different from selected char.
+                            // We will update 'amt' after selection.
+                        } else {
+                            // 3. Last Resort: No unique chars left at all. Allow duplicate of original rarity.
+                            validChars = pool.filter(c => c.b <= b && c.r === r);
+                            // If even that is empty (e.g. rarity not in bucket), try full fallback
+                            if (validChars.length === 0) validChars = pool.filter(c => c.b <= b);
+                        }
                     }
 
-                    if (filtered.length > 0 && amt > 0) {
-                        let char = filtered[Math.floor(Math.random() * filtered.length)];
+                    if (validChars.length > 0) {
+                        let char = validChars[Math.floor(Math.random() * validChars.length)];
+
+                        // Recalculate Amount based on ACTUAL char rarity
+                        if (char.r !== r) {
+                            r = char.r;
+                            amt = conf.amounts[r]['b' + b] || conf.amounts[r]['b1'];
+                        }
 
                         // Mark as selected
                         selectedChars.add(char.n);
 
-                        // Update Character State
-                        if (!playerInventory[char.n]) playerInventory[char.n] = { cards: 0, level: 1, rarity: char.r };
-                        playerInventory[char.n].cards += amt;
-
-                        chestItems.push(`${char.n} x${amt}`);
+                        if (amt > 0) {
+                            // Update Character State
+                            if (!playerInventory[char.n]) playerInventory[char.n] = { cards: 0, level: 1, rarity: char.r };
+                            playerInventory[char.n].cards += amt;
+                            chestItems.push(`${char.n} x${amt}`);
+                        }
                     }
                 }
             });
@@ -1797,7 +1821,7 @@ window.renderMarket = function () {
                 <button class="tab-btn" id="mt_powers" onclick="setMarketTab('powers')">⚡ Power Packs</button>
             </div>
             <div id="marketGrid" class="market-grid"></div>
-            <!--Market Logs Container-- >
+            <!-- Market Logs Container -->
         <div id="marketLogs" style="margin-top:20px; max-height:750px; overflow-y:auto; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; display:none; font-family:monospace;"></div>
         </div>`;
     }
@@ -2055,27 +2079,48 @@ function openMarketChest(chestType, bucket, chestName, imgName) {
 
             let pool = getSafe('charPoolData');
             if (pool) {
-                // Filter: Must be in bucket, correct rarity, AND NOT ALREADY SELECTED
+                // 1. Try to find unique char with Rolled Rarity
                 let validChars = pool.filter(ch => ch.b <= bucket && ch.r === r && !selectedChars.has(ch.n));
 
-                // Fallback: If no unique characters left
+                // 2. Fallback: If no unique chars of this rarity, try ANY unique char in bucket with >0 amount
                 if (validChars.length === 0) {
-                    validChars = pool.filter(ch => ch.b <= bucket && ch.r === r);
+                    let potentialFallback = pool.filter(ch => {
+                        if (ch.b > bucket) return false;
+                        if (selectedChars.has(ch.n)) return false;
+                        let a = c.amounts[ch.r]['b' + bucket] || c.amounts[ch.r]['b1'];
+                        return a > 0;
+                    });
+
+                    if (potentialFallback.length > 0) {
+                        validChars = potentialFallback;
+                    } else {
+                        // 3. Last Resort: Allow duplicate
+                        validChars = pool.filter(ch => ch.b <= bucket && ch.r === r);
+                        if (validChars.length === 0) validChars = pool.filter(ch => ch.b <= bucket);
+                    }
                 }
 
                 if (validChars.length > 0) {
                     let char = validChars[Math.floor(Math.random() * validChars.length)];
 
+                    // Recalculate Amount based on ACTUAL char rarity
+                    if (char.r !== r) {
+                        r = char.r;
+                        amt = c.amounts[r]['b' + bucket] || c.amounts[r]['b1'];
+                    }
+
                     // Mark as selected
                     selectedChars.add(char.n);
 
-                    // Global Inventory
-                    if (!playerInventory[char.n]) {
-                        playerInventory[char.n] = { rarity: char.r, level: 1, cards: 0, bucket: char.b };
-                        lootLog.push(`${char.n} (New!) x${amt} `);
-                    } else {
-                        playerInventory[char.n].cards += amt;
-                        lootLog.push(`${char.n} x${amt} `);
+                    if (amt > 0) {
+                        // Global Inventory
+                        if (!playerInventory[char.n]) {
+                            playerInventory[char.n] = { rarity: char.r, level: 1, cards: 0, bucket: char.b };
+                            lootLog.push(`${char.n} (New!) x${amt} `);
+                        } else {
+                            playerInventory[char.n].cards += amt;
+                            lootLog.push(`${char.n} x${amt} `);
+                        }
                     }
                 } else {
                     // Fallback Gold
