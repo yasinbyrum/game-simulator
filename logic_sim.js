@@ -734,6 +734,7 @@ function simulateGame(inputs) {
             let oppG = Math.floor(Math.random() * (inputs.maxGoals - inputs.minGoals + 1)) + inputs.minGoals;
 
             let puInfo = "";
+            let usedList = [];
             // Power Up Usage (Simulated) - Use up to unlockedSlots (max 2 for start)
             if (puUsedToday < 5) { // Daily limit
                 let availablePups = Object.keys(state.powerUps).filter(k => state.powerUps[k].unlocked && state.powerUps[k].amount > 0);
@@ -750,7 +751,6 @@ function simulateGame(inputs) {
                     // Primitive shuffle
                     availablePups.sort(() => Math.random() - 0.5);
 
-                    let usedList = [];
                     for (let i = 0; i < useCount; i++) {
                         let pName = availablePups[i];
                         state.powerUps[pName].amount--;
