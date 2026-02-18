@@ -1134,15 +1134,28 @@ window.simulateManualChestOpen = function (typeArg, bucketArg, logIdArg) {
             }
         } else {
             // Character Chest
+            let selectedChars = new Set(); // Track selected characters for this chest
+
             conf.slotProbs.forEach(slot => {
-                let probs = slot['b' + b] || slot['b1']; let roll = Math.random() * 100;
+                let probs = slot['b' + b] || slot['b1'];
+                let roll = Math.random() * 100;
                 let r = (roll < probs.R) ? "Rookie" : (roll < probs.R + probs.P) ? "Pro" : (roll < probs.R + probs.P + probs.C) ? "Champion" : "Legendary";
                 let amt = conf.amounts[r]['b' + b] || conf.amounts[r]['b1'];
                 let pool = getSafe('charPoolData');
                 if (pool) {
-                    let filtered = pool.filter(c => c.b <= b).filter(c => c.r === r);
+                    // Filter: Must be in bucket, correct rarity, AND NOT ALREADY SELECTED
+                    let filtered = pool.filter(c => c.b <= b && c.r === r && !selectedChars.has(c.n));
+
+                    // Fallback: If no unique characters left (very rare), allow duplicates (or could strictly fail/give gold)
+                    if (filtered.length === 0) {
+                        filtered = pool.filter(c => c.b <= b && c.r === r);
+                    }
+
                     if (filtered.length > 0 && amt > 0) {
                         let char = filtered[Math.floor(Math.random() * filtered.length)];
+
+                        // Mark as selected
+                        selectedChars.add(char.n);
 
                         // Update Character State
                         if (!playerInventory[char.n]) playerInventory[char.n] = { cards: 0, level: 1, rarity: char.r };
@@ -2030,6 +2043,8 @@ function openMarketChest(chestType, bucket, chestName, imgName) {
 
     // 1. CARDS
     if (c.slotProbs) {
+        let selectedChars = new Set(); // Track selected characters for this chest
+
         c.slotProbs.forEach(slot => {
             let probs = slot['b' + bucket] || slot['b1'];
             if (!probs) return;
@@ -2040,9 +2055,20 @@ function openMarketChest(chestType, bucket, chestName, imgName) {
 
             let pool = getSafe('charPoolData');
             if (pool) {
-                let validChars = pool.filter(ch => ch.b <= bucket && ch.r === r);
+                // Filter: Must be in bucket, correct rarity, AND NOT ALREADY SELECTED
+                let validChars = pool.filter(ch => ch.b <= bucket && ch.r === r && !selectedChars.has(ch.n));
+
+                // Fallback: If no unique characters left
+                if (validChars.length === 0) {
+                    validChars = pool.filter(ch => ch.b <= bucket && ch.r === r);
+                }
+
                 if (validChars.length > 0) {
                     let char = validChars[Math.floor(Math.random() * validChars.length)];
+
+                    // Mark as selected
+                    selectedChars.add(char.n);
+
                     // Global Inventory
                     if (!playerInventory[char.n]) {
                         playerInventory[char.n] = { rarity: char.r, level: 1, cards: 0, bucket: char.b };
