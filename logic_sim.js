@@ -768,26 +768,31 @@ function simulateGame(inputs) {
             let matchLog = `Score: ${myG}-${oppG}${puInfo}`;
             if (win) {
                 myG = Math.max(myG, oppG + 1);
-                matchLog = `Win (${myG}-${oppG})${puInfo}`;
-                wins++; state.cups += 30; cupsToday += 30; state.maxAchievedCups = Math.max(state.maxAchievedCups, state.cups);
 
                 // LOG MATCH RESULT FIRST
-                addLog("WIN", `Match ${m} Won`, `${matchLog} | Cups: ${state.cups} 🏆`);
+                // Format: ✅ Match 1 Won (8-3)
+                // Detail: Used: Rocket Gun & Giant Player | Cups: 30 🏆
+                let puStr = (usedList.length > 0) ? `Used: ${usedList.join(' & ')}` : "No PowerUps";
+                addLog("WIN", `Match ${m} Won (${myG}-${oppG})`, `${puStr} | Cups: ${state.cups} 🏆`);
 
                 // CHECK MILESTONES
                 safeCheckMilestones();
 
                 // Win Reward - Bucket-based
                 let currentBucket = getBucket(state.maxAchievedCups);
-                let bucketWinRewards = inputs.winRewardsAll['b' + currentBucket] || inputs.winRewardsAll['b1'] || [];
-                let wr = bucketWinRewards.find(w => w.winCount === wins);
+                let bucketWinRewards = inputs.winRewardsAll || {};
+                let rewards = bucketWinRewards['b' + currentBucket] || bucketWinRewards['b1'] || [];
+                let wr = rewards.find(w => w && w.winCount === wins);
+
                 if (wr) {
                     if (wr.type === "Gold") {
                         let oldG = state.gold;
                         addRes("Gold", wr.amt, "Win Reward");
                         addLog("WIN REWARD", `Win Reward (${wins}. Win)`, `+${wr.amt} Gold (${oldG} -> ${state.gold})`);
                     }
-                    else if (wr.type.includes("Chest")) openChest(wr.type, "Win Reward");
+                    else if (wr.type === "Chest" || wr.type.includes("Chest")) {
+                        openChest(wr.type, "Win Reward");
+                    }
 
                     if (wr.type2 === "Gold") {
                         let oldG = state.gold;
@@ -797,8 +802,9 @@ function simulateGame(inputs) {
                 }
             } else {
                 state.cups = Math.max(0, state.cups - inputs.simConfig.lossPenalty);
-                matchLog = `Loss (${myG}-${oppG})${puInfo}`;
-                addLog("LOSS", `Match ${m} Lost`, matchLog);
+
+                let puStr = (usedList.length > 0) ? `Used: ${usedList.join(' & ')}` : "No PowerUps";
+                addLog("LOSS", `Match ${m} Lost (${myG}-${oppG})`, `${puStr} | Cups: ${state.cups} 🏆`);
             }
             goals += myG;
             checkMissionsNow(m); // Check missions after each match
