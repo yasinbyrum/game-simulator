@@ -854,7 +854,7 @@ var leaderboardConfig = {
 
 var chestConfigs = {
   "Rookie Chest": {
-    "slots": 4,
+    "slots": 3,
     "gold": {
       "b1": 50,
       "b2": 50,
@@ -992,39 +992,7 @@ var chestConfigs = {
           "L": 0
         }
       },
-      {
-        "id": 4,
-        "b1": {
-          "R": 0,
-          "P": 0,
-          "C": 0,
-          "L": 0
-        },
-        "b2": {
-          "R": 0,
-          "P": 0,
-          "C": 0,
-          "L": 0
-        },
-        "b3": {
-          "R": 0,
-          "P": 0,
-          "C": 0,
-          "L": 0
-        },
-        "b4": {
-          "R": 0,
-          "P": 0,
-          "C": 0,
-          "L": 0
-        },
-        "b5": {
-          "R": 0,
-          "P": 0,
-          "C": 0,
-          "L": 0
-        }
-      }
+
     ]
   },
   "Pro Chest": {
