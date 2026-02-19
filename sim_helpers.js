@@ -192,8 +192,10 @@ function getSimulationInputs() {
 
         // Game Data (Read-only access)
         startCfg: {
-            gold: getUiVal('simStartGold', 500),
-            diamonds: getUiVal('simStartGems', 0)
+            gold: (window.playerResources && window.playerResources.gold !== undefined) ? window.playerResources.gold : getUiVal('simStartGold', 500),
+            diamonds: (window.playerResources && window.playerResources.diamonds !== undefined) ? window.playerResources.diamonds : getUiVal('simStartGems', 0),
+            cups: (window.playerResources && window.playerResources.cups !== undefined) ? window.playerResources.cups : 0,
+            maxCups: (window.playerResources && window.playerResources.maxCups !== undefined) ? window.playerResources.maxCups : 0
         },
         levelData: getSafe('levelData') || [],
         cupRoadData: getSafe('cupRoadData') || [],

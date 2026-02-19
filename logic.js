@@ -108,6 +108,8 @@ var playerPowerUps = {};
 window.playerResources = {
     gold: getUiVal('simStartGold', 1000),
     diamonds: getUiVal('simStartGems', 100),
+    cups: 0,
+    maxCups: 0,
     dailyChests: {}
 };
 
@@ -2223,6 +2225,9 @@ function openRewardChest(configKey, bucket, name, imgName) {
 
         if (document.getElementById('resGems')) document.getElementById('resGems').innerText = (window.marketResources ? window.marketResources.diamonds : window.playerResources.diamonds).toLocaleString();
     }
+
+    // UPDATE CUPS visually if they changed (not here usually, but good practice)
+    if (document.getElementById('resCups')) document.getElementById('resCups').innerText = (window.marketResources ? 0 : window.playerResources.cups) || 0;
 
     // Log with Image
     // The instruction seems to refer to a line that doesn't exist in this function.

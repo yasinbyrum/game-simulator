@@ -14,8 +14,8 @@ function simulateGame(inputs) {
         diamonds: inputs.startCfg.diamonds,
         xp: 0,
         level: 1,
-        cups: 0,
-        maxAchievedCups: 0,
+        cups: inputs.startCfg.cups || 0,
+        maxAchievedCups: inputs.startCfg.maxCups || 0,
         totalAds: 0,
         totalMissions: 0,
         totalUpgrades: 1,
@@ -1022,6 +1022,8 @@ window.runSimulation = function () {
     if (!window.playerResources) window.playerResources = {};
     window.playerResources.gold = finalState.gold;
     window.playerResources.diamonds = finalState.diamonds;
+    window.playerResources.cups = finalState.cups;
+    window.playerResources.maxCups = finalState.maxAchievedCups;
     window.playerResources.xp = finalState.xp || 0;
 
     // Also sync inventory for consistency if manual tools are used
