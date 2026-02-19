@@ -810,14 +810,20 @@ function simulateGame(inputs) {
                 // Cup Logic: +30 Cups
                 let cupGain = 30; // Standard win reward
                 if (inputs.simConfig && inputs.simConfig.winReward) cupGain = inputs.simConfig.winReward;
+
+                // console.log(`[DEBUG] Win! Old Cups: ${state.cups}, Gain: ${cupGain}`);
+
+                let oldCups = state.cups;
                 state.cups += cupGain;
                 state.maxAchievedCups = Math.max(state.maxAchievedCups, state.cups);
+
+                // console.log(`[DEBUG] New Cups: ${state.cups}`);
 
                 // LOG MATCH RESULT FIRST
                 // Format: ✅ Match 1 Won (8-3) +30 Cups
                 // Detail: Used: Rocket Gun & Giant Player | Total Cups: 30 🏆
                 let puStr = (usedList.length > 0) ? `Used: ${usedList.join(' & ')}` : "No PowerUps";
-                addLog("WIN", `Match ${m} Won (${myG}-${oppG})`, `+${cupGain} Cups | ${puStr} | Total: ${state.cups} 🏆`);
+                addLog("WIN", `Match ${m} Won (${myG}-${oppG})`, `+${cupGain} Cups | ${puStr} | Total: ${state.cups} 🏆 | [DBG: ${oldCups}+${cupGain}=${state.cups}]`);
 
                 // CHECK MILESTONES
                 safeCheckMilestones();
@@ -1030,7 +1036,10 @@ window.runSimulation = function () {
     window.playerInventory = finalState.inventory;
     window.playerPowerUps = finalState.powerUps;
 
-    // 4. Render Results
+    // 4. PERSIST TO DISK (LocalStorage)
+    if (typeof saveGameData === 'function') saveGameData();
+
+    // 5. Render Results
     renderSimulationResults(finalState, inputs);
 };
 

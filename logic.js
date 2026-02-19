@@ -113,6 +113,46 @@ window.playerResources = {
     dailyChests: {}
 };
 
+// SAVING / LOADING (LocalStorage Persistence)
+window.saveGameData = function () {
+    if (!window.playerResources) return;
+    localStorage.setItem('playerResources', JSON.stringify(window.playerResources));
+    if (window.playerInventory) localStorage.setItem('playerInventory', JSON.stringify(window.playerInventory));
+    if (window.playerPowerUps) localStorage.setItem('playerPowerUps', JSON.stringify(window.playerPowerUps));
+};
+
+window.loadGameData = function () {
+    try {
+        let res = localStorage.getItem('playerResources');
+        if (res) {
+            let parsed = JSON.parse(res);
+            // Merge to ensure we have all keys (like cups if missing in old save)
+            window.playerResources = { ...window.playerResources, ...parsed };
+            // Ensure cups are numbers
+            if (window.playerResources.cups === undefined) window.playerResources.cups = 0;
+            if (window.playerResources.maxCups === undefined) window.playerResources.maxCups = 0;
+
+            // Visual Update if elements exist
+            if (document.getElementById('resCups')) document.getElementById('resCups').innerText = window.playerResources.cups || 0;
+            if (document.getElementById('resGold')) document.getElementById('resGold').innerText = window.playerResources.gold || 0;
+            if (document.getElementById('resGems')) document.getElementById('resGems').innerText = window.playerResources.diamonds || 0;
+        }
+
+        let inv = localStorage.getItem('playerInventory');
+        if (inv) window.playerInventory = JSON.parse(inv);
+
+        let pups = localStorage.getItem('playerPowerUps');
+        if (pups) window.playerPowerUps = JSON.parse(pups);
+
+        console.log("✅ Game Data Loaded from LocalStorage", window.playerResources);
+    } catch (e) {
+        console.error("Save/Load Error:", e);
+    }
+};
+
+// Attempt to load saved data immediately
+setTimeout(window.loadGameData, 100);
+
 // Simple Logger
 window.addLog = function (source, title, msg, img) {
     console.log(`[${source}] ${title}: ${msg}`);
