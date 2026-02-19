@@ -3,11 +3,16 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Economy Master v76.0 (Analytics)</title>
+    <title>Economy Master (DUCKY VERSION)</title>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            border-top: 5px solid #ffd700;
+        }
+    </style>
 </head>
 
 <body>
@@ -15,10 +20,10 @@
     <button id="btnBackToTop" class="btn-scroll-top" onclick="scrollToTop()">⬆️</button>
 
     <header>
-        <div class="header-title">🛠 GAME ECONOMY <span style="color:var(--accent)">MASTER</span></div>
+        <div class="header-title">🦆 DUCKY <span style="color:var(--accent)">EDITION</span></div>
         <div class="header-right">
-            <button class="btn" onclick="window.location.href='ducky.html'"
-                style="background:#ffd700; color:#000; margin-right:10px;">🐥 Go to Ducky</button>
+            <button class="btn" onclick="window.location.href='index.html'"
+                style="background:#444; margin-right:10px;">⬅ Go to Main</button>
             <button class="btn btn-lock" id="lockBtn" onclick="toggleAdminMode()" title="Admin Unlock">🔒</button>
             <button class="btn" id="exportJsonBtn" onclick="exportSimulationJSON()" title="Export Simulation Data"
                 style="display:none; background:linear-gradient(135deg, #6366f1, #8b5cf6); color:#fff; padding:6px 14px; border:none; border-radius:6px; font-size:0.8rem; cursor:pointer; font-weight:bold; box-shadow:0 2px 8px rgba(99,102,241,0.3); transition:all 0.2s;"
@@ -827,7 +832,7 @@
 
     <script>
         (function () {
-            const scripts = ['data_core.js', 'data_assets.js', 'data_progression.js', 'sim_helpers.js', 'logic.js', 'logic_sim.js'];
+            const scripts = ['data_ducky_core.js', 'data_ducky_assets.js', 'data_ducky_progression.js', 'sim_helpers.js', 'logic.js', 'logic_sim.js'];
             let loaded = 0;
             function loadNext() {
                 if (loaded >= scripts.length) { console.log("✅ All scripts loaded."); return; }

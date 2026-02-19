@@ -1,31 +1,34 @@
 // ==========================================
 // 1. GLOBAL STATE & HELPERS
 // ==========================================
-console.log("✅ LOGIC.JS LOADED: FINAL GOLD VERSION (v86 - Stats Update)");
+const isDucky = window.location.pathname.toLowerCase().includes('ducky');
+const coreDataFile = isDucky ? 'data_ducky_core.js' : 'data_core.js';
+const assetsDataFile = isDucky ? 'data_ducky_assets.js' : 'data_assets.js';
+const progressionDataFile = isDucky ? 'data_ducky_progression.js' : 'data_progression.js';
 
 const fileMap = {
-    'charPoolData': 'data_assets.js',
-    'charStatsData': 'data_assets.js', // YENİ EKLENDİ
-    'powerUpData': 'data_assets.js',
-    'xpGainData': 'data_assets.js',
-    'goldCostData': 'data_assets.js',
-    'cardReqData': 'data_assets.js',
-    'levelData': 'data_progression.js',
-    'cupRoadData': 'data_progression.js',
-    'arenaData': 'data_progression.js',
-    'simConfig': 'data_core.js',
-    'missionData': 'data_core.js',
-    'winRewardData': 'data_core.js',
-    'weConfig': 'data_core.js',
-    'rewardChestConfig': 'data_core.js',
-    'loginConfig': 'data_core.js',
-    'leaderboardConfig': 'data_core.js',
-    'chestConfigs': 'data_core.js',
-    'scriptedChests': 'data_core.js',
-    'missionCompletion': 'data_core.js',
-    'startConfig': 'data_core.js',
-    'slotUnlockData': 'data_core.js',
-    'marketConfig': 'data_core.js'
+    'charPoolData': assetsDataFile,
+    'charStatsData': assetsDataFile,
+    'powerUpData': assetsDataFile,
+    'xpGainData': assetsDataFile,
+    'goldCostData': assetsDataFile,
+    'cardReqData': assetsDataFile,
+    'levelData': progressionDataFile,
+    'cupRoadData': progressionDataFile,
+    'arenaData': progressionDataFile,
+    'simConfig': coreDataFile,
+    'missionData': coreDataFile,
+    'winRewardData': coreDataFile,
+    'weConfig': coreDataFile,
+    'rewardChestConfig': coreDataFile,
+    'loginConfig': coreDataFile,
+    'leaderboardConfig': coreDataFile,
+    'chestConfigs': coreDataFile,
+    'scriptedChests': coreDataFile,
+    'missionCompletion': coreDataFile,
+    'startConfig': coreDataFile,
+    'slotUnlockData': coreDataFile,
+    'marketConfig': coreDataFile
 };
 
 // Excel Library Loader
