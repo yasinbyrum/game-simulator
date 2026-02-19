@@ -234,11 +234,12 @@ function simulateGame(inputs) {
     };
 
     // ACTIONS
-    // ACTIONS
     const openChest = (type, source) => {
         let conf = inputs.chestConfigs;
-        // FIX: Allow Scripted Chest to pass even if not in conf
-        if ((!conf || !conf[type]) && type !== "Scripted Chest" && type !== "PowerUp Chest") return;
+        let rewardConf = inputs.rewardChestConfig; // Gold & Diamond Chests
+
+        // FIX: Allow Scripted Chest, PowerUp Chest, Gold Chest, Diamond Chest to pass even if not in conf
+        if ((!conf || !conf[type]) && type !== "Scripted Chest" && type !== "PowerUp Chest" && type !== "Gold Chest" && type !== "Diamond Chest") return;
 
         // FIX: Breakdown Chest Sources (Ad vs Non-Ad)
         let trackKey = type;
@@ -247,10 +248,17 @@ function simulateGame(inputs) {
 
         let c = conf ? conf[type] : null;
         // FIX: Use maxAchievedCups to determine loot bucket so drops don't degrade
+        // Note: getBucket now checks maxAchievedCups internally if passed correct value
         let bucket = getBucket(state.maxAchievedCups || state.cups);
 
         let lootLog = [];
         let deferredUnlocks = []; // Store unlock events to log AFTER chest opening
+
+        // Logging Prefix Helper
+        let prefix = "";
+        if (source === "Watch & Earn") prefix = "ADS: ";
+        else if (type === "Free Chest") prefix = "FREE: ";
+        else if (type === "PowerUp Chest") prefix = "PWR: ";
 
         // Scripted Chest Logic
         if (type === "Scripted Chest") {
@@ -333,7 +341,33 @@ function simulateGame(inputs) {
                 addRes("Gold", 50, "PowerUp Fallback");
                 lootLog.push(`50 Gold (Fallback)`);
             }
-        } else {
+        }
+
+        // NEW: Gold Chest Logic (Reward Chest)
+        else if (type === "Gold Chest") {
+            let goldAmt = 0;
+            if (rewardConf && rewardConf.goldChest) {
+                goldAmt = rewardConf.goldChest['b' + bucket] || 100;
+            } else {
+                goldAmt = 100; // Fallback
+            }
+            addRes("Gold", goldAmt, "Gold Chest");
+            lootLog.push(`Gold x${goldAmt}`);
+        }
+
+        // NEW: Diamond Chest Logic (Reward Chest)
+        else if (type === "Diamond Chest") {
+            let diaAmt = 0;
+            if (rewardConf && rewardConf.diamondChest) {
+                diaAmt = rewardConf.diamondChest['b' + bucket] || 5;
+            } else {
+                diaAmt = 5; // Fallback
+            }
+            addRes("Diamonds", diaAmt, "Diamond Chest");
+            lootLog.push(`Diamonds x${diaAmt}`);
+        }
+
+        else {
             // SMART DROP LOGIC (User Request)
             // 1. Determine Rate based on Player Bucket (already done via c.slotProbs selection if generic)
             // Actually, slotProbs usually defines R/P/C/L chances.
@@ -432,10 +466,14 @@ function simulateGame(inputs) {
 
 
         // Final Log Construction
-        if (source && source !== "Unknown") {
+        // If we have a special prefix (ADS, FREE, PWR), use it in the main message.
+        // If source is relevant but no prefix, keep the source header log.
+        if (source && source !== "Unknown" && !prefix) {
             addLog("CHEST", `${source}: ${type}`, "");
         }
-        addLog("CHEST", `${type} Opened`, lootLog.join(', '));
+
+        let msgTitle = prefix ? `${prefix}${type}` : `${type} Opened`;
+        addLog("CHEST", msgTitle, lootLog.join(', '));
 
         // Log Deferred Unlocks NOW
         deferredUnlocks.forEach(l => {
@@ -769,11 +807,17 @@ function simulateGame(inputs) {
             if (win) {
                 myG = Math.max(myG, oppG + 1);
 
+                // Cup Logic: +30 Cups
+                let cupGain = 30; // Standard win reward
+                if (inputs.simConfig && inputs.simConfig.winReward) cupGain = inputs.simConfig.winReward;
+                state.cups += cupGain;
+                state.maxAchievedCups = Math.max(state.maxAchievedCups, state.cups);
+
                 // LOG MATCH RESULT FIRST
-                // Format: ✅ Match 1 Won (8-3)
-                // Detail: Used: Rocket Gun & Giant Player | Cups: 30 🏆
+                // Format: ✅ Match 1 Won (8-3) +30 Cups
+                // Detail: Used: Rocket Gun & Giant Player | Total Cups: 30 🏆
                 let puStr = (usedList.length > 0) ? `Used: ${usedList.join(' & ')}` : "No PowerUps";
-                addLog("WIN", `Match ${m} Won (${myG}-${oppG})`, `${puStr} | Cups: ${state.cups} 🏆`);
+                addLog("WIN", `Match ${m} Won (${myG}-${oppG})`, `+${cupGain} Cups | ${puStr} | Total: ${state.cups} 🏆`);
 
                 // CHECK MILESTONES
                 safeCheckMilestones();
@@ -801,10 +845,14 @@ function simulateGame(inputs) {
                     }
                 }
             } else {
-                state.cups = Math.max(0, state.cups - inputs.simConfig.lossPenalty);
+                // Cup Logic: -30 Cups (min 0)
+                let cupLoss = inputs.simConfig.lossPenalty || 30;
+                let oldCups = state.cups;
+                state.cups = Math.max(0, state.cups - cupLoss);
+                let actualLoss = oldCups - state.cups;
 
                 let puStr = (usedList.length > 0) ? `Used: ${usedList.join(' & ')}` : "No PowerUps";
-                addLog("LOSS", `Match ${m} Lost (${myG}-${oppG})`, `${puStr} | Cups: ${state.cups} 🏆`);
+                addLog("LOSS", `Match ${m} Lost (${myG}-${oppG})`, `-${actualLoss} Cups | ${puStr} | Total: ${state.cups} 🏆`);
             }
             goals += myG;
             checkMissionsNow(m); // Check missions after each match
@@ -819,7 +867,7 @@ function simulateGame(inputs) {
             let bucketWERewards = inputs.weConfig['b' + currentDayBucket];
             for (let a = 1; a <= adsCount; a++) {
                 let stepReward = bucketWERewards[(a - 1) % bucketWERewards.length];
-                let headerStr = `W&E Step ${a}`;
+                let headerStr = `ADS: W&E Step ${a}`;
 
                 if (stepReward.type === "Gold") {
                     addRes("Gold", stepReward.amt, "Watch & Earn");

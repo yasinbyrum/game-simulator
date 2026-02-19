@@ -175,9 +175,9 @@ function getSimulationInputs() {
         minGoals: 3,
         maxGoals: 8,
 
-        // Upgrade Ratios
-        charUpgradeChance: parseInt(p.charRate) || 50,
-        pupUpgradeChance: parseInt(p.pupRate) || 50,
+        // Upgrade Ratios (Map from Profile Fields)
+        charUpgradeChance: (p.charFreq !== undefined) ? parseInt(p.charFreq) : (parseInt(p.charRate) || 50),
+        pupUpgradeChance: (p.puFreq !== undefined) ? parseInt(p.puFreq) : (parseInt(p.pupRate) || 50),
 
         // Chests (Driven by Profile)
         dailyFreeChests: parseInt(p.freeChest) !== undefined ? parseInt(p.freeChest) : 2,
