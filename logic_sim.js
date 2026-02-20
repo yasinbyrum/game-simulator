@@ -648,6 +648,7 @@ function simulateGame(inputs) {
         let missionsToday = 0;
         let dailyMissionIndices = new Set();
         let adsToday = 0; let freeChestsToday = 0; let cupsToday = 0; let puUsedToday = 0; let wins = 0; let goals = 0;
+        let currentDayBucket = getBucket(state.maxAchievedCups); // Locked at dawn for W&E and Win Rewards
 
         // Missions Helper
         const checkMissionsNow = (matchesPlayed = 0) => {
@@ -728,12 +729,12 @@ function simulateGame(inputs) {
             if (rew) {
                 if (rew.type === "Gold") {
                     let oldG = state.gold;
-                    addRes("Gold", rew.amt, rewardSource);
+                    addRes("Gold", rew.amt, "Daily Login");
                     addLog("LOGIN", rewardSource, `+${rew.amt} Gold (${oldG} -> ${state.gold})`);
                 }
                 else if (rew.type === "Diamonds") {
                     let oldD = state.diamonds;
-                    addRes("Diamonds", rew.amt, rewardSource);
+                    addRes("Diamonds", rew.amt, "Daily Login");
                     addLog("LOGIN", rewardSource, `+${rew.amt} Diamonds (${oldD} -> ${state.diamonds})`);
                 }
                 else if (rew.type.includes("Chest")) {
@@ -809,6 +810,7 @@ function simulateGame(inputs) {
             let win = Math.random() * 100 < inputs.winRate;
             let matchLog = `Score: ${myG}-${oppG}${puInfo}`;
             if (win) {
+                wins++;
                 myG = Math.max(myG, oppG + 1);
 
                 // Cup Logic: +30 Cups
@@ -832,10 +834,9 @@ function simulateGame(inputs) {
                 // CHECK MILESTONES
                 safeCheckMilestones();
 
-                // Win Reward - Bucket-based
-                let currentBucket = getBucket(state.maxAchievedCups);
+                // Win Reward - Bucket-based (Locked at dawn per user request)
                 let bucketWinRewards = inputs.winRewardsAll || {};
-                let rewards = bucketWinRewards['b' + currentBucket] || bucketWinRewards['b1'] || [];
+                let rewards = bucketWinRewards['b' + currentDayBucket] || bucketWinRewards['b1'] || [];
                 let wr = rewards.find(w => w && w.winCount === wins);
 
                 if (wr) {
@@ -871,8 +872,7 @@ function simulateGame(inputs) {
         }
 
         // 3. Watch & Earn - Bucket-based (determined at start of day)
-        let currentDayBucket = getBucket(state.maxAchievedCups);
-        let adsCount = Math.floor(Math.random() * (inputs.maxAds - inputs.minAds + 1)) + inputs.minAds;
+        let adsCount = inputs.maxAds || 0; // User says "ADS bölümündeki sayı günlük W&E izleme sayısıdır"
         if (inputs.weConfig && inputs.weConfig['b' + currentDayBucket] && inputs.doWE) {
             let bucketWERewards = inputs.weConfig['b' + currentDayBucket];
             for (let a = 1; a <= adsCount; a++) {
