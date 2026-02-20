@@ -190,10 +190,10 @@ function getSimulationInputs() {
         doMissions: getUiVal('simDoMissions', false),
         doLeaderboard: getUiVal('simDoLeaderboard', false),
 
-        // Game Data (Read-only access) - Always use startConfig for fresh base values
+        // Game Data (Read-only access) - Always use UI start values for fresh simulation
         startCfg: {
-            gold: (getSafe('startConfig') && getSafe('startConfig').gold !== undefined) ? getSafe('startConfig').gold : 450,
-            diamonds: (getSafe('startConfig') && getSafe('startConfig').diamonds !== undefined) ? getSafe('startConfig').diamonds : 0,
+            gold: getUiVal('simStartGold', 450),
+            diamonds: getUiVal('simStartGems', 0),
             cups: 0,
             maxCups: 0
         },
