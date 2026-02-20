@@ -390,8 +390,11 @@ function simulateGame(inputs) {
                 let probs = slot['b' + bucket] || slot['b1'];
                 if (!probs) return;
                 let roll = Math.random() * 100;
-                let r = (roll < probs.R) ? "Rookie" : (roll < probs.R + probs.P) ? "Pro" : (roll < probs.R + probs.P + probs.C) ? "Champion" : "Legendary";
-                let amt = c.amounts[r]['b' + bucket] || c.amounts[r]['b1'];
+                let pR = probs.R || 0, pP = probs.P || 0, pC = probs.C || 0, pL = probs.L || 0;
+                let r = (roll < pR) ? "Rookie" : (roll < pR + pP) ? "Pro" : (roll < pR + pP + pC) ? "Champion" : (pL > 0 ? "Legendary" : "Champion");
+                // Fallback if rarity doesn't exist in amounts
+                if (!c.amounts[r]) r = Object.keys(c.amounts).pop() || "Rookie";
+                let amt = (c.amounts[r] && c.amounts[r]['b' + bucket]) || (c.amounts[r] && c.amounts[r]['b1']) || 0;
 
                 // FIX: If amount is 0 (e.g. empty slot prob like Rookie Chest Slot 4 in B1), skip
                 if (!amt || amt <= 0) return;
