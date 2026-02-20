@@ -190,12 +190,12 @@ function getSimulationInputs() {
         doMissions: getUiVal('simDoMissions', false),
         doLeaderboard: getUiVal('simDoLeaderboard', false),
 
-        // Game Data (Read-only access)
+        // Game Data (Read-only access) - Always use startConfig for fresh base values
         startCfg: {
-            gold: (window.playerResources && window.playerResources.gold !== undefined) ? window.playerResources.gold : getUiVal('simStartGold', 500),
-            diamonds: (window.playerResources && window.playerResources.diamonds !== undefined) ? window.playerResources.diamonds : getUiVal('simStartGems', 0),
-            cups: (window.playerResources && window.playerResources.cups !== undefined) ? window.playerResources.cups : 0,
-            maxCups: (window.playerResources && window.playerResources.maxCups !== undefined) ? window.playerResources.maxCups : 0
+            gold: (getSafe('startConfig') && getSafe('startConfig').gold !== undefined) ? getSafe('startConfig').gold : 450,
+            diamonds: (getSafe('startConfig') && getSafe('startConfig').diamonds !== undefined) ? getSafe('startConfig').diamonds : 0,
+            cups: 0,
+            maxCups: 0
         },
         levelData: getSafe('levelData') || [],
         cupRoadData: getSafe('cupRoadData') || [],
