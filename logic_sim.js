@@ -840,6 +840,12 @@ function simulateGame(inputs) {
                 let wr = rewards.find(w => w && w.winCount === wins);
 
                 if (wr) {
+                    if (wr.type2 === "Gold") {
+                        let oldG = state.gold;
+                        addRes("Gold", wr.amt2, "Win Reward");
+                        addLog("WIN REWARD", `Win Reward (${wins}. Win)`, `+${wr.amt2} Gold (${oldG} -> ${state.gold})`);
+                    }
+
                     if (wr.type === "Gold") {
                         let oldG = state.gold;
                         addRes("Gold", wr.amt, "Win Reward");
@@ -847,12 +853,6 @@ function simulateGame(inputs) {
                     }
                     else if (wr.type === "Chest" || wr.type.includes("Chest")) {
                         openChest(wr.type, "Win Reward");
-                    }
-
-                    if (wr.type2 === "Gold") {
-                        let oldG = state.gold;
-                        addRes("Gold", wr.amt2, "Win Reward");
-                        addLog("WIN REWARD", `Win Reward (${wins}. Win)`, `+${wr.amt2} Gold (${oldG} -> ${state.gold})`);
                     }
                 }
             } else {
@@ -873,7 +873,7 @@ function simulateGame(inputs) {
 
         // 3. Watch & Earn - Bucket-based (determined at start of day)
         let adsCount = inputs.maxAds || 0; // User says "ADS bölümündeki sayı günlük W&E izleme sayısıdır"
-        if (inputs.weConfig && inputs.weConfig['b' + currentDayBucket] && inputs.doWE) {
+        if (inputs.weConfig && inputs.weConfig['b' + currentDayBucket] && (inputs.doWE || adsCount > 0)) {
             let bucketWERewards = inputs.weConfig['b' + currentDayBucket];
             for (let a = 1; a <= adsCount; a++) {
                 let stepReward = bucketWERewards[(a - 1) % bucketWERewards.length];
