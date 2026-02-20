@@ -123,28 +123,48 @@ window.saveGameData = function () {
 
 window.loadGameData = function () {
     try {
-        let res = localStorage.getItem('playerResources');
-        if (res) {
-            let parsed = JSON.parse(res);
-            // Merge to ensure we have all keys (like cups if missing in old save)
-            window.playerResources = { ...window.playerResources, ...parsed };
-            // Ensure cups are numbers
-            if (window.playerResources.cups === undefined) window.playerResources.cups = 0;
-            if (window.playerResources.maxCups === undefined) window.playerResources.maxCups = 0;
+        // ALWAYS reset to default UI values on load/refresh (F5)
+        window.playerResources.gold = parseInt(document.getElementById('simStartGold')?.value) || 500;
+        window.playerResources.diamonds = parseInt(document.getElementById('simStartGems')?.value) || 0;
+        window.playerResources.cups = 0;
+        window.playerResources.maxCups = 0;
 
-            // Visual Update if elements exist
-            if (document.getElementById('resCups')) document.getElementById('resCups').innerText = window.playerResources.cups || 0;
-            if (document.getElementById('resGold')) document.getElementById('resGold').innerText = window.playerResources.gold || 0;
-            if (document.getElementById('resGems')) document.getElementById('resGems').innerText = window.playerResources.diamonds || 0;
+        // Visual Update if elements exist (Top Bar & Dashboard)
+        if (document.getElementById('resCups')) document.getElementById('resCups').innerText = window.playerResources.cups || 0;
+        if (document.getElementById('resGold')) document.getElementById('resGold').innerText = window.playerResources.gold || 500;
+        if (document.getElementById('resGems')) document.getElementById('resGems').innerText = window.playerResources.diamonds || 0;
+
+        // Reset Extended Dashboard Stats
+        if (document.getElementById('resXP')) document.getElementById('resXP').innerText = 0;
+        if (document.getElementById('resLevel')) document.getElementById('resLevel').innerText = 1;
+        if (document.getElementById('resChests')) document.getElementById('resChests').innerText = 0;
+        if (document.getElementById('resCards')) document.getElementById('resCards').innerText = 0;
+        if (document.getElementById('resWins')) document.getElementById('resWins').innerText = 0;
+        if (document.getElementById('resLosses')) document.getElementById('resLosses').innerText = 0;
+        if (document.getElementById('resMissions')) document.getElementById('resMissions').innerText = 0;
+        if (document.getElementById('resSlots')) document.getElementById('resSlots').innerText = 2;
+
+        // Wipe old sim states from localStorage so F5 guarantees a clean start
+        localStorage.removeItem('playerResources');
+        localStorage.removeItem('playerInventory');
+        localStorage.removeItem('playerPowerUps');
+
+        window.playerInventory = {};
+        window.playerPowerUps = {};
+        window.lastSimState = null; // Prevent UI from clinging to old RAM state
+
+        // Wipe generic charts if they exist (prevents old lines lingering)
+        if (typeof renderSimulationResults === 'function') {
+            // Just clearing HTML inside charts area usually fails if Chart.js is holding memory,
+            // but for simplicity, we'll let runSimulation overwrite it later.
+            // As a fallback, ensure any UI bound to lastSimState clears.
+            let chartGold = Chart.getChart("chartGoldSource"); if (chartGold) chartGold.destroy();
+            let chartGem = Chart.getChart("chartGemSource"); if (chartGem) chartGem.destroy();
+            let chartCards = Chart.getChart("chartCardSource"); if (chartCards) chartCards.destroy();
+            let chartPU = Chart.getChart("chartPuSource"); if (chartPU) chartPU.destroy();
         }
 
-        let inv = localStorage.getItem('playerInventory');
-        if (inv) window.playerInventory = JSON.parse(inv);
-
-        let pups = localStorage.getItem('playerPowerUps');
-        if (pups) window.playerPowerUps = JSON.parse(pups);
-
-        console.log("✅ Game Data Loaded from LocalStorage", window.playerResources);
+        console.log("✅ Game Data Initialized to Defaults (Fresh Start)", window.playerResources);
     } catch (e) {
         console.error("Save/Load Error:", e);
     }
@@ -980,28 +1000,14 @@ function renderProgressionTable(id, typeKey, bucket) {
         let rowHtml = `<td style="display:flex; align-items:center; gap:5px; white-space:nowrap;">${getJpgTag(c.n, 30)} <span style="font-size:1.1rem;">${c.n}</span></td><td class="rar-${c.r}" style="font-size:1.1rem;">${c.r}</td>`;
 
         for (let i = startLvl - 1; i < maxLvl; i++) {
-            // For Gold/XP/Cards:
             // Arrays are [val1, val2...].
-            // If Gold: padded with 0 at index 0 (for Lvl 1? or 1->2 cost at index 1?). 
-            // We padded Gold with 0 at start. So index 0 = 0. Index 1 = 100 (Level 2 cost).
-            // Logic.js uses g[lvl-2] or similar? No, getUpgradeCost uses g[lvl-1].
-            // If we want to show "Level 2 Cost", we show g[1].
-            // If typeKey='g', index 0 is irrelevant (0).
-            // If typeKey='x', index 0 is irrelevant (0).
-            // If typeKey='c', index 0 is Level 1 Req (Unlock).
-
-            // Let's display raw array indices?
-            // Column "Lvl 1":
-            // If Card Req: Cost to Unlock? (c[0]).
-            // If Gold: Cost to Unlock? (g[0]=0).
-            // If XP: XP for Level 1? (x[0]=0).
-
-            // Column "Lvl 2": Cost to reach Lvl 2.
-            // Card: c[1]. Gold: g[1]. XP: x[1].
-
-            // So iterating i=0 to maxLvl-1 maps to Level i+1.
+            // Mapping i=0 to maxLvl-1 maps to Level i+1.
             let val = vals[i] !== undefined ? vals[i] : "-";
-            rowHtml += `<td>${val}</td>`;
+
+            // Format string path safely for updateVal eval: e.g., charProgressionData["Bruce"].g[1]
+            let path = `charProgressionData["${c.n}"].${typeKey}[${i}]`;
+
+            rowHtml += `<td><input class="edit-admin" type="text" value="${val}" style="width:60px;" onchange='updateVal(\`${path}\`, this.value)'></td>`;
         }
         html += `<tr>${rowHtml}</tr>`;
     });
@@ -1092,10 +1098,15 @@ window.injectSaveButton = function (containerId, varOrList) {
             if (!data) { pending--; return; }
             let filename = fileMap[vName] || 'data_core.js';
 
+            let exportVarName = vName;
+            if (['xpGainData', 'goldCostData', 'cardReqData'].includes(vName)) {
+                exportVarName = 'charProgressionData';
+            }
+
             fetch('/update-data', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ filename: filename, varName: vName, data: data })
+                body: JSON.stringify({ filename: filename, varName: exportVarName, data: data })
             })
                 .then(r => { if (!r.ok) alert(`Save Failed for ${vName}`); })
                 .catch(e => console.error(e))

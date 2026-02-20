@@ -389,22 +389,82 @@ var winRewardData = {
 // WATCH & EARN (BUCKETIZED)
 var weConfig = {
   "b1": [
-    { "step": 1, "type": "Gold", "amt": 50, "hcInt": 2.5 },
-    { "step": 2, "type": "Diamonds", "amt": 5, "hcInt": 75 },
-    { "step": 3, "type": "Random Power Card", "amt": 5, "hcInt": 60 },
-    { "step": 4, "type": "Rookie Chest", "amt": 1, "hcInt": 150 }
+    {
+      "step": 1,
+      "type": "Diamonds",
+      "amt": 10,
+      "hcInt": 2.5
+    },
+    {
+      "step": 2,
+      "type": "Rookie Chest",
+      "amt": 1,
+      "hcInt": 75
+    },
+    {
+      "step": 3,
+      "type": "Rookie Chest",
+      "amt": 2,
+      "hcInt": 60
+    },
+    {
+      "step": 4,
+      "type": "Pro Chest",
+      "amt": 1,
+      "hcInt": 150
+    }
   ],
   "b2": [
-    { "step": 1, "type": "Gold", "amt": 100, "hcInt": 5 },
-    { "step": 2, "type": "Diamonds", "amt": 10, "hcInt": 150 },
-    { "step": 3, "type": "Random Power Card", "amt": 10, "hcInt": 120 },
-    { "step": 4, "type": "Pro Chest", "amt": 1, "hcInt": 460 }
+    {
+      "step": 1,
+      "type": "Diamonds",
+      "amt": 15,
+      "hcInt": 5
+    },
+    {
+      "step": 2,
+      "type": "Rookie Chest",
+      "amt": 1,
+      "hcInt": 150
+    },
+    {
+      "step": 3,
+      "type": "Rookie Chest",
+      "amt": 2,
+      "hcInt": 120
+    },
+    {
+      "step": 4,
+      "type": "Pro Chest",
+      "amt": 1,
+      "hcInt": 460
+    }
   ],
   "b3": [
-    { "step": 1, "type": "Gold", "amt": 200, "hcInt": 10 },
-    { "step": 2, "type": "Diamonds", "amt": 20, "hcInt": 300 },
-    { "step": 3, "type": "Random Power Card", "amt": 5, "hcInt": 60 },
-    { "step": 4, "type": "Champion Chest", "amt": 1, "hcInt": 1150 }
+    {
+      "step": 1,
+      "type": "Diamonds",
+      "amt": 20,
+      "hcInt": 10
+    },
+    {
+      "step": 2,
+      "type": "Rookie Chest",
+      "amt": 1,
+      "hcInt": 300
+    },
+    {
+      "step": 3,
+      "type": "Pro Chest",
+      "amt": 1,
+      "hcInt": 60
+    },
+    {
+      "step": 4,
+      "type": "Champion Chest",
+      "amt": 1,
+      "hcInt": 1150
+    }
   ]
 };
 
@@ -605,9 +665,9 @@ var chestConfigs = {
   "Rookie Chest": {
     "slots": 3,
     "gold": {
-      "b1": 50,
-      "b2": 50,
-      "b3": 60
+      "b1": 60,
+      "b2": 60,
+      "b3": 90
     },
     "amounts": {
       "Rookie": {
@@ -681,15 +741,14 @@ var chestConfigs = {
           "C": 0
         }
       }
-
     ]
   },
   "Pro Chest": {
     "slots": 4,
     "gold": {
-      "b1": 60,
-      "b2": 60,
-      "b3": 70
+      "b1": 120,
+      "b2": 120,
+      "b3": 160
     },
     "amounts": {
       "Rookie": {
@@ -786,9 +845,9 @@ var chestConfigs = {
   "Champion Chest": {
     "slots": 4,
     "gold": {
-      "b1": 100,
-      "b2": 100,
-      "b3": 200
+      "b1": 200,
+      "b2": 200,
+      "b3": 260
     },
     "amounts": {
       "Rookie": {
@@ -885,9 +944,9 @@ var chestConfigs = {
   "Free Chest": {
     "slots": 2,
     "gold": {
-      "b1": 10,
-      "b2": 10,
-      "b3": 20
+      "b1": 20,
+      "b2": 20,
+      "b3": 40
     },
     "amounts": {
       "Rookie": {
@@ -978,19 +1037,19 @@ var chestConfigs = {
       {
         "id": 1,
         "b1": {
-          "R": 75,
-          "P": 25,
-          "C": 0
-        },
-        "b2": {
           "R": 65,
           "P": 35,
           "C": 0
         },
+        "b2": {
+          "R": 55,
+          "P": 35,
+          "C": 0
+        },
         "b3": {
-          "R": 50,
-          "P": 45,
-          "C": 5
+          "R": 45,
+          "P": 35,
+          "C": 20
         }
       }
     ]

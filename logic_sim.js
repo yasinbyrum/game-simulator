@@ -489,21 +489,22 @@ function simulateGame(inputs) {
         while (nxt && state.xp >= nxt.req) {
             state.level = nxt.l; state.xp -= nxt.req;
 
-            let rewardLog = [];
+            // 1. Log the Level Up event first
+            addLog("LEVEL UP", `Reached Level ${state.level}`, "");
 
             // Rewards
             const give = (type, amt) => {
                 if (type === "Gold") {
                     addRes("Gold", amt, "Level Reward");
-                    rewardLog.push(`+${amt} Gold`);
+                    addLog("LEVEL UP", "Level Reward", `+${amt} Gold`);
                 }
                 else if (type === "Diamonds") {
                     addRes("Diamonds", amt, "Level Reward");
-                    rewardLog.push(`+${amt} Diamonds`);
+                    addLog("LEVEL UP", "Level Reward", `+${amt} Diamonds`);
                 }
                 else if (type.includes("Chest")) {
+                    addLog("LEVEL UP", "Level Reward", type);
                     openChest(type, "Level Reward");
-                    rewardLog.push(`Opened ${type}`);
                 }
                 else if (type.includes("Power")) {
                     // Logic to add powerup cards
@@ -511,7 +512,7 @@ function simulateGame(inputs) {
                     if (unlocked.length > 0) {
                         let chosen = unlocked[Math.floor(Math.random() * unlocked.length)];
                         state.powerUps[chosen].amount += amt;
-                        rewardLog.push(`PowerUp: ${chosen} x${amt}`);
+                        addLog("LEVEL UP", "Level Reward", `PowerUp: ${chosen} x${amt}`);
                     }
                 }
             };
@@ -528,12 +529,11 @@ function simulateGame(inputs) {
                     if (cands.length > 0) {
                         let chosen = cands[Math.floor(Math.random() * cands.length)];
                         state.powerUps[chosen].unlocked = true;
-                        rewardLog.push(`🔓 Unlocked NEW PowerUp: ${chosen} (${star}★)`);
+                        addLog("UNLOCK", `Unlocked NEW PowerUp: ${chosen}`, `(${star}★)`);
                     }
                 }
             }
 
-            addLog("LEVEL UP", `Reached Level ${state.level}`, rewardLog.join('\n'));
             nxt = inputs.levelData.find(l => l.l === state.level + 1);
         }
     };
@@ -701,7 +701,7 @@ function simulateGame(inputs) {
                 // Onboarding phase (days 1-7)
                 if (inputs.loginConfig.onboarding && inputs.loginConfig.onboarding[state.loginDay - 1]) {
                     rew = inputs.loginConfig.onboarding[state.loginDay - 1];
-                    rewardSource = `Onboarding Day ${state.loginDay}`;
+                    rewardSource = `Daily Login ${state.loginDay} (Onboarding Cycle)`;
                 }
             } else {
                 // Fixed cycle phase (days 8+)
@@ -718,7 +718,8 @@ function simulateGame(inputs) {
                     let bucketFixedWeek = inputs.loginConfig.fixed['b' + state.loginCycleBucket];
                     if (bucketFixedWeek[cycleDay - 1]) {
                         rew = bucketFixedWeek[cycleDay - 1];
-                        rewardSource = `Fixed Cycle Day ${cycleDay} (Bucket ${state.loginCycleBucket})`;
+                        let cycleNum = Math.floor((state.loginDay - 1) / 7);
+                        rewardSource = `Daily Login ${state.loginDay} (Fixed Cycle ${cycleNum} - Bucket ${state.loginCycleBucket})`;
                     }
                 }
             }
@@ -727,17 +728,17 @@ function simulateGame(inputs) {
             if (rew) {
                 if (rew.type === "Gold") {
                     let oldG = state.gold;
-                    addRes("Gold", rew.amt, "Daily Login");
+                    addRes("Gold", rew.amt, rewardSource);
                     addLog("LOGIN", rewardSource, `+${rew.amt} Gold (${oldG} -> ${state.gold})`);
                 }
                 else if (rew.type === "Diamonds") {
                     let oldD = state.diamonds;
-                    addRes("Diamonds", rew.amt, "Daily Login");
-                    addLog("LOGIN", rewardSource, `+${rew.amt} Diamonds`);
+                    addRes("Diamonds", rew.amt, rewardSource);
+                    addLog("LOGIN", rewardSource, `+${rew.amt} Diamonds (${oldD} -> ${state.diamonds})`);
                 }
                 else if (rew.type.includes("Chest")) {
-                    openChest(rew.type, "Daily Login");
-                    addLog("LOGIN", rewardSource, `Opened ${rew.amt}x ${rew.type}`);
+                    openChest(rew.type, rewardSource);
+                    // Removed the redundant LOGIN log for chests
                 }
                 else if (rew.type.includes("Card")) {
                     // Handle "Card Taiga" or "Random Power Card"
@@ -1023,9 +1024,15 @@ window.runSimulation = function () {
     // 1. Gather Inputs
     let inputs = getSimulationInputs();
 
-    // Reset some player resources for a clean simulation run
-    window.playerResources.gold = inputs.startCfg.gold;
-    window.playerResources.diamonds = inputs.startCfg.diamonds;
+    // Reset some player resources for a clean simulation run using exactly what is in the UI inputs
+    // to prevent any local storage accumulation bugs.
+    window.playerResources.gold = parseInt(document.getElementById('simStartGold').value) || 0;
+    window.playerResources.diamonds = parseInt(document.getElementById('simStartGems').value) || 0;
+
+    // Ensure inputs object also uses strict DOM values right before simulation starts
+    inputs.startCfg.gold = window.playerResources.gold;
+    inputs.startCfg.diamonds = window.playerResources.diamonds;
+
     window.playerResources.cups = inputs.startCfg.cups || 0;
     window.playerResources.maxCups = inputs.startCfg.maxCups || 0;
     window.playerResources.xp = 0;
@@ -1034,22 +1041,6 @@ window.runSimulation = function () {
 
     // 2. Run Core Simulation
     let finalState = simulateGame(inputs);
-
-    // 3. PERSIST STATE (User Request: "Garip bir durum oluyor" fix)
-    // Update global state so navigation doesn't reset Top Bar
-    if (!window.playerResources) window.playerResources = {};
-    window.playerResources.gold = finalState.gold;
-    window.playerResources.diamonds = finalState.diamonds;
-    window.playerResources.cups = finalState.cups;
-    window.playerResources.maxCups = finalState.maxAchievedCups;
-    window.playerResources.xp = finalState.xp || 0;
-
-    // Also sync inventory for consistency if manual tools are used
-    window.playerInventory = finalState.inventory;
-    window.playerPowerUps = finalState.powerUps;
-
-    // 4. PERSIST TO DISK (LocalStorage)
-    if (typeof saveGameData === 'function') saveGameData();
 
     // 5. Render Results
     renderSimulationResults(finalState, inputs);

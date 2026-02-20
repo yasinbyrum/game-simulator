@@ -316,6 +316,7 @@ th {
 }
 
 input.edit,
+input.edit-admin,
 select.edit,
 .pup-edit {
     background: rgba(0, 0, 0, 0.3) !important;
@@ -332,6 +333,7 @@ select.edit,
 }
 
 input.edit:focus,
+input.edit-admin:focus,
 .pup-edit:focus {
     border-color: var(--accent) !important;
     outline: none;
@@ -655,6 +657,7 @@ input:checked+.slider:before {
 }
 
 body.read-only .card:not(.public-card) input.edit,
+body.read-only .card:not(.public-card) input.edit-admin,
 body.read-only .card:not(.public-card) select.edit,
 body.read-only .card:not(.public-card) .pup-edit,
 body.read-only .card:not(.public-card) .switch {

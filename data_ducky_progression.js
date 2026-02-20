@@ -27,7 +27,7 @@ var arenaData = [
   {
     "id": 5,
     "n": "India Temple Arena",
-    "reqLevel": 6
+    "reqLevel": 5
   },
   {
     "id": 6,
@@ -42,27 +42,27 @@ var arenaData = [
   {
     "id": 8,
     "n": "Tanzania Safari Arena",
-    "reqLevel": 10
+    "reqLevel": 11
   },
   {
     "id": 9,
     "n": "Istanbul Bosphorus Arena",
-    "reqLevel": 11
+    "reqLevel": 14
   },
   {
     "id": 10,
     "n": "Rio Favela Arena",
-    "reqLevel": 13
+    "reqLevel": 19
   },
   {
     "id": 11,
     "n": "Tokyo Dojo Arena",
-    "reqLevel": 15
+    "reqLevel": 24
   },
   {
     "id": 12,
     "n": "Transilvania Castle Arena",
-    "reqLevel": 17
+    "reqLevel": 30
   }
 ];
 
