@@ -63,66 +63,6 @@ var arenaData = [
     "id": 12,
     "n": "Transilvania Castle Arena",
     "reqLevel": 17
-  },
-  {
-    "id": 13,
-    "n": "Cappadocia Valley Arena",
-    "reqLevel": 19
-  },
-  {
-    "id": 14,
-    "n": "Dubai Skyline Arena",
-    "reqLevel": 22
-  },
-  {
-    "id": 15,
-    "n": "Las Vegas Casino Arena",
-    "reqLevel": 24
-  },
-  {
-    "id": 16,
-    "n": "Paris Eiffel Arena",
-    "reqLevel": 26
-  },
-  {
-    "id": 17,
-    "n": "Caribbean Island Arena",
-    "reqLevel": 29
-  },
-  {
-    "id": 18,
-    "n": "Moon Station Arena",
-    "reqLevel": 32
-  },
-  {
-    "id": 19,
-    "n": "Alaska Icerift Arena",
-    "reqLevel": 35
-  },
-  {
-    "id": 20,
-    "n": "Alcatraz Prison Arena",
-    "reqLevel": 38
-  },
-  {
-    "id": 21,
-    "n": "Montreal Circus Arena",
-    "reqLevel": 41
-  },
-  {
-    "id": 22,
-    "n": "Geneva DarkLab Arena",
-    "reqLevel": 44
-  },
-  {
-    "id": 23,
-    "n": "Wychwood Forest Arena",
-    "reqLevel": 47
-  },
-  {
-    "id": 24,
-    "n": "Tartarus Underworld Arena",
-    "reqLevel": 50
   }
 ];
 

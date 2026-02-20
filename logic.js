@@ -242,11 +242,11 @@ window.nav = function (id) {
     else if (id === 'xp-gain') { createTabs('xpTabs', 'setXpBucket', currentXpBucket); renderProgressionTable('xpBody', 'x', currentXpBucket); injectSaveButton('xp-gain', 'xpGainData'); injectExcelButtons('xp-gain', 'xpGainData'); }
     else if (id === 'gold-req') { createTabs('goldTabs', 'setGoldBucket', currentGoldBucket); renderProgressionTable('goldBody', 'g', currentGoldBucket); injectSaveButton('gold-req', 'goldCostData'); injectExcelButtons('gold-req', 'goldCostData'); }
     else if (id === 'card-req') { createTabs('cardTabs', 'setCardBucket', currentCardBucket); renderProgressionTable('cardBody', 'c', currentCardBucket); injectSaveButton('card-req', 'cardReqData'); injectExcelButtons('card-req', 'cardReqData'); }
-    else if (id === 'leaderboard') { createTabs('lbTabs', 'setLBBucket', currentLBBucket); renderLeaderboard(); injectSaveButton('leaderboard', 'leaderboardConfig'); injectExcelButtons('leaderboard', 'leaderboardConfig'); }
+    else if (id === 'leaderboard') { /* removed - ducky only has B1-B3 */ }
     else if (id === 'daily-login') { renderDaily(); injectSaveButton('daily-login', 'loginConfig'); }
     else if (id === 'watch-earn') { renderWE(); injectSaveButton('watch-earn', 'weConfig'); }
     else if (id === 'reward-chests') { renderRewardChests(); injectSaveButton('reward-chests', 'rewardChestConfig'); }
-    else if (id === 'missions') { createTabs('missionTabs', 'setMissionBucket', currentMissionBucket); renderMissions(); injectSaveButton('missions', ['missionData', 'missionCompletion']); injectExcelButtons('missions', 'missionData'); }
+    else if (id === 'missions') { /* removed - ducky only has B1-B3 */ }
     else if (id === 'win-rewards') { renderWinRewards(); injectSaveButton('win-rewards', 'winRewardData'); }
     else if (id === 'chest-config') { renderChestTabs(); renderChestConfigViz(); renderScriptedChestUI(); updateManualBucketOptions(); injectSaveButton('chest-config', ['chestConfigs', 'simConfig']); injectExcelButtons('chest-config', 'chestConfigs'); }
     else if (id === 'power-ups') { renderPowerUps(); renderSlotConfig(); injectSaveButton('power-ups', ['powerUpData', 'slotUnlockData']); injectExcelButtons('power-ups', 'powerUpData'); }
@@ -274,10 +274,8 @@ function attachCharFilters() {
 // ==========================================
 // 3. UI HELPER & RENDER (ROBUST)
 // ==========================================
-function createTabs(cid, fn, active) { const el = document.getElementById(cid); if (el) el.innerHTML = [1, 2, 3, 4, 5].map(i => `<button class="tab-btn ${i === active ? 'active' : ''}" onclick="${fn}(${i})">Bucket ${i}</button>`).join(''); }
-window.setLBBucket = function (b) { currentLBBucket = b; renderLeaderboard(); createTabs('lbTabs', 'setLBBucket', currentLBBucket); }
-window.setMissionBucket = function (b) { currentMissionBucket = b; renderMissions(); createTabs('missionTabs', 'setMissionBucket', currentMissionBucket); };
-window.updateGrandPrizeUI = function (key, val) { let finalVal = val; if (!isNaN(parseInt(val)) && val !== '') finalVal = parseInt(val); let path = `missionCompletion.b${currentMissionBucket}.${key}`; updateVal(path, finalVal); };
+function createTabs(cid, fn, active) { const el = document.getElementById(cid); if (el) el.innerHTML = [1, 2, 3].map(i => `<button class="tab-btn ${i === active ? 'active' : ''}" onclick="${fn}(${i})">Bucket ${i}</button>`).join(''); }
+// Leaderboard and Mission bucket setters removed (ducky only has B1-B3)
 
 function renderMissions() {
     let allData = getSafe('missionData');
@@ -380,7 +378,7 @@ function renderWinRewards() {
 
     // Create bucket tabs
     if (tabsEl) {
-        tabsEl.innerHTML = [1, 2, 3, 4, 5].map(i =>
+        tabsEl.innerHTML = [1, 2, 3].map(i =>
             `<button class="tab-btn ${i === currentWinBucket ? 'active' : ''}" onclick="setWinBucket(${i})">Bucket ${i}</button>`
         ).join('');
     }
@@ -800,7 +798,7 @@ function renderWE() {
 
     // Render bucket tabs (same style as Win Rewards)
     if (tabsEl) {
-        tabsEl.innerHTML = [1, 2, 3, 4, 5].map(b =>
+        tabsEl.innerHTML = [1, 2, 3].map(b =>
             `<button class="tab-btn ${currentWEBucket === b ? 'active' : ''}" onclick="setWEBucket(${b})">Bucket ${b}</button>`
         ).join('');
     }
@@ -830,7 +828,7 @@ function renderRewardChests() {
     // Render Gold Chest row
     if (goldEl && data.goldChest) {
         let row = "<tr>";
-        for (let b = 1; b <= 5; b++) {
+        for (let b = 1; b <= 3; b++) {
             let val = data.goldChest['b' + b] || 0;
             row += `<td><input class="edit" type="number" value="${val}" onchange="updateVal('rewardChestConfig.goldChest.b${b}', this.value)" style="width:80px; font-size:1.2rem; text-align:center;"></td>`;
         }
@@ -841,7 +839,7 @@ function renderRewardChests() {
     // Render Diamond Chest row
     if (diamondEl && data.diamondChest) {
         let row = "<tr>";
-        for (let b = 1; b <= 5; b++) {
+        for (let b = 1; b <= 3; b++) {
             let val = data.diamondChest['b' + b] || 0;
             row += `<td><input class="edit" type="number" value="${val}" onchange="updateVal('rewardChestConfig.diamondChest.b${b}', this.value)" style="width:80px; font-size:1.2rem; text-align:center;"></td>`;
         }
@@ -891,7 +889,7 @@ function renderDaily() {
 
     // For Fixed Cycle, show bucket tabs
     if (currentDailyBucket === 2 && bucketTabsEl) {
-        bucketTabsEl.innerHTML = [1, 2, 3, 4, 5].map(b =>
+        bucketTabsEl.innerHTML = [1, 2, 3].map(b =>
             `<button class="tab-btn ${currentDailyFixedBucket === b ? 'active' : ''}" onclick="setDailyFixedBucket(${b})">Bucket ${b}</button>`
         ).join('');
         bucketTabsEl.style.display = 'flex';

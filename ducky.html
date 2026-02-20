@@ -53,8 +53,7 @@
             <div class="nav-link" onclick="nav('power-ups')">🔥 Power Ups</div>
 
             <div class="nav-group">Rewards</div>
-            <div class="nav-link" onclick="nav('leaderboard')">🏅 Leaderboard</div>
-            <div class="nav-link" onclick="nav('missions')">🎯 Missions</div>
+
             <div class="nav-link" onclick="nav('win-rewards')">🏆 Win Rewards</div>
             <div class="nav-link" onclick="nav('chest-config')">📦 Chest Rates</div>
             <div class="nav-link" onclick="nav('daily-login')">📅 Daily Login</div>
@@ -91,10 +90,7 @@
                     <div id="resBestChar" class="res-value"
                         style="font-size:0.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">-</div>
                 </div>
-                <div class="res-item">
-                    <div class="res-label">📺 Total Ads</div>
-                    <div id="resAds" class="res-value">0</div>
-                </div>
+
                 <div class="res-item">
                     <div class="res-label">⚡ Power Upgrades</div>
                     <div id="resPupUpgrades" class="res-value">0</div>
@@ -103,10 +99,7 @@
                     <div class="res-label">🔓 Unlocked Slots</div>
                     <div id="resUnlockedSlots" class="res-value">0</div>
                 </div>
-                <div class="res-item">
-                    <div class="res-label">🎯 Avg Missions/Day</div>
-                    <div id="resAvgMissions" class="res-value">0.0</div>
-                </div>
+
             </div>
 
             <div id="charts-area" style="display:none; gap:20px; flex-wrap:wrap; margin-bottom:20px;">
@@ -157,23 +150,6 @@
                             </select>
                         </div>
 
-                        <div style="width:1px; height:35px; background:var(--border); margin:0 5px;"></div>
-
-                        <div class="sim-input-group" style="align-items:center;">
-                            <label style="margin-bottom:2px;">Ads</label>
-                            <label class="switch" style="transform:scale(0.8);"><input type="checkbox"
-                                    id="simDoWE"><span class="slider"></span></label>
-                        </div>
-                        <div class="sim-input-group" style="align-items:center;">
-                            <label style="margin-bottom:2px;">Missions</label>
-                            <label class="switch" style="transform:scale(0.8);"><input type="checkbox"
-                                    id="simDoMissions"><span class="slider"></span></label>
-                        </div>
-                        <div class="sim-input-group" style="align-items:center;">
-                            <label style="margin-bottom:2px;">LdrBrd</label>
-                            <label class="switch" style="transform:scale(0.8);"><input type="checkbox"
-                                    id="simDoLeaderboard"><span class="slider"></span></label>
-                        </div>
 
                     </div>
 
@@ -342,8 +318,7 @@
                             <option value="1">B1</option>
                             <option value="2">B2</option>
                             <option value="3">B3</option>
-                            <option value="4">B4</option>
-                            <option value="5">B5</option>
+
                         </select>
                         <select class="filter-select" id="editorRaritySelect" onchange="renderCharEditor()">
                             <option value="All">All Rarities</option>
@@ -375,8 +350,7 @@
                             <option value="1">B1</option>
                             <option value="2">B2</option>
                             <option value="3">B3</option>
-                            <option value="4">B4</option>
-                            <option value="5">B5</option>
+
                         </select>
                         <select class="filter-select" id="charRaritySelect" onchange="renderCharPower()">
                             <option value="All">All Rarities</option>
@@ -574,27 +548,7 @@
             </div>
         </div>
 
-        <div id="leaderboard" class="content-area">
-            <div class="card">
-                <div class="card-header">🏅 Leaderboard Config<div class="toolbar"></div>
-                </div>
-                <div class="bucket-tabs" id="lbTabs"></div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Reward 1</th>
-                                <th>Amt 1</th>
-                                <th>Reward 2</th>
-                                <th>Amt 2</th>
-                            </tr>
-                        </thead>
-                        <tbody id="lbBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+
         <div id="win-rewards" class="content-area">
             <div class="card">
                 <div class="card-header">🏆 Win Rewards<div class="toolbar"></div>
@@ -706,8 +660,6 @@
                                         <th>Bucket 1</th>
                                         <th>Bucket 2</th>
                                         <th>Bucket 3</th>
-                                        <th>Bucket 4</th>
-                                        <th>Bucket 5</th>
                                     </tr>
                                 </thead>
                                 <tbody id="goldChestBody">
@@ -729,8 +681,6 @@
                                         <th>Bucket 1</th>
                                         <th>Bucket 2</th>
                                         <th>Bucket 3</th>
-                                        <th>Bucket 4</th>
-                                        <th>Bucket 5</th>
                                     </tr>
                                 </thead>
                                 <tbody id="diamondChestBody">
@@ -743,64 +693,7 @@
             </div>
         </div>
 
-        <div id="missions" class="content-area">
-            <div class="card">
-                <div class="card-header">🎯 Daily Missions & Grand Prize<div class="toolbar"></div>
-                </div>
-                <div class="bucket-tabs" id="missionTabs"></div>
 
-                <div style="padding: 15px; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border);">
-                    <div style="font-weight:bold; color:var(--gold); margin-bottom:10px;">🏆 Grand Prize (9/9 Reward)
-                    </div>
-                    <div class="flex-row">
-                        <div class="sim-input-group">
-                            <label>Reward 1</label>
-                            <select class="edit" id="mrType1" style="width:130px"
-                                onchange="updateGrandPrizeUI('r1t', this.value)">
-                                <option value="Rookie Chest">Rookie Chest</option>
-                                <option value="Pro Chest">Pro Chest</option>
-                                <option value="Champion Chest">Champion Chest</option>
-                                <option value="Legendary Chest">Legendary Chest</option>
-                            </select>
-                        </div>
-                        <div class="sim-input-group">
-                            <label>Amount</label>
-                            <input type="number" class="edit" id="mrAmt1" style="width:60px"
-                                onchange="updateGrandPrizeUI('r1a', this.value)">
-                        </div>
-                        <div class="sim-input-group">
-                            <label>Reward 2</label>
-                            <select class="edit" id="mrType2" style="width:130px"
-                                onchange="updateGrandPrizeUI('r2t', this.value)">
-                                <option value="Gold">Gold</option>
-                                <option value="Diamonds">Diamonds</option>
-                            </select>
-                        </div>
-                        <div class="sim-input-group">
-                            <label>Amount</label>
-                            <input type="number" class="edit" id="mrAmt2" style="width:60px"
-                                onchange="updateGrandPrizeUI('r2a', this.value)">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Task</th>
-                                <th>Req</th>
-                                <th>Rew</th>
-                                <th>Amt</th>
-                                <th>XP</th>
-                            </tr>
-                        </thead>
-                        <tbody id="missionBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
 
         <div id="player-profile" class="content-area">
             <div class="card">
