@@ -1148,8 +1148,10 @@ function importFromExcel(event, varOrList) {
 window.renderInventory = function () {
     if (window.lastSimState && window.lastSimState.inventory) {
         if (typeof renderSimInventory === 'function') renderSimInventory(window.lastSimState.inventory);
+    } else if (window.playerInventory) {
+        // Fallback to playerInventory if simulation hasn't run yet
+        if (typeof renderSimInventory === 'function') renderSimInventory(window.playerInventory);
     } else {
-        // Fallback or empty
         console.warn("No simulation state found for inventory.");
     }
 };

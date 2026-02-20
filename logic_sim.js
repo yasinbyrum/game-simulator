@@ -826,7 +826,7 @@ function simulateGame(inputs) {
                 // Format: ✅ Match 1 Won (8-3) +30 Cups
                 // Detail: Used: Rocket Gun & Giant Player | Total Cups: 30 🏆
                 let puStr = (usedList.length > 0) ? `Used: ${usedList.join(' & ')}` : "No PowerUps";
-                addLog("WIN", `Match ${m} Won (${myG}-${oppG})`, `+${cupGain} Cups | ${puStr} | Total: ${state.cups} 🏆 | [DBG: ${oldCups}+${cupGain}=${state.cups}]`);
+                addLog("WIN", `Match ${m} Won (${myG}-${oppG})`, `+${cupGain} Cups | ${puStr} | Total: ${state.cups} 🏆`);
 
                 // CHECK MILESTONES
                 safeCheckMilestones();
@@ -1022,6 +1022,15 @@ window.runSimulation = function () {
 
     // 1. Gather Inputs
     let inputs = getSimulationInputs();
+
+    // Reset some player resources for a clean simulation run
+    window.playerResources.gold = inputs.startCfg.gold;
+    window.playerResources.diamonds = inputs.startCfg.diamonds;
+    window.playerResources.cups = inputs.startCfg.cups || 0;
+    window.playerResources.maxCups = inputs.startCfg.maxCups || 0;
+    window.playerResources.xp = 0;
+    window.playerInventory = {};
+    window.playerPowerUps = {};
 
     // 2. Run Core Simulation
     let finalState = simulateGame(inputs);
