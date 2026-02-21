@@ -865,8 +865,10 @@ function simulateGame(inputs) {
             }
             goals += myG;
             checkMissionsNow(m); // Check missions after each match
-            attemptCharUpgrade(); // Attempt upgrades after match
-            attemptPowerUpUpgrade();
+            if (m % 2 === 0) { // Attempt upgrades every 2 matches
+                attemptCharUpgrade();
+                attemptPowerUpUpgrade();
+            }
         }
 
         // 3. Watch & Earn - Bucket-based (determined at start of day)

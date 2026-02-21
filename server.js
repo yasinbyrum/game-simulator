@@ -1,6 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const { exec } = require('child_process');
 
 const PORT = process.env.PORT || 8080; // Render için PORT env var
 
@@ -13,10 +14,54 @@ const mimeTypes = {
     '.jpg': 'image/jpg'
 };
 
-console.log(`ðŸš€ AKILLI SUNUCU BAÅžLATILDI: http://localhost:${PORT}`);
+console.log(`🚀 AKILLI SUNUCU BAŞLATILDI: http://localhost:${PORT}`);
 
 // --- FILE WRITE QUEUE (prevents race conditions) ---
 const fileQueues = new Map(); // filePath -> Promise chain
+
+// --- AUTO GIT PUSH (debounced to batch rapid saves) ---
+let gitPushTimer = null;
+const GIT_PUSH_DELAY = 5000; // 5 seconds debounce
+let lastPushedVar = '';
+
+function scheduleGitPush(varName) {
+    lastPushedVar = varName;
+    if (gitPushTimer) clearTimeout(gitPushTimer);
+    gitPushTimer = setTimeout(() => {
+        const token = process.env.GITHUB_TOKEN;
+        if (!token) {
+            console.log('[GIT] No GITHUB_TOKEN env var set — skipping auto-push. Changes saved to disk only.');
+            return;
+        }
+
+        const timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        const commitMsg = `Auto-save config: ${lastPushedVar} (${timestamp})`;
+        console.log(`[GIT] Committing and pushing: "${commitMsg}"`);
+
+        // Configure git user + set authenticated remote + commit + push
+        const cmds = [
+            'git config user.email "auto-save@render.com"',
+            'git config user.name "Auto-Save Bot"',
+            `git remote set-url origin https://${token}@github.com/yasinbyrum/game-simulator.git`,
+            'git add -A',
+            `git commit -m "${commitMsg}"`,
+            'git push origin main'
+        ].join(' && ');
+
+        exec(cmds, { cwd: __dirname }, (err, stdout, stderr) => {
+            if (err) {
+                if ((stdout + stderr).includes('nothing to commit')) {
+                    console.log('[GIT] Nothing to commit, working tree clean.');
+                } else {
+                    console.error('[GIT ERROR]', err.message);
+                    if (stderr) console.error('[GIT STDERR]', stderr);
+                }
+                return;
+            }
+            console.log('[GIT] ✅ Push successful!', stdout.trim());
+        });
+    }, GIT_PUSH_DELAY);
+}
 
 function processUpdate(filePath, varName, newData) {
     // Chain this update after any pending updates for the same file
@@ -74,6 +119,7 @@ function processUpdate(filePath, varName, newData) {
             fs.writeFile(filePath, newContent, (writeErr) => {
                 if (writeErr) { reject(writeErr); return; }
                 console.log('[DISK UPDATED] ' + varName);
+                scheduleGitPush(varName);
                 resolve();
             });
         });
