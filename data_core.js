@@ -21,17 +21,7 @@ var simConfig = {
 
 
 
-var loginConfig = {
-  "fixed": [
-    { "day": 1, "type": "Gold", "amt": 100 },
-    { "day": 2, "type": "Card Taiga", "amt": 8 },
-    { "day": 3, "type": "Diamonds", "amt": 10 },
-    { "day": 4, "type": "Card Taiga", "amt": 10 },
-    { "day": 5, "type": "Gold", "amt": 500 },
-    { "day": 6, "type": "Random Power Card", "amt": 5 },
-    { "day": 7, "type": "Pro Chest", "amt": 1 }
-  ]
-};
+// loginConfig moved below (single declaration to fix save persistence)
 
 
 

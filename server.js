@@ -28,11 +28,12 @@ function processUpdate(filePath, varName, newData) {
             const newDataJSON = JSON.stringify(newData, null, 2);
 
             // Find "var varName =" or "let varName ="
-            const patterns = ['var ' + varName + ' =', 'let ' + varName + ' =', 'var ' + varName + '=', 'let ' + varName + '='];
+            const patterns = ['var ' + varName + ' =', 'let ' + varName + ' =', 'var ' + varName + '=', 'let ' + varName + '=', 'window.' + varName + ' =', 'window.' + varName + '='];
             let declStart = -1;
+            let matchedPrefix = 'var ' + varName + ' = '; // default
             for (const pat of patterns) {
                 const idx = fileContent.indexOf(pat);
-                if (idx !== -1) { declStart = idx; break; }
+                if (idx !== -1) { declStart = idx; matchedPrefix = pat.replace(/=$/, '= '); break; }
             }
 
             let newContent;
@@ -66,7 +67,7 @@ function processUpdate(filePath, varName, newData) {
 
                 let before = fileContent.substring(0, declStart);
                 let after = fileContent.substring(i);
-                newContent = before + 'var ' + varName + ' = ' + newDataJSON + ';' + after;
+                newContent = before + matchedPrefix + newDataJSON + ';' + after;
                 console.log(`[UPDATE] ${varName}: found at ${declStart}, ends at ${i}. Replaced.`);
             }
 
