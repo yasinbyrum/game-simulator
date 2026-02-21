@@ -1107,6 +1107,16 @@ function renderSimulationResults(state, inputs) {
     // Show Export JSON Button in header
     let exportBtn = document.getElementById('exportJsonBtn');
     if (exportBtn) exportBtn.style.display = 'inline-block';
+
+    // Sync state to global variables to prevent reset on navigation
+    if (window.playerResources) {
+        window.playerResources.gold = state.gold;
+        window.playerResources.diamonds = state.diamonds;
+        window.playerResources.cups = state.cups;
+        window.playerResources.maxCups = state.maxAchievedCups;
+    }
+    window.playerInventory = state.inventory;
+    window.playerPowerUps = state.powerUps;
 }
 
 // ==========================================
