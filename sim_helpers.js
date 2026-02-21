@@ -192,7 +192,7 @@ function getSimulationInputs() {
 
         // Game Data (Read-only access) - Always use UI start values for fresh simulation
         startCfg: {
-            gold: getUiVal('simStartGold', 450),
+            gold: getUiVal('simStartGold', 500),
             diamonds: getUiVal('simStartGems', 0),
             cups: 0,
             maxCups: 0

@@ -1,0 +1,38 @@
+﻿diff --git a/logic_sim.js b/logic_sim.js
+index 9c0ed2a..ce45068 100644
+--- a/logic_sim.js
++++ b/logic_sim.js
+@@ -76,18 +76,13 @@ function simulateGame(inputs) {
+     if (state.powerUps["Rocket Gun"]) { state.powerUps["Rocket Gun"].unlocked = true; state.powerUps["Rocket Gun"].amount = 3; }
+     if (state.powerUps["Giant Player"]) { state.powerUps["Giant Player"].unlocked = true; state.powerUps["Giant Player"].amount = 3; }
+ 
+-    addLog("TUTORIAL", "Tutorial Reward", "Unlocked: (2Γÿà) Rocket Gun x3, (2Γÿà) Giant Player x3. 2 Slots Unlocked.");
+-
+-    // Tutorial Force Upgrade
+-    if (state.gold >= 300) {
+-        let cost = 300; let oldG = state.gold; state.gold -= cost; state.xp += 20; state.totalUpgrades++;
+-        if (state.powerUps["Rocket Gun"]) state.powerUps["Rocket Gun"].level = 2;
+-        addLog("UPGRADE", "Onboarding First Step", `Rocket Gun Force Upgrade to Lvl 2. Gold: ${oldG}-${cost} = ${state.gold} Gold. XP +20`);
+-    }
+-
+     // INTERNAL HELPERS
+     const getBucket = (c) => { let b = 1; for (let i = 0; i < inputs.cupRoadData.length; i++) { if (c >= inputs.cupRoadData[i].cup && inputs.cupRoadData[i].feat && inputs.cupRoadData[i].feat.includes("Bucket")) { let p = inputs.cupRoadData[i].feat.split(' '); if (p[1]) b = Math.max(b, parseInt(p[1])); } } return b; };
+-    // Use global versions from sim_helpers.js
++
++    const getSafeCharRarity = (charName) => {
++        let ch = inputs.charPool.find(c => c.n === charName);
++        return ch ? ch.r : "Common";
++    };
+ 
+     // AUTO-UNLOCK HELPER: Level 0 ΓåÆ Level 1 when cards >= c[0]
+     // MODIFIED: Returns the unlock log instead of adding it directly, if deferred.
+@@ -105,6 +100,9 @@ function simulateGame(inputs) {
+         }
+     };
+ 
++    addLog("TUTORIAL", "Tutorial Reward", "Scripted Chest Reward");
++    openChest("Scripted Chest", "Tutorial Reward");
++
+     // --- NEW MATCHMAKING HELPERS ---
+     const getOpponent = (currentCups) => {
+         let range = inputs.matchmakingData.find(r => currentCups >= r.min && currentCups <= r.max);

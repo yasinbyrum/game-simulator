@@ -76,14 +76,14 @@ var levelData = [
   {
     "l": 2,
     "req": 20,
-    "r1t": "Scripted Chest",
-    "r1a": 1
+    "r1t": "Gold",
+    "r1a": 100
   },
   {
     "l": 3,
     "req": 50,
     "r1t": "1★ Powerup",
-    "r1a": 1
+    "r1a": 5
   },
   {
     "l": 4,
@@ -95,7 +95,7 @@ var levelData = [
     "l": 5,
     "req": 50,
     "r1t": "Gold",
-    "r1a": 100,
+    "r1a": 200,
     "r2t": "1★ Powerup",
     "r2a": 5,
     "ul": "1★ Powerup Unlock"
@@ -110,28 +110,28 @@ var levelData = [
     "l": 7,
     "req": 120,
     "r1t": "1★ Powerup",
-    "r1a": 3
+    "r1a": 5
   },
   {
     "l": 8,
-    "req": 125,
+    "req": 150,
     "r1t": "Gold",
-    "r1a": 100,
+    "r1a": 300,
     "r2t": "2★ Powerup",
     "r2a": 3,
     "ul": "2★ Powerup Unlock"
   },
   {
     "l": 9,
-    "req": 130,
+    "req": 150,
     "r1t": "Rookie Chest",
     "r1a": 1
   },
   {
     "l": 10,
-    "req": 145,
+    "req": 200,
     "r1t": "Gold",
-    "r1a": 150
+    "r1a": 400
   },
   {
     "l": 11,
@@ -144,9 +144,9 @@ var levelData = [
   },
   {
     "l": 12,
-    "req": 220,
+    "req": 240,
     "r1t": "Gold",
-    "r1a": 200
+    "r1a": 500
   },
   {
     "l": 13,
@@ -158,7 +158,7 @@ var levelData = [
     "l": 14,
     "req": 300,
     "r1t": "1★ Powerup",
-    "r1a": 3,
+    "r1a": 5,
     "r2t": "2★ Powerup",
     "r2a": 3,
     "ul": "2★ Powerup Unlock"
@@ -169,7 +169,7 @@ var levelData = [
     "r1t": "Diamonds",
     "r1a": 10,
     "r2t": "Gold",
-    "r2a": 250
+    "r2a": 300
   },
   {
     "l": 16,
@@ -187,34 +187,34 @@ var levelData = [
     "l": 18,
     "req": 650,
     "r1t": "Gold",
-    "r1a": 300,
+    "r1a": 600,
     "r2t": "1★ Powerup",
     "r2a": 5,
     "ul": "1★ Powerup Unlock"
   },
   {
     "l": 19,
-    "req": 800,
+    "req": 750,
     "r1t": "Pro Chest",
     "r1a": 1
   },
   {
     "l": 20,
-    "req": 1200,
+    "req": 1000,
     "r1t": "Diamonds",
     "r1a": 5
   },
   {
     "l": 21,
-    "req": 1400,
+    "req": 1250,
     "r1t": "Pro Chest",
     "r1a": 1,
     "r2t": "Gold",
-    "r2a": 350
+    "r2a": 500
   },
   {
     "l": 22,
-    "req": 1600,
+    "req": 1500,
     "r1t": "2★ Powerup",
     "r1a": 3,
     "r2t": "2★ Powerup",
@@ -225,21 +225,21 @@ var levelData = [
     "l": 23,
     "req": 2000,
     "r1t": "Gold",
-    "r1a": 350
+    "r1a": 700
   },
   {
     "l": 24,
-    "req": 2300,
+    "req": 2200,
     "r1t": "Diamonds",
-    "r1a": 4,
+    "r1a": 5,
     "r2t": "Gold",
-    "r2a": 400
+    "r2a": 700
   },
   {
     "l": 25,
-    "req": 2700,
+    "req": 2500,
     "r1t": "1★ Powerup",
-    "r1a": 3
+    "r1a": 5
   },
   {
     "l": 26,
@@ -252,21 +252,21 @@ var levelData = [
   },
   {
     "l": 27,
-    "req": 4000,
+    "req": 3500,
     "r1t": "2★ Powerup",
     "r1a": 3,
     "r2t": "Gold",
-    "r2a": 450
+    "r2a": 900
   },
   {
     "l": 28,
-    "req": 4600,
+    "req": 4100,
     "r1t": "1★ Powerup",
-    "r1a": 3
+    "r1a": 5
   },
   {
     "l": 29,
-    "req": 5400,
+    "req": 5000,
     "r1t": "Diamonds",
     "r1a": 5
   },
@@ -274,9 +274,9 @@ var levelData = [
     "l": 30,
     "req": 6000,
     "r1t": "1★ Powerup",
-    "r1a": 3,
+    "r1a": 5,
     "r2t": "Gold",
-    "r2a": 500
+    "r2a": 1100
   },
   {
     "l": 31,
@@ -297,44 +297,44 @@ var levelData = [
     "l": 33,
     "req": 9000,
     "r1t": "1★ Powerup",
-    "r1a": 3,
+    "r1a": 5,
     "r2t": "Gold",
-    "r2a": 550
+    "r2a": 1300
   },
   {
     "l": 34,
-    "req": 11000,
+    "req": 10000,
     "r1t": "Diamonds",
     "r1a": 6
   },
   {
     "l": 35,
-    "req": 12500,
+    "req": 11000,
     "r1t": "1★ Powerup",
-    "r1a": 3,
+    "r1a": 5,
     "r2t": "3★ Powerup",
-    "r2a": 2,
+    "r2a": 3,
     "ul": "3★ Powerup Unlock"
   },
   {
     "l": 36,
-    "req": 12500,
+    "req": 12000,
     "r1t": "Pro Chest",
     "r1a": 1,
     "r2t": "Gold",
-    "r2a": 600
+    "r2a": 1500
   },
   {
     "l": 37,
-    "req": 12500,
+    "req": 13000,
     "r1t": "Gold",
-    "r1a": 600
+    "r1a": 1100
   },
   {
     "l": 38,
-    "req": 12500,
+    "req": 14000,
     "r1t": "1★ Powerup",
-    "r1a": 3
+    "r1a": 5
   },
   {
     "l": 39,
@@ -342,12 +342,12 @@ var levelData = [
     "r1t": "Diamonds",
     "r1a": 10,
     "r2t": "Gold",
-    "r2a": 650
+    "r2a": 1300
   },
   {
     "l": 40,
-    "req": 18000,
-    "r1t": "1★ Powerup",
+    "req": 17000,
+    "r1t": "3★ Powerup",
     "r1a": 3,
     "r2t": "1★ Powerup",
     "r2a": 5,
@@ -355,22 +355,22 @@ var levelData = [
   },
   {
     "l": 41,
-    "req": 22000,
+    "req": 19000,
     "r1t": "Champion Chest",
     "r1a": 1
   },
   {
     "l": 42,
-    "req": 25000,
+    "req": 20000,
     "r1t": "2★ Powerup",
-    "r1a": 2,
+    "r1a": 3,
     "r2t": "Gold",
-    "r2a": 700
+    "r2a": 1500
   },
   {
     "l": 43,
-    "req": 25000,
-    "r1t": "1★ Powerup",
+    "req": 22500,
+    "r1t": "3★ Powerup",
     "r1a": 3
   },
   {
@@ -384,43 +384,43 @@ var levelData = [
   },
   {
     "l": 45,
-    "req": 25000,
+    "req": 26000,
     "r1t": "Gold",
-    "r1a": 700
+    "r1a": 1300
   },
   {
     "l": 46,
-    "req": 25000,
+    "req": 26000,
     "r1t": "Champion Chest",
     "r1a": 1
   },
   {
     "l": 47,
-    "req": 25000,
+    "req": 27000,
     "r1t": "2★ Powerup",
     "r1a": 3
   },
   {
     "l": 48,
-    "req": 25000,
+    "req": 28000,
     "r1t": "1★ Powerup",
-    "r1a": 3,
+    "r1a": 5,
     "r2t": "Gold",
-    "r2a": 800
+    "r2a": 1700
   },
   {
     "l": 49,
-    "req": 25000,
+    "req": 29000,
     "r1t": "Diamonds",
     "r1a": 15,
     "r2t": "3★ Powerup",
-    "r2a": 2,
+    "r2a": 3,
     "ul": "3★ Powerup Unlock"
   },
   {
     "l": 50,
-    "req": 25000,
-    "r1t": "2★ Powerup",
+    "req": 30000,
+    "r1t": "3★ Powerup",
     "r1a": 3
   }
 ];
@@ -437,7 +437,7 @@ var cupRoadData = [
   {
     "cup": 50,
     "r1": "Gold",
-    "a1": 100
+    "a1": 200
   },
   {
     "cup": 100,
@@ -452,7 +452,7 @@ var cupRoadData = [
   {
     "cup": 200,
     "r1": "Gold",
-    "a1": 150
+    "a1": 300
   },
   {
     "cup": 250,
@@ -474,7 +474,7 @@ var cupRoadData = [
   {
     "cup": 400,
     "r1": "Gold",
-    "a1": 200
+    "a1": 400
   },
   {
     "cup": 450,
@@ -487,72 +487,55 @@ var cupRoadData = [
     "a1": 20
   },
   {
-    "cup": 550,
+    "cup": 560,
     "r1": "Gold",
-    "a1": 200
+    "a1": 500
   },
   {
-    "cup": 600,
+    "cup": 620,
     "r1": "Arena 3 Unlock",
     "a1": "-",
-    "feat": "",
     "r2": "Gold",
-    "a2": 200,
+    "a2": 300,
     "arena": "Arena 3"
   },
   {
-    "cup": 650,
+    "cup": 680,
     "r1": "Diamonds",
     "a1": 5
   },
   {
-    "cup": 700,
+    "cup": 740,
     "r1": "Rookie Card",
     "a1": 120
   },
   {
-    "cup": 750,
+    "cup": 800,
     "r1": "Gold",
-    "a1": 250
+    "a1": 600
   },
   {
-    "cup": 800,
+    "cup": 870,
     "r1": "Rookie Chest",
     "a1": 1
   },
   {
-    "cup": 850,
+    "cup": 940,
     "r1": "Pro Card",
     "a1": 20
   },
   {
-    "cup": 900,
+    "cup": 1010,
     "r1": "Gold",
-    "a1": 300
+    "a1": 700
   },
   {
-    "cup": 950,
-    "r1": "Rookie Chest",
-    "a1": 1
-  },
-  {
-    "cup": 1000,
+    "cup": 1080,
     "r1": "Arena 4 Unlock",
     "a1": "-",
-    "feat": "",
     "r2": "Gold",
-    "a2": 300,
+    "a2": 500,
     "arena": "Arena 4"
-  },
-  {
-    "cup": 1050,
-    "r1": "Rookie Card",
-    "a1": 140
-  },
-  {
-    "cup": 1100,
-    "r1": "Gold",
-    "a1": 350
   },
   {
     "cup": 1150,
@@ -560,778 +543,314 @@ var cupRoadData = [
     "a1": 1
   },
   {
-    "cup": 1200,
+    "cup": 1230,
+    "r1": "Rookie Card",
+    "a1": 140
+  },
+  {
+    "cup": 1310,
+    "r1": "Gold",
+    "a1": 800
+  },
+  {
+    "cup": 1390,
+    "r1": "Rookie Chest",
+    "a1": 1
+  },
+  {
+    "cup": 1470,
     "r1": "Rookie Card",
     "a1": 80
   },
   {
-    "cup": 1250,
-    "r1": "Gold",
-    "a1": 400
-  },
-  {
-    "cup": 1300,
+    "cup": 1550,
     "r1": "Arena 5 Unlock",
     "a1": "-",
-    "feat": "",
     "r2": "Gold",
-    "a2": 400,
+    "a2": 700,
     "arena": "Arena 5"
   },
   {
-    "cup": 1350,
+    "cup": 1640,
+    "r1": "Gold",
+    "a1": 900
+  },
+  {
+    "cup": 1730,
     "r1": "Diamonds",
     "a1": 5
   },
   {
-    "cup": 1450,
+    "cup": 1820,
     "r1": "Pro Card",
     "a1": 30
   },
   {
-    "cup": 1500,
+    "cup": 1910,
     "r1": "Gold",
-    "a1": 450
+    "a1": 1000
   },
   {
-    "cup": 1550,
+    "cup": 2000,
     "r1": "Rookie Chest",
     "a1": 1
   },
   {
-    "cup": 1600,
+    "cup": 2100,
     "r1": "Arena 6 Unlock",
     "a1": "-",
     "r2": "Gold",
-    "a2": 500,
+    "a2": 900,
     "arena": "Arena 6"
   },
   {
-    "cup": 1650,
+    "cup": 2200,
     "r1": "Gold",
-    "a1": 500
+    "a1": 1100
   },
   {
-    "cup": 1700,
+    "cup": 2300,
     "r1": "Pro Chest",
     "a1": 1
   },
   {
-    "cup": 1750,
+    "cup": 2400,
     "r1": "Pro Card",
     "a1": 30
   },
   {
-    "cup": 1800,
+    "cup": 2500,
     "r1": "Gold",
-    "a1": 550
+    "a1": 1200
   },
   {
-    "cup": 1900,
+    "cup": 2610,
     "r1": "Rookie Chest",
     "a1": 1
   },
   {
-    "cup": 1950,
-    "r1": "Rookie Card",
-    "a1": 160
-  },
-  {
-    "cup": 2000,
+    "cup": 2720,
     "r1": "Arena 7 Unlock",
     "a1": "-",
     "feat": "Bucket 3",
     "arena": "Arena 7"
   },
   {
-    "cup": 2050,
+    "cup": 2830,
+    "r1": "Rookie Card",
+    "a1": 160
+  },
+  {
+    "cup": 2940,
     "r1": "Pro Chest",
     "a1": 1
   },
   {
-    "cup": 2100,
+    "cup": 3050,
     "r1": "Diamonds",
     "a1": 10
   },
   {
-    "cup": 2150,
+    "cup": 3170,
     "r1": "Rookie Card",
     "a1": 180
   },
   {
-    "cup": 2200,
+    "cup": 3290,
     "r1": "Gold",
-    "a1": 650
+    "a1": 1300
   },
   {
-    "cup": 2250,
-    "r1": "Rookie Chest",
-    "a1": 1
-  },
-  {
-    "cup": 2300,
+    "cup": 3410,
     "r1": "Arena 8 Unlock",
     "a1": "-",
     "r2": "Gold",
-    "a2": 600,
+    "a2": 1100,
     "arena": "Arena 8"
   },
   {
-    "cup": 2350,
-    "r1": "Gold",
-    "a1": 700
-  },
-  {
-    "cup": 2450,
-    "r1": "Pro Chest",
-    "a1": 1
-  },
-  {
-    "cup": 2500,
-    "r1": "Champion Card",
-    "a1": 12
-  },
-  {
-    "cup": 2550,
-    "r1": "Gold",
-    "a1": 750
-  },
-  {
-    "cup": 2600,
-    "r1": "Arena 9 Unlock",
-    "a1": "-",
-    "r2": "Gold",
-    "a2": 700,
-    "arena": "Arena 9"
-  },
-  {
-    "cup": 2650,
-    "r1": "Diamonds",
-    "a1": 10
-  },
-  {
-    "cup": 2700,
-    "r1": "Pro Card",
-    "a1": 40
-  },
-  {
-    "cup": 2750,
-    "r1": "Gold",
-    "a1": 800
-  },
-  {
-    "cup": 2800,
+    "cup": 3530,
     "r1": "Rookie Chest",
     "a1": 1
-  },
-  {
-    "cup": 2850,
-    "r1": "Champion Card",
-    "a1": 12
-  },
-  {
-    "cup": 2900,
-    "r1": "Gold",
-    "a1": 850
-  },
-  {
-    "cup": 2950,
-    "r1": "Pro Chest",
-    "a1": 1
-  },
-  {
-    "cup": 3000,
-    "r1": "Arena 10 Unlock",
-    "a1": "-",
-    "r2": "Gold",
-    "a2": 800,
-    "arena": "Arena 10"
-  },
-  {
-    "cup": 3050,
-    "r1": "Gold",
-    "a1": 900
-  },
-  {
-    "cup": 3150,
-    "r1": "Pro Chest",
-    "a1": 1
-  },
-  {
-    "cup": 3200,
-    "r1": "Pro Card",
-    "a1": 40
-  },
-  {
-    "cup": 3250,
-    "r1": "Gold",
-    "a1": 950
-  },
-  {
-    "cup": 3300,
-    "r1": "Pro Chest",
-    "a1": 1
-  },
-  {
-    "cup": 3350,
-    "r1": "Champion Card",
-    "a1": 16
-  },
-  {
-    "cup": 3400,
-    "r1": "Arena 11 Unlock",
-    "a1": "-",
-    "r2": "Gold",
-    "a2": 900,
-    "arena": "Arena 11"
-  },
-  {
-    "cup": 3450,
-    "r1": "Pro Chest",
-    "a1": 1
-  },
-  {
-    "cup": 3500,
-    "r1": "Diamonds",
-    "a1": 10
-  },
-  {
-    "cup": 3550,
-    "r1": "Pro Card",
-    "a1": 40
-  },
-  {
-    "cup": 3600,
-    "r1": "Gold",
-    "a1": 900
   },
   {
     "cup": 3650,
-    "r1": "Rookie Chest",
-    "a1": 1
-  },
-  {
-    "cup": 3800,
-    "r1": "Arena 12 Unlock",
-    "a1": "-",
-    "r2": "Gold",
-    "a2": 1000,
-    "arena": "Arena 12"
-  },
-  {
-    "cup": 3850,
     "r1": "Gold",
-    "a1": 1200
+    "a1": 1400
   },
   {
-    "cup": 3900,
+    "cup": 3780,
     "r1": "Pro Chest",
     "a1": 1
   },
   {
-    "cup": 3950,
+    "cup": 3910,
     "r1": "Champion Card",
-    "a1": 16
+    "a1": 12
   },
   {
-    "cup": 4050,
+    "cup": 4040,
     "r1": "Gold",
-    "a1": 1600
+    "a1": 1500
   },
   {
-    "cup": 4100,
-    "r1": "Rookie Chest",
-    "a1": 1
-  },
-  {
-    "cup": 4150,
-    "r1": "Legendary Card",
-    "a1": 1
-  },
-  {
-    "cup": 4200,
-    "r1": "Arena 13 Unlock",
+    "cup": 4170,
+    "r1": "Arena 9 Unlock",
     "a1": "-",
-    "feat": "Bucket 4",
-    "arena": "Arena 13"
+    "r2": "Gold",
+    "a2": 1300,
+    "arena": "Arena 9"
   },
   {
-    "cup": 4250,
+    "cup": 4300,
     "r1": "Diamonds",
     "a1": 10
   },
   {
-    "cup": 4300,
-    "r1": "Champion Card",
-    "a1": 16
+    "cup": 4450,
+    "r1": "Pro Card",
+    "a1": 40,
+    "r2": "Champion Chest",
+    "a2": 1
   },
   {
-    "cup": 4350,
+    "cup": 4600,
     "r1": "Gold",
     "a1": 1600
   },
   {
-    "cup": 4450,
+    "cup": 4750,
     "r1": "Rookie Chest",
     "a1": 1
   },
   {
-    "cup": 4500,
-    "r1": "Pro Card",
-    "a1": 60
-  },
-  {
-    "cup": 4550,
-    "r1": "Gold",
-    "a1": 2000
-  },
-  {
-    "cup": 4600,
-    "r1": "Arena 14 Unlock",
-    "a1": "-",
-    "r2": "Gold",
-    "a2": 600,
-    "arena": "Arena 14"
-  },
-  {
-    "cup": 4650,
-    "r1": "Diamonds",
-    "a1": 20
-  },
-  {
-    "cup": 4750,
+    "cup": 4900,
     "r1": "Champion Card",
-    "a1": 20
-  },
-  {
-    "cup": 4850,
-    "r1": "Gold",
-    "a1": 2100
-  },
-  {
-    "cup": 4950,
-    "r1": "Champion Card",
-    "a1": 20
-  },
-  {
-    "cup": 5000,
-    "r1": "Arena 15 Unlock",
-    "a1": "-",
-    "r2": "Gold",
-    "a2": 700,
-    "arena": "Arena 15"
+    "a1": 12
   },
   {
     "cup": 5050,
     "r1": "Gold",
-    "a1": 2200
+    "a1": 1700
   },
   {
-    "cup": 5100,
+    "cup": 5220,
     "r1": "Pro Chest",
     "a1": 1
   },
   {
-    "cup": 5150,
-    "r1": "Pro Card",
-    "a1": 60
-  },
-  {
-    "cup": 5200,
-    "r1": "Gold",
-    "a1": 2300
-  },
-  {
-    "cup": 5250,
-    "r1": "Rookie Chest",
-    "a1": 1
-  },
-  {
-    "cup": 5300,
-    "r1": "Legendary Card",
-    "a1": 2
-  },
-  {
-    "cup": 5350,
-    "r1": "Gold",
-    "a1": 2400
-  },
-  {
-    "cup": 5400,
-    "r1": "Rookie Chest",
-    "a1": 1,
-    "r2": "Gold",
-    "a2": 800,
-    "arena": "Arena 16"
-  },
-  {
-    "cup": 5450,
-    "r1": "Legendary Card",
-    "a1": 2
-  },
-  {
-    "cup": 5500,
-    "r1": "Gold",
-    "a1": 2500
-  },
-  {
-    "cup": 5550,
-    "r1": "Diamonds",
-    "a1": 10
-  },
-  {
-    "cup": 5600,
-    "r1": "Legendary Card",
-    "a1": 2
-  },
-  {
-    "cup": 5650,
-    "r1": "Gold",
-    "a1": 2600
-  },
-  {
-    "cup": 5700,
-    "r1": "Pro Chest",
-    "a1": 1
-  },
-  {
-    "cup": 5750,
-    "r1": "Champion Card",
-    "a1": 20
-  },
-  {
-    "cup": 5800,
-    "r1": "Arena 17 Unlock",
+    "cup": 5390,
+    "r1": "Arena 10 Unlock",
     "a1": "-",
-    "feat": "Bucket 5",
-    "arena": "Arena 17"
+    "r2": "Gold",
+    "a2": 1500,
+    "arena": "Arena 10"
   },
   {
-    "cup": 5850,
+    "cup": 5560,
+    "r1": "Gold",
+    "a1": 1800,
+    "r2": "Champion Chest",
+    "a2": 1
+  },
+  {
+    "cup": 5730,
     "r1": "Pro Chest",
     "a1": 1
   },
   {
     "cup": 5900,
-    "r1": "Legendary Card",
-    "a1": 2
-  },
-  {
-    "cup": 5950,
-    "r1": "Gold",
-    "a1": 3000
-  },
-  {
-    "cup": 6050,
-    "r1": "Diamonds",
-    "a1": 20
-  },
-  {
-    "cup": 6100,
     "r1": "Pro Card",
-    "a1": 50
+    "a1": 40
   },
   {
-    "cup": 6150,
+    "cup": 6090,
     "r1": "Gold",
-    "a1": 3100
+    "a1": 1900
   },
   {
-    "cup": 6200,
+    "cup": 6280,
     "r1": "Pro Chest",
     "a1": 1
   },
   {
-    "cup": 6250,
-    "r1": "Arena 18 Unlock",
-    "a1": "-",
-    "r2": "Gold",
-    "a2": 900,
-    "arena": "Arena 18"
-  },
-  {
-    "cup": 6300,
-    "r1": "Gold",
-    "a1": 3200
-  },
-  {
-    "cup": 6350,
-    "r1": "Pro Chest",
-    "a1": 1
-  },
-  {
-    "cup": 6400,
-    "r1": "Legendary Card",
-    "a1": 2
-  },
-  {
-    "cup": 6450,
-    "r1": "Gold",
-    "a1": 3500
-  },
-  {
-    "cup": 6500,
-    "r1": "Pro Chest",
-    "a1": 1
-  },
-  {
-    "cup": 6550,
+    "cup": 6470,
     "r1": "Champion Card",
-    "a1": 20
+    "a1": 16
   },
   {
-    "cup": 6700,
-    "r1": "Gold",
-    "a1": 3600
-  },
-  {
-    "cup": 6750,
-    "r1": "Arena 19 Unlock",
+    "cup": 6660,
+    "r1": "Arena 11 Unlock",
     "a1": "-",
     "r2": "Gold",
-    "a2": 1000,
-    "arena": "Arena 19"
-  },
-  {
-    "cup": 6800,
-    "r1": "Champion Chest",
-    "a1": 1
+    "a2": 1700,
+    "arena": "Arena 11"
   },
   {
     "cup": 6850,
-    "r1": "Legendary Card",
-    "a1": 2
-  },
-  {
-    "cup": 6950,
-    "r1": "Gold",
-    "a1": 3700
-  },
-  {
-    "cup": 7000,
-    "r1": "Champion Chest",
+    "r1": "Pro Chest",
     "a1": 1
   },
   {
-    "cup": 7050,
-    "r1": "Legendary Card",
-    "a1": 2
-  },
-  {
-    "cup": 7100,
-    "r1": "Gold",
-    "a1": 3800
-  },
-  {
-    "cup": 7150,
+    "cup": 7060,
     "r1": "Diamonds",
-    "a1": 20
+    "a1": 10,
+    "r2": "Champion Chest",
+    "a2": 1
   },
   {
-    "cup": 7200,
-    "r1": "Champion Card",
-    "a1": 20,
-    "r2": "Gold",
-    "a2": 600,
-    "arena": "Arena 20"
+    "cup": 7270,
+    "r1": "Pro Card",
+    "a1": 40
   },
   {
-    "cup": 7250,
+    "cup": 7480,
     "r1": "Gold",
-    "a1": 2400
+    "a1": 2000
   },
   {
-    "cup": 7350,
-    "r1": "Champion Chest",
+    "cup": 7690,
+    "r1": "Rookie Chest",
     "a1": 1
-  },
-  {
-    "cup": 7400,
-    "r1": "Legendary Card",
-    "a1": 2
-  },
-  {
-    "cup": 7450,
-    "r1": "Gold",
-    "a1": 2500
-  },
-  {
-    "cup": 7500,
-    "r1": "Diamonds",
-    "a1": 10
-  },
-  {
-    "cup": 7550,
-    "r1": "Legendary Card",
-    "a1": 4
-  },
-  {
-    "cup": 7650,
-    "r1": "Gold",
-    "a1": 2600
-  },
-  {
-    "cup": 7750,
-    "r1": "Arena 21 Unlock",
-    "a1": "-",
-    "r2": "Gold",
-    "a2": 700,
-    "arena": "Arena 21"
-  },
-  {
-    "cup": 7850,
-    "r1": "Legendary Card",
-    "a1": 4
   },
   {
     "cup": 7900,
     "r1": "Gold",
-    "a1": 2700
+    "a1": 2200
   },
   {
-    "cup": 7950,
-    "r1": "Champion Chest",
-    "a1": 1
-  },
-  {
-    "cup": 8000,
-    "r1": "Legendary Card",
-    "a1": 4
-  },
-  {
-    "cup": 8050,
-    "r1": "Gold",
-    "a1": 3200
-  },
-  {
-    "cup": 8100,
-    "r1": "Champion Chest",
-    "a1": 1
-  },
-  {
-    "cup": 8150,
-    "r1": "Diamonds",
-    "a1": 10
-  },
-  {
-    "cup": 8200,
-    "r1": "Arena 22 Unlock",
+    "cup": 8130,
+    "r1": "Arena 12 Unlock",
     "a1": "-",
     "r2": "Gold",
-    "a2": 800,
-    "arena": "Arena 22"
+    "a2": 1900,
+    "arena": "Arena 12"
   },
   {
-    "cup": 8250,
-    "r1": "Gold",
-    "a1": 4200
-  },
-  {
-    "cup": 8300,
-    "r1": "Diamonds",
-    "a1": 20
-  },
-  {
-    "cup": 8350,
-    "r1": "Legendary Card",
-    "a1": 4
-  },
-  {
-    "cup": 8400,
-    "r1": "Gold",
-    "a1": 4200
-  },
-  {
-    "cup": 8450,
-    "r1": "Champion Chest",
+    "cup": 8360,
+    "r1": "Pro Chest",
     "a1": 1
   },
   {
-    "cup": 8500,
-    "r1": "Legendary Card",
-    "a1": 4
+    "cup": 8590,
+    "r1": "Pro Card",
+    "a1": 40
   },
   {
-    "cup": 8550,
+    "cup": 8820,
     "r1": "Gold",
-    "a1": 4200
+    "a1": 2400,
+    "r2": "Champion Chest",
+    "a2": 1
   },
   {
-    "cup": 8600,
-    "r1": "Arena 23 Unlock",
-    "a1": "-",
-    "r2": "Gold",
-    "a2": 900,
-    "arena": "Arena 23"
-  },
-  {
-    "cup": 8650,
-    "r1": "Legendary Card",
-    "a1": 6
-  },
-  {
-    "cup": 8700,
-    "r1": "Gold",
-    "a1": 4200
-  },
-  {
-    "cup": 8850,
-    "r1": "Legendary Chest",
+    "cup": 9050,
+    "r1": "Rookie Chest",
     "a1": 1
-  },
-  {
-    "cup": 8900,
-    "r1": "Legendary Card",
-    "a1": 6
-  },
-  {
-    "cup": 8950,
-    "r1": "Gold",
-    "a1": 4800
-  },
-  {
-    "cup": 9000,
-    "r1": "Legendary Card",
-    "a1": 6
-  },
-  {
-    "cup": 9100,
-    "r1": "Gold",
-    "a1": 5400
-  },
-  {
-    "cup": 9150,
-    "r1": "Legendary Chest",
-    "a1": 1
-  },
-  {
-    "cup": 9200,
-    "r1": "Champion Chest",
-    "a1": 1
-  },
-  {
-    "cup": 9250,
-    "r1": "Diamonds",
-    "a1": 20
   },
   {
     "cup": 9300,
-    "r1": "Gold",
-    "a1": 6000
-  },
-  {
-    "cup": 9400,
-    "r1": "Legendary Chest",
-    "a1": 1
-  },
-  {
-    "cup": 9450,
-    "r1": "Legendary Card",
-    "a1": 6
-  },
-  {
-    "cup": 9500,
-    "r1": "Gold",
-    "a1": 6600
+    "r1": "Champion Card",
+    "a1": 16
   }
 ];

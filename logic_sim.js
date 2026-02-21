@@ -76,18 +76,13 @@ function simulateGame(inputs) {
     if (state.powerUps["Rocket Gun"]) { state.powerUps["Rocket Gun"].unlocked = true; state.powerUps["Rocket Gun"].amount = 3; }
     if (state.powerUps["Giant Player"]) { state.powerUps["Giant Player"].unlocked = true; state.powerUps["Giant Player"].amount = 3; }
 
-    addLog("TUTORIAL", "Tutorial Reward", "Unlocked: (2★) Rocket Gun x3, (2★) Giant Player x3. 2 Slots Unlocked.");
-
-    // Tutorial Force Upgrade
-    if (state.gold >= 300) {
-        let cost = 300; let oldG = state.gold; state.gold -= cost; state.xp += 20; state.totalUpgrades++;
-        if (state.powerUps["Rocket Gun"]) state.powerUps["Rocket Gun"].level = 2;
-        addLog("UPGRADE", "Onboarding First Step", `Rocket Gun Force Upgrade to Lvl 2. Gold: ${oldG}-${cost} = ${state.gold} Gold. XP +20`);
-    }
-
     // INTERNAL HELPERS
     const getBucket = (c) => { let b = 1; for (let i = 0; i < inputs.cupRoadData.length; i++) { if (c >= inputs.cupRoadData[i].cup && inputs.cupRoadData[i].feat && inputs.cupRoadData[i].feat.includes("Bucket")) { let p = inputs.cupRoadData[i].feat.split(' '); if (p[1]) b = Math.max(b, parseInt(p[1])); } } return b; };
-    // Use global versions from sim_helpers.js
+
+    const getSafeCharRarity = (charName) => {
+        let ch = inputs.charPool.find(c => c.n === charName);
+        return ch ? ch.r : "Common";
+    };
 
     // AUTO-UNLOCK HELPER: Level 0 → Level 1 when cards >= c[0]
     // MODIFIED: Returns the unlock log instead of adding it directly, if deferred.
@@ -105,135 +100,6 @@ function simulateGame(inputs) {
         }
     };
 
-    // --- NEW MATCHMAKING HELPERS ---
-    const getOpponent = (currentCups) => {
-        let range = inputs.matchmakingData.find(r => currentCups >= r.min && currentCups <= r.max);
-        if (!range) range = inputs.matchmakingData[inputs.matchmakingData.length - 1]; // Fallback to last
-        if (!range || !range.dist) return { name: "Unknown Bot", difficulty: 0 };
-
-        let rand = Math.random() * 100;
-        let sum = 0;
-        let selectedId = "training_dummy"; // Default
-        for (let botId in range.dist) {
-            sum += range.dist[botId];
-            if (rand <= sum) { selectedId = botId; break; }
-        }
-
-        // Find Bot Data
-        let bot = inputs.botData.find(b => b.id === selectedId);
-        return bot || { name: "Generic Bot", difficulty: 0 };
-    };
-
-    const calculateWinChance = (playerSkill, botDifficulty) => {
-        // Find Best Char Power: (Size+Spd+Jmp+Sht)/4
-        let bestPower = 0;
-
-        // Find highest level char in inventory
-        let bestChar = null;
-        let maxLvl = 0;
-        Object.keys(state.inventory).forEach(k => {
-            if (state.inventory[k].level > maxLvl) { maxLvl = state.inventory[k].level; bestChar = k; }
-        });
-
-        if (bestChar && inputs.charStatsData[bestChar]) {
-            let s = inputs.charStatsData[bestChar];
-            let avgBase = (s.size + s.speed + s.jump + s.shoot) / 4;
-            // Assume 10% stats increase per level
-            bestPower = avgBase * (1 + (maxLvl - 1) * 0.1);
-        } else {
-            bestPower = 50; // Base weak power
-        }
-
-        // Formula: (Skill + (Power/3)) - BotDiff
-        let powerFactor = bestPower / 3;
-        let chance = (playerSkill + powerFactor) - botDifficulty;
-
-        // Cap
-        return Math.max(5, Math.min(98, chance));
-    };
-
-
-
-
-
-    // --- DAILY SHOP HELPERS ---
-    const generateDailyShop = (currentBucket) => {
-        let shop = { items: [] };
-        let cfg = inputs.shopConfig;
-        if (!cfg || !cfg.slots) return shop;
-
-        let mult = cfg.priceMultipliers['b' + currentBucket] || 1;
-
-        cfg.slots.forEach(slot => {
-            let item = { id: slot.id, type: slot.type, currency: slot.currency, name: "Unknown", amt: 1, cost: Math.floor(slot.baseCost * mult) };
-
-            if (slot.type === "Free") {
-                item.name = "Free Gift"; item.amt = 1; item.cost = 0; item.currency = "Gold"; item.resType = "Gold"; item.resAmt = 50;
-            } else if (slot.type === "Card") {
-                // Pick Random Char based on bucket
-                let pool = inputs.charPool.filter(c => {
-                    if (c.b > currentBucket) return false;
-                    // SPECIAL LOCK: Taiga (Day 2/4 Login)
-                    // Ensure state is accessible or pass it. 
-                    // Assuming state is in scope (inside runSimulation)
-                    if (c.n === "Taiga" && (!state.inventory[c.n] || state.inventory[c.n].level === 0)) return false;
-                    return true;
-                });
-                if (pool.length > 0) {
-                    let c = pool[Math.floor(Math.random() * pool.length)];
-                    item.name = c.n; item.cost = Math.floor(slot.baseCost * mult);
-                    item.amt = (c.r === "Legendary" ? 1 : c.r === "Champion" ? 2 : c.r === "Pro" ? 5 : 20);
-                }
-            } else if (slot.type === "PowerUp") {
-                let pu = inputs.powerUpData[Math.floor(Math.random() * inputs.powerUpData.length)];
-                if (pu) { item.name = pu.n; item.amt = 5; }
-            } else if (slot.type === "Chest") {
-                item.name = "Shop Chest";
-            }
-            shop.items.push(item);
-        });
-        return shop;
-    };
-
-    const buyShopItem = (item) => {
-        let bought = false;
-        // Purchase Logic
-        if (item.currency === "Gold" && state.gold >= item.cost) {
-            state.gold -= item.cost;
-            track('goldSinks', 'Shop Spend', item.cost);
-            bought = true;
-        } else if (item.currency === "Diamonds" && state.diamonds >= item.cost) {
-            state.diamonds -= item.cost;
-            track('gemSources', 'Shop Spend', -item.cost); // Negative source? Or track sink? Using gemSources for now.
-            bought = true;
-        } else if (item.cost === 0) {
-            bought = true;
-        }
-
-        if (bought) {
-            addLog("SHOP", `Bought ${item.name}`, `Cost: ${item.cost} ${item.currency}`);
-            if (item.type === "Free") { addRes(item.resType, item.resAmt, "Shop Free"); }
-            else if (item.type === "Card") {
-                let deferredUnlocks = [];
-                if (state.inventory[item.name]) {
-                    state.inventory[item.name].cards += item.amt;
-                } else {
-                    let meta = inputs.charPool.find(c => c.n === item.name);
-                    state.inventory[item.name] = { rarity: meta ? meta.r : "Rookie", level: 0, cards: item.amt, bucket: meta ? meta.b : 1 };
-                }
-                tryAutoUnlock(item.name, deferredUnlocks);
-            } else if (item.type === "PowerUp") {
-                if (state.powerUps[item.name]) state.powerUps[item.name].amount += item.amt;
-            } else if (item.type === "Chest") {
-                openChest("Pro Chest", "Shop Purchase");
-            }
-        }
-
-        // Process deferred unlocks for Shop
-        deferredUnlocks.forEach(l => addLog(l.type, l.msg, l.det));
-    };
-
-    // ACTIONS
     const openChest = (type, source) => {
         let conf = inputs.chestConfigs;
         let rewardConf = inputs.rewardChestConfig; // Gold & Diamond Chests
@@ -484,6 +350,138 @@ function simulateGame(inputs) {
         });
     };
 
+    addLog("TUTORIAL", "Tutorial Reward", "Scripted Chest Reward");
+    openChest("Scripted Chest", "Tutorial Reward");
+
+    // --- NEW MATCHMAKING HELPERS ---
+    const getOpponent = (currentCups) => {
+        let range = inputs.matchmakingData.find(r => currentCups >= r.min && currentCups <= r.max);
+        if (!range) range = inputs.matchmakingData[inputs.matchmakingData.length - 1]; // Fallback to last
+        if (!range || !range.dist) return { name: "Unknown Bot", difficulty: 0 };
+
+        let rand = Math.random() * 100;
+        let sum = 0;
+        let selectedId = "training_dummy"; // Default
+        for (let botId in range.dist) {
+            sum += range.dist[botId];
+            if (rand <= sum) { selectedId = botId; break; }
+        }
+
+        // Find Bot Data
+        let bot = inputs.botData.find(b => b.id === selectedId);
+        return bot || { name: "Generic Bot", difficulty: 0 };
+    };
+
+    const calculateWinChance = (playerSkill, botDifficulty) => {
+        // Find Best Char Power: (Size+Spd+Jmp+Sht)/4
+        let bestPower = 0;
+
+        // Find highest level char in inventory
+        let bestChar = null;
+        let maxLvl = 0;
+        Object.keys(state.inventory).forEach(k => {
+            if (state.inventory[k].level > maxLvl) { maxLvl = state.inventory[k].level; bestChar = k; }
+        });
+
+        if (bestChar && inputs.charStatsData[bestChar]) {
+            let s = inputs.charStatsData[bestChar];
+            let avgBase = (s.size + s.speed + s.jump + s.shoot) / 4;
+            // Assume 10% stats increase per level
+            bestPower = avgBase * (1 + (maxLvl - 1) * 0.1);
+        } else {
+            bestPower = 50; // Base weak power
+        }
+
+        // Formula: (Skill + (Power/3)) - BotDiff
+        let powerFactor = bestPower / 3;
+        let chance = (playerSkill + powerFactor) - botDifficulty;
+
+        // Cap
+        return Math.max(5, Math.min(98, chance));
+    };
+
+
+
+
+
+    // --- DAILY SHOP HELPERS ---
+    const generateDailyShop = (currentBucket) => {
+        let shop = { items: [] };
+        let cfg = inputs.shopConfig;
+        if (!cfg || !cfg.slots) return shop;
+
+        let mult = cfg.priceMultipliers['b' + currentBucket] || 1;
+
+        cfg.slots.forEach(slot => {
+            let item = { id: slot.id, type: slot.type, currency: slot.currency, name: "Unknown", amt: 1, cost: Math.floor(slot.baseCost * mult) };
+
+            if (slot.type === "Free") {
+                item.name = "Free Gift"; item.amt = 1; item.cost = 0; item.currency = "Gold"; item.resType = "Gold"; item.resAmt = 50;
+            } else if (slot.type === "Card") {
+                // Pick Random Char based on bucket
+                let pool = inputs.charPool.filter(c => {
+                    if (c.b > currentBucket) return false;
+                    // SPECIAL LOCK: Taiga (Day 2/4 Login)
+                    // Ensure state is accessible or pass it. 
+                    // Assuming state is in scope (inside runSimulation)
+                    if (c.n === "Taiga" && (!state.inventory[c.n] || state.inventory[c.n].level === 0)) return false;
+                    return true;
+                });
+                if (pool.length > 0) {
+                    let c = pool[Math.floor(Math.random() * pool.length)];
+                    item.name = c.n; item.cost = Math.floor(slot.baseCost * mult);
+                    item.amt = (c.r === "Legendary" ? 1 : c.r === "Champion" ? 2 : c.r === "Pro" ? 5 : 20);
+                }
+            } else if (slot.type === "PowerUp") {
+                let pu = inputs.powerUpData[Math.floor(Math.random() * inputs.powerUpData.length)];
+                if (pu) { item.name = pu.n; item.amt = 5; }
+            } else if (slot.type === "Chest") {
+                item.name = "Shop Chest";
+            }
+            shop.items.push(item);
+        });
+        return shop;
+    };
+
+    const buyShopItem = (item) => {
+        let bought = false;
+        // Purchase Logic
+        if (item.currency === "Gold" && state.gold >= item.cost) {
+            state.gold -= item.cost;
+            track('goldSinks', 'Shop Spend', item.cost);
+            bought = true;
+        } else if (item.currency === "Diamonds" && state.diamonds >= item.cost) {
+            state.diamonds -= item.cost;
+            track('gemSources', 'Shop Spend', -item.cost); // Negative source? Or track sink? Using gemSources for now.
+            bought = true;
+        } else if (item.cost === 0) {
+            bought = true;
+        }
+
+        if (bought) {
+            addLog("SHOP", `Bought ${item.name}`, `Cost: ${item.cost} ${item.currency}`);
+            if (item.type === "Free") { addRes(item.resType, item.resAmt, "Shop Free"); }
+            else if (item.type === "Card") {
+                let deferredUnlocks = [];
+                if (state.inventory[item.name]) {
+                    state.inventory[item.name].cards += item.amt;
+                } else {
+                    let meta = inputs.charPool.find(c => c.n === item.name);
+                    state.inventory[item.name] = { rarity: meta ? meta.r : "Rookie", level: 0, cards: item.amt, bucket: meta ? meta.b : 1 };
+                }
+                tryAutoUnlock(item.name, deferredUnlocks);
+            } else if (item.type === "PowerUp") {
+                if (state.powerUps[item.name]) state.powerUps[item.name].amount += item.amt;
+            } else if (item.type === "Chest") {
+                openChest("Pro Chest", "Shop Purchase");
+            }
+        }
+
+        // Process deferred unlocks for Shop
+        deferredUnlocks.forEach(l => addLog(l.type, l.msg, l.det));
+    };
+
+    // ACTIONS
     const checkLevelUp = () => {
         let nxt = inputs.levelData.find(l => l.l === state.level + 1);
         while (nxt && state.xp >= nxt.req) {
