@@ -520,132 +520,7 @@ function updateScriptedChest() {
 window.currentMarketTab = 'chests';
 window.currentMarketBucket = 1;
 
-window.renderMarket = function () {
-    let el = document.getElementById('market');
-    if (!el) return;
 
-    // Build Skeleton if empty (Updated Header Layout)
-    if (el.innerHTML.trim() === "") {
-        el.innerHTML = `
-        <div class="card">
-            <div class="market-header" style="flex-direction:column; align-items:flex-start; gap:15px;">
-                <div style="font-size:1.4rem; font-weight:bold; display:flex; align-items:center; gap:10px;">
-                    🛒 Market
-                </div>
-                <div class="bucket-tabs" id="marketBucketTabs" style="margin:0;"></div>
-            </div>
-            <div class="market-tabs">
-                <button class="tab-btn active" id="mt_chests" onclick="setMarketTab('chests')">📦 Chests</button>
-                <button class="tab-btn" id="mt_gold" onclick="setMarketTab('gold')">💰 Gold</button>
-                <button class="tab-btn" id="mt_powers" onclick="setMarketTab('powers')">⚡ Power Packs</button>
-            </div>
-            <div id="marketGrid" class="market-grid"></div>
-        </div>`;
-    }
-
-    // Render Buckets
-    createTabs('marketBucketTabs', 'setMarketBucket', window.currentMarketBucket);
-
-    // Update active tab
-    ['chests', 'gold', 'powers'].forEach(t => {
-        let btn = document.getElementById('mt_' + t);
-        if (btn) {
-            if (t === window.currentMarketTab) btn.classList.add('active');
-            else btn.classList.remove('active');
-        }
-    });
-
-    renderMarketItems();
-}
-
-window.setMarketTab = function (t) { window.currentMarketTab = t; renderMarket(); }
-window.setMarketBucket = function (b) { window.currentMarketBucket = b; renderMarket(); }
-
-window.renderMarketItems = function () {
-    let grid = document.getElementById('marketGrid');
-    if (!grid) return;
-
-    let config = getSafe('marketConfig');
-    if (!config) { grid.innerHTML = "<div style='grid-column:1/-1; text-align:center; padding:20px;'>No market data found.</div>"; return; }
-
-    let items = [];
-    if (window.currentMarketTab === 'chests') items = config.chests || [];
-    else if (window.currentMarketTab === 'gold') items = config.goldPackages || [];
-    else if (window.currentMarketTab === 'powers') items = config.powerPacks || [];
-
-    if (items.length === 0) {
-        grid.innerHTML = "<div style='grid-column:1/-1; text-align:center; padding:20px; color:#aaa;'>No items in this category.</div>";
-        return;
-    }
-
-    grid.innerHTML = items.map((item, index) => {
-        let imgName = item.img || item.name;
-
-        // Price Tag Logic
-        let priceTag = "";
-        let contentTag = "";
-
-        let safeAdmin = (typeof isAdminMode !== 'undefined' && isAdminMode);
-
-        if (window.currentMarketTab === 'gold') {
-            if (safeAdmin) {
-                priceTag = `<div class="market-item-price price-diamond">💎 <input class="edit" type="number" value="${item.diamonds}" onchange="updateVal('marketConfig.goldPackages[${index}].diamonds', this.value)" style="width:60px; font-size:1rem; padding:2px;"></div>`;
-                contentTag = `<div style="font-size:1.3rem; font-weight:800; color:#fbbf24; margin-top:5px;"><input class="edit" type="number" value="${item.gold}" onchange="updateVal('marketConfig.goldPackages[${index}].gold', this.value)" style="width:100px; font-size:1.2rem; padding:2px;"> Gold</div>`;
-            } else {
-                priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
-                contentTag = `<div style="font-size:1.3rem; font-weight:800; color:#fbbf24; margin-top:5px;">${item.gold.toLocaleString()} Gold</div>`;
-            }
-        } else if (window.currentMarketTab === 'powers') {
-            if (safeAdmin) {
-                priceTag = `<div class="market-item-price price-diamond">💎 <input class="edit" type="number" value="${item.diamonds}" onchange="updateVal('marketConfig.powerPacks[${index}].diamonds', this.value)" style="width:60px; font-size:1rem; padding:2px;"></div>`;
-            } else {
-                priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
-            }
-            // Removed redundant text as requested
-        } else {
-            // Chests
-            if (safeAdmin) {
-                // For now chests are completely free, but we can allow editing the name if needed, or leave OPEN
-                priceTag = `<div class="market-item-price price-free">OPEN</div>`;
-            } else {
-                priceTag = `<div class="market-item-price price-free">OPEN</div>`;
-            }
-            // Removed redundant text as requested
-        }
-
-        return `
-        <div class="market-item" ${!safeAdmin ? `onclick="buyMarketItem('${item.id}')" style="cursor:pointer;"` : `style="cursor:default; border:1px dashed #555;"`}>
-            <div class="market-item-name">${item.name}</div>
-            <div style="margin:10px 0;">
-                ${getPngTag(imgName, 100)}
-            </div>
-            ${priceTag}
-            ${contentTag}
-        </div>
-        `;
-    }).join('');
-}
-
-window.buyMarketItem = function (id) {
-    let config = getSafe('marketConfig');
-    if (!config) return;
-
-    // Find Item
-    let item = null;
-    ['chests', 'goldPackages', 'powerPacks'].forEach(cat => {
-        if (item) return;
-        if (config[cat]) {
-            let found = config[cat].find(x => x.id === id);
-            if (found) item = found;
-        }
-    });
-
-    if (!item) { console.error("Item not found:", id); return; }
-
-    // Placeholder Logic
-    addLog("MARKET", `Clicked ${item.name}`, "Purchase logic coming next.");
-    // alert(`You clicked ${item.name}. Purchase logic implemented in next step.`);
-}
 
 
 function renderInventory() {
@@ -1957,90 +1832,89 @@ window.renderMarketItems = function () {
     if (!config) { grid.innerHTML = "<div style='grid-column:1/-1; text-align:center; padding:20px;'>No market data found.</div>"; return; }
 
     let items = [];
+    let cat = 'chests';
     if (window.currentMarketTab === 'chests') {
         items = config.chests || [];
-        // Filter by Bucket
         items = items.filter(i => !i.minBucket || window.currentMarketBucket >= i.minBucket);
+        cat = 'chests';
     }
-    else if (window.currentMarketTab === 'gold') items = config.goldPackages || [];
-    else if (window.currentMarketTab === 'powers') items = config.powerPacks || [];
+    else if (window.currentMarketTab === 'gold') { items = config.goldPackages || []; cat = 'goldPackages'; }
+    else if (window.currentMarketTab === 'powers') { items = config.powerPacks || []; cat = 'powerPacks'; }
 
     if (items.length === 0) {
         grid.innerHTML = "<div style='grid-column:1/-1; text-align:center; padding:20px; color:#aaa;'>No items in this category.</div>";
         return;
     }
 
-    grid.innerHTML = items.map(item => {
+    grid.innerHTML = items.map((item, index) => {
         let imgName = item.img || item.name;
 
         // Price Tag Logic
         let priceTag = "";
         let contentTag = "";
         let isFreePremium = ['Rookie Chest', 'Pro Chest', 'Champion Chest', 'Legendary Chest'].includes(item.name);
+        
+        let safeAdmin = (typeof isAdminMode !== 'undefined' && isAdminMode);
+        let nameTag = safeAdmin ? `<div class="market-item-name"><input class="edit" value="${item.name}" onchange="updateVal('marketConfig.${cat}[${index}].name', this.value, false)" style="width:90%; text-align:center; font-weight:bold; font-size:1rem;"></div>` : `<div class="market-item-name">${item.name}</div>`;
 
         if (window.currentMarketTab === 'gold') {
-            priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
-            contentTag = `<div style="font-size:1.3rem; font-weight:800; color:#fbbf24; margin-top:5px;">${item.gold.toLocaleString()} Gold</div>`;
+            if (safeAdmin) {
+                priceTag = `<div class="market-item-price price-diamond">💎 <input class="edit" type="number" value="${item.diamonds}" onchange="updateVal('marketConfig.goldPackages[${index}].diamonds', this.value)" style="width:60px; font-size:1rem; padding:2px;"></div>`;
+                contentTag = `<div style="font-size:1.3rem; font-weight:800; color:#fbbf24; margin-top:5px;"><input class="edit" type="number" value="${item.gold}" onchange="updateVal('marketConfig.goldPackages[${index}].gold', this.value)" style="width:100px; font-size:1.2rem; padding:2px;"> Gold</div>`;
+            } else {
+                priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
+                contentTag = `<div style="font-size:1.3rem; font-weight:800; color:#fbbf24; margin-top:5px;">${item.gold.toLocaleString()} Gold</div>`;
+            }
         } else if (window.currentMarketTab === 'powers') {
-            priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
+            if (safeAdmin) {
+                priceTag = `<div class="market-item-price price-diamond">💎 <input class="edit" type="number" value="${item.diamonds}" onchange="updateVal('marketConfig.powerPacks[${index}].diamonds', this.value)" style="width:60px; font-size:1rem; padding:2px;"></div>`;
+            } else {
+                priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
+            }
             let stars = "";
             for (let i = 0; i < (item.star || 1); i++) stars += "⭐";
             contentTag = `<div style="font-size:1rem; margin-top:5px;">${stars}</div>`;
         } else {
             // Chests
             if (item.id === 'gold_chest' || item.id === 'diamond_chest') {
-                // Reward Chests - Check Daily Limit
                 let configKey = (item.id === 'gold_chest') ? 'goldChest' : 'diamondChest';
                 let current = (window.playerResources && window.playerResources.dailyChests && window.playerResources.dailyChests[configKey]) || 0;
-                let limit = 2; // Fixed limit
+                let limit = 2; 
                 let isMaxed = current >= limit;
-
                 let btnText = isMaxed ? "MAX" : "OPEN";
                 let btnClass = isMaxed ? "btn-open-chest disabled" : "btn-open-chest";
-                // If maxed, disable click. If not, normal click.
                 let onClick = isMaxed ? "" : `onclick="event.stopPropagation(); buyMarketItem('${item.id}')"`;
                 let style = isMaxed ? "background:#555; cursor:not-allowed;" : "";
 
-                priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds || 0}</div>`; // Should be 0 for these?
-                // Actually Gold/Diamond chests in marketConfig have 0 diamonds usually? Or are they hidden?
-                // data_core: Gold Chest has no diamond price listed in snippet?
-                // If they have no diamond price, maybe handled differently. 
-                // data_core snippet: { "id": "gold_chest", ... "img": "gold_chest" } - no price.
-
-                // Fix: If no diamonds, show free/open?
-                if (!item.diamonds) {
-                    priceTag = `<div class="market-item-price price-free">FREE</div>`;
+                if (safeAdmin) {
+                    priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds ? `<input class="edit" type="number" value="${item.diamonds}" onchange="updateVal('marketConfig.chests[${index}].diamonds', this.value)" style="width:60px; font-size:1rem; padding:2px;">` : "0"}</div>`;
+                } else {
+                    priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds || 0}</div>`;
                 }
+                if (!item.diamonds) priceTag = `<div class="market-item-price price-free">FREE</div>`;
 
                 contentTag = `<button class="${btnClass}" style="${style}" ${onClick}>${btnText}</button>`;
-                if (isMaxed) {
-                    contentTag += `<div style="font-size:0.9rem; color:#aaa; margin-top:5px;">Daily Limit: ${current} /${limit}</div>`;
-                }
+                if (isMaxed) contentTag += `<div style="font-size:0.9rem; color:#aaa; margin-top:5px;">Daily Limit: ${current} /${limit}</div>`;
 
             } else if (item.id === 'free_chest' || item.id === 'power_chest') {
-                // Daily Free Chests
                 let current = (window.playerResources && window.playerResources.dailyChests && window.playerResources.dailyChests[item.id]) || 0;
                 let limit = 2;
                 let isMaxed = current >= limit;
-
                 let btnText = isMaxed ? "MAX" : "OPEN";
                 let btnClass = "market-item-price price-free";
                 let style = isMaxed ? "background:#555;" : "";
 
-                // For these, the "Price Tag" acts as the button/status
                 priceTag = `<div class="${btnClass}" style="${style}">${btnText}</div>`;
                 contentTag = `<div style="font-size:0.9rem; color:#aaa; margin-top:5px;">Daily Limit: ${current} /${limit}</div>`;
 
-            } else if (isFreePremium) {
-                // Free Premium Chests (Visual Override)
-                priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
-                contentTag = `<button class="btn-open-chest" onclick="event.stopPropagation(); buyMarketItem('${item.id}')">OPEN</button>`;
-            } else if (item.diamonds) {
-                // Regular Premium Chests
-                priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
+            } else if (isFreePremium || item.diamonds) {
+                if (safeAdmin) {
+                    priceTag = `<div class="market-item-price price-diamond">💎 <input class="edit" type="number" value="${item.diamonds || 0}" onchange="updateVal('marketConfig.chests[${index}].diamonds', this.value)" style="width:60px; font-size:1rem; padding:2px;"></div>`;
+                } else {
+                    priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
+                }
                 contentTag = `<button class="btn-open-chest" onclick="event.stopPropagation(); buyMarketItem('${item.id}')">OPEN</button>`;
             } else {
-                // Fallback
                 priceTag = `<div class="market-item-price price-free">OPEN</div>`;
                 contentTag = ``;
             }
@@ -2048,15 +1922,14 @@ window.renderMarketItems = function () {
 
         return `
         <div class="market-item" onclick="buyMarketItem('${item.id}')" style="cursor:pointer;">
-            <div class="market-item-name">${item.name}</div>
+            ${nameTag}
             <div style="margin:10px 0;">
                 ${getPngTag(imgName, 100)}
             </div>
             ${priceTag}
             ${contentTag}
         </div>
-        `;
-    }).join('');
+        `;    }).join('');
 }
 
 
@@ -2170,7 +2043,9 @@ function openMarketChest(chestType, bucket, chestName, imgName) {
 
             let roll = Math.random() * 100;
             let r = (roll < probs.R) ? "Rookie" : (roll < probs.R + probs.P) ? "Pro" : (roll < probs.R + probs.P + probs.C) ? "Champion" : "Legendary";
-            let amt = c.amounts[r]['b' + bucket] || c.amounts[r]['b1'];
+            if (!c.amounts[r]) r = Object.keys(c.amounts).pop() || "Rookie";
+            let amt = (c.amounts[r] && c.amounts[r]['b' + bucket]) || (c.amounts[r] && c.amounts[r]['b1']) || 0;
+            if (!amt || amt <= 0) return;
 
             let pool = getSafe('charPoolData');
             if (pool) {

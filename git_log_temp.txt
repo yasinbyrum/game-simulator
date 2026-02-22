@@ -1,0 +1,10 @@
+﻿1604c44 Add auto git push to server.js for persistent config saves
+63f2ded Fix admin save persistence: remove duplicate loginConfig, support window.* declarations
+27e9e7b Fix dashboard reset bug by syncing sim state to global variables
+3a218f7 Update Ducky progression rewards and fix openChest initialization logic
+a289a56 Reorder Win Reward outputs; Force W&E execution if maxAds > 0 regardless of UI toggle
+42b5a31 Fix Daily Login pie chart, fix W&E loop limits, fix Win Reward counter and bucket consistency
+1581401 Fix charProgressionData save functionality aliasing
+d5859e0 Update Ducky progression and sim start values and remove DBG from sim_logic
+70cee66 Fix openChest crash: handle missing Legendary rarity and L prob key safely
+d5d48cd Fix chest rates crash (dynamic buckets/rarities) and sim reset bug (read UI inputs)
