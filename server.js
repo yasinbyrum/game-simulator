@@ -46,21 +46,23 @@ function doGitPush(label, callback) {
     console.log(`[GIT] Starting commit+push: "${commitMsg}"`);
     console.log(`[GIT] Token length: ${token.length}, starts with: ${token.substring(0, 4)}...`);
 
-    // Add remote if missing (Render strips it), then set URL
+    // Explicitly target detached HEAD push to main
     const repoUrl = `https://${token}@github.com/yasinbyrum/game-simulator.git`;
     const cmds = [
         'git config user.email "auto-save@render.com"',
         'git config user.name "Auto-Save Bot"',
-        `git remote add origin ${repoUrl} 2>/dev/null; git remote set-url origin ${repoUrl}`,
+        `(git remote set-url origin ${repoUrl} || git remote add origin ${repoUrl})`,
         'git add -A',
-        `git commit -m "${commitMsg}"`,
-        'git push origin main'
+        `(git diff --staged --quiet || git commit -m "${commitMsg}")`,
+        'git push origin HEAD:main'
     ].join(' && ');
 
     exec(cmds, { cwd: __dirname, timeout: 30000 }, (err, stdout, stderr) => {
         let result = '';
         if (err) {
-            if ((stdout + stderr).includes('nothing to commit')) {
+            // Because of the updated cmds, if nothing is staged, commit isn't run and push might fail or be empty. 
+            // We can check if stdout/stderr indicate everything is up to date.
+            if ((stdout + stderr).includes('nothing to commit') || (stdout + stderr).includes('Everything up-to-date')) {
                 result = '[GIT] Nothing to commit, working tree clean.';
                 console.log(result);
             } else {
