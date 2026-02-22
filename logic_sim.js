@@ -568,6 +568,7 @@ function simulateGame(inputs) {
     };
 
     const attemptCharUpgrade = () => {
+        if (isNaN(inputs.charUpgradeChance) || inputs.charUpgradeChance <= 0) return;
         if (Math.random() * 100 > inputs.charUpgradeChance) return;
         let cands = [];
         for (let n in state.inventory) {
@@ -604,6 +605,7 @@ function simulateGame(inputs) {
     };
 
     const attemptPowerUpUpgrade = () => {
+        if (isNaN(inputs.pupUpgradeChance) || inputs.pupUpgradeChance <= 0) return;
         if (Math.random() * 100 > inputs.pupUpgradeChance) return;
         let cands = [];
         for (let n in state.powerUps) {

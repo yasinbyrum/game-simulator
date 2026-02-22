@@ -578,27 +578,43 @@ window.renderMarketItems = function () {
         return;
     }
 
-    grid.innerHTML = items.map(item => {
+    grid.innerHTML = items.map((item, index) => {
         let imgName = item.img || item.name;
 
         // Price Tag Logic
         let priceTag = "";
         let contentTag = "";
 
+        let safeAdmin = (typeof isAdminMode !== 'undefined' && isAdminMode);
+
         if (window.currentMarketTab === 'gold') {
-            priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
-            contentTag = `<div style="font-size:1.3rem; font-weight:800; color:#fbbf24; margin-top:5px;">${item.gold.toLocaleString()} Gold</div>`;
+            if (safeAdmin) {
+                priceTag = `<div class="market-item-price price-diamond">💎 <input class="edit" type="number" value="${item.diamonds}" onchange="updateVal('marketConfig.goldPackages[${index}].diamonds', this.value)" style="width:60px; font-size:1rem; padding:2px;"></div>`;
+                contentTag = `<div style="font-size:1.3rem; font-weight:800; color:#fbbf24; margin-top:5px;"><input class="edit" type="number" value="${item.gold}" onchange="updateVal('marketConfig.goldPackages[${index}].gold', this.value)" style="width:100px; font-size:1.2rem; padding:2px;"> Gold</div>`;
+            } else {
+                priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
+                contentTag = `<div style="font-size:1.3rem; font-weight:800; color:#fbbf24; margin-top:5px;">${item.gold.toLocaleString()} Gold</div>`;
+            }
         } else if (window.currentMarketTab === 'powers') {
-            priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
+            if (safeAdmin) {
+                priceTag = `<div class="market-item-price price-diamond">💎 <input class="edit" type="number" value="${item.diamonds}" onchange="updateVal('marketConfig.powerPacks[${index}].diamonds', this.value)" style="width:60px; font-size:1rem; padding:2px;"></div>`;
+            } else {
+                priceTag = `<div class="market-item-price price-diamond">💎 ${item.diamonds}</div>`;
+            }
             // Removed redundant text as requested
         } else {
             // Chests
-            priceTag = `<div class="market-item-price price-free">OPEN</div>`;
+            if (safeAdmin) {
+                // For now chests are completely free, but we can allow editing the name if needed, or leave OPEN
+                priceTag = `<div class="market-item-price price-free">OPEN</div>`;
+            } else {
+                priceTag = `<div class="market-item-price price-free">OPEN</div>`;
+            }
             // Removed redundant text as requested
         }
 
         return `
-        <div class="market-item" onclick="buyMarketItem('${item.id}')" style="cursor:pointer;">
+        <div class="market-item" ${!safeAdmin ? `onclick="buyMarketItem('${item.id}')" style="cursor:pointer;"` : `style="cursor:default; border:1px dashed #555;"`}>
             <div class="market-item-name">${item.name}</div>
             <div style="margin:10px 0;">
                 ${getPngTag(imgName, 100)}
