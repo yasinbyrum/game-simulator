@@ -146,6 +146,12 @@ try {
 }
 
 function getSimulationInputs() {
+    const getNum = (val, def) => {
+        if (val === undefined || val === null || val === "") return def;
+        let p = parseInt(val);
+        return isNaN(p) ? def : p;
+    };
+
     // defaults
     let days = getUiVal('simDays', 7);
 
@@ -158,15 +164,15 @@ function getSimulationInputs() {
     let profiles = window.playerProfiles || {};
     let p = profiles[profileKey] || profiles["hardcore1"] || {};
 
-    let actDays = parseInt(p.actDays) || 7;
+    let actDays = getNum(p.actDays, 7);
 
     return {
         // UI Inputs - Driven by Profile
         days: days,
-        dailyMatches: parseInt(p.match) || 0,
-        winRate: parseInt(p.win) || 50,
-        minAds: parseInt(p.ads) || 0,
-        maxAds: parseInt(p.ads) || 0,
+        dailyMatches: getNum(p.match, 0),
+        winRate: getNum(p.win, 50),
+        minAds: getNum(p.ads, 0),
+        maxAds: getNum(p.ads, 0),
 
         // Activity Chance (0-1)
         activityChance: actDays / 7.0,
@@ -176,14 +182,14 @@ function getSimulationInputs() {
         maxGoals: 8,
 
         // Upgrade Ratios (Map from Profile Fields)
-        charUpgradeChance: (p.charFreq !== undefined) ? parseInt(p.charFreq) : (parseInt(p.charRate) || 50),
-        pupUpgradeChance: (p.puFreq !== undefined) ? parseInt(p.puFreq) : (parseInt(p.pupRate) || 50),
+        charUpgradeChance: getNum(p.charFreq !== undefined ? p.charFreq : p.charRate, 50),
+        pupUpgradeChance: getNum(p.puFreq !== undefined ? p.puFreq : p.pupRate, 50),
 
         // Chests (Driven by Profile)
-        dailyFreeChests: parseInt(p.freeChest) !== undefined ? parseInt(p.freeChest) : 2,
-        dailyGoldChests: parseInt(p.goldChest) !== undefined ? parseInt(p.goldChest) : 2,
-        dailyDiamondChests: parseInt(p.diaChest) !== undefined ? parseInt(p.diaChest) : 2,
-        dailyPUChests: parseInt(p.pupChest) !== undefined ? parseInt(p.pupChest) : 2,
+        dailyFreeChests: getNum(p.freeChest, 2),
+        dailyGoldChests: getNum(p.goldChest, 2),
+        dailyDiamondChests: getNum(p.diaChest, 2),
+        dailyPUChests: getNum(p.pupChest, 2),
 
         // Flags
         doWE: getUiVal('simDoWE', false), // User Toggle
