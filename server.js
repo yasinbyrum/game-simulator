@@ -28,39 +28,51 @@ function scheduleGitPush(varName) {
     lastPushedVar = varName;
     if (gitPushTimer) clearTimeout(gitPushTimer);
     gitPushTimer = setTimeout(() => {
-        const token = process.env.GITHUB_TOKEN;
-        if (!token) {
-            console.log('[GIT] No GITHUB_TOKEN env var set — skipping auto-push. Changes saved to disk only.');
-            return;
-        }
-
-        const timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
-        const commitMsg = `Auto-save config: ${lastPushedVar} (${timestamp})`;
-        console.log(`[GIT] Committing and pushing: "${commitMsg}"`);
-
-        // Configure git user + set authenticated remote + commit + push
-        const cmds = [
-            'git config user.email "auto-save@render.com"',
-            'git config user.name "Auto-Save Bot"',
-            `git remote set-url origin https://${token}@github.com/yasinbyrum/game-simulator.git`,
-            'git add -A',
-            `git commit -m "${commitMsg}"`,
-            'git push origin main'
-        ].join(' && ');
-
-        exec(cmds, { cwd: __dirname }, (err, stdout, stderr) => {
-            if (err) {
-                if ((stdout + stderr).includes('nothing to commit')) {
-                    console.log('[GIT] Nothing to commit, working tree clean.');
-                } else {
-                    console.error('[GIT ERROR]', err.message);
-                    if (stderr) console.error('[GIT STDERR]', stderr);
-                }
-                return;
-            }
-            console.log('[GIT] ✅ Push successful!', stdout.trim());
-        });
+        doGitPush(lastPushedVar);
     }, GIT_PUSH_DELAY);
+}
+
+function doGitPush(label, callback) {
+    const token = process.env.GITHUB_TOKEN;
+    if (!token) {
+        const msg = '[GIT] No GITHUB_TOKEN env var set — skipping auto-push. Changes saved to disk only.';
+        console.log(msg);
+        if (callback) callback(msg);
+        return;
+    }
+
+    const timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const commitMsg = `Auto-save config: ${label} (${timestamp})`;
+    console.log(`[GIT] Starting commit+push: "${commitMsg}"`);
+    console.log(`[GIT] Token length: ${token.length}, starts with: ${token.substring(0, 4)}...`);
+
+    // Run commands one by one for better error reporting
+    const cmds = [
+        'git config user.email "auto-save@render.com"',
+        'git config user.name "Auto-Save Bot"',
+        `git remote set-url origin https://${token}@github.com/yasinbyrum/game-simulator.git`,
+        'git add -A',
+        `git commit -m "${commitMsg}"`,
+        'git push origin main'
+    ].join(' && ');
+
+    exec(cmds, { cwd: __dirname, timeout: 30000 }, (err, stdout, stderr) => {
+        let result = '';
+        if (err) {
+            if ((stdout + stderr).includes('nothing to commit')) {
+                result = '[GIT] Nothing to commit, working tree clean.';
+                console.log(result);
+            } else {
+                result = `[GIT ERROR] code=${err.code} signal=${err.signal}\n` +
+                    `[GIT STDOUT] ${stdout}\n[GIT STDERR] ${stderr}`;
+                console.error(result);
+            }
+        } else {
+            result = '[GIT] ✅ Push successful! ' + stdout.trim();
+            console.log(result);
+        }
+        if (callback) callback(result);
+    });
 }
 
 function processUpdate(filePath, varName, newData) {
@@ -157,7 +169,39 @@ http.createServer(function (request, response) {
         return;
     }
 
-    // --- 2. DOSYA SUNUMU (GET) ---
+    // --- 2. GIT DIAGNOSTIC ENDPOINT ---
+    if (request.method === 'GET' && request.url === '/git-test') {
+        const results = [];
+        const token = process.env.GITHUB_TOKEN;
+        results.push(`GITHUB_TOKEN set: ${!!token}`);
+        if (token) results.push(`Token length: ${token.length}, prefix: ${token.substring(0, 4)}...`);
+
+        // Check if .git exists
+        const gitDir = path.join(__dirname, '.git');
+        results.push(`.git exists: ${fs.existsSync(gitDir)}`);
+        results.push(`__dirname: ${__dirname}`);
+
+        // Check if git command works
+        exec('git status --short && git remote -v && git log -1 --oneline', { cwd: __dirname, timeout: 10000 }, (err, stdout, stderr) => {
+            if (err) {
+                results.push(`git status ERROR: ${err.message}`);
+                results.push(`stderr: ${stderr}`);
+            } else {
+                results.push(`git output:\n${stdout}`);
+            }
+
+            // Try a test push
+            results.push('\n--- Attempting test push ---');
+            doGitPush('git-test-endpoint', (pushResult) => {
+                results.push(pushResult);
+                response.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+                response.end(results.join('\n'));
+            });
+        });
+        return;
+    }
+
+    // --- 3. DOSYA SUNUMU (GET) ---
     let safeUrl = request.url.split('?')[0];
     let filePath = '.' + safeUrl;
     if (filePath === './') filePath = './index.html';
