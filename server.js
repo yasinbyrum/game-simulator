@@ -46,11 +46,12 @@ function doGitPush(label, callback) {
     console.log(`[GIT] Starting commit+push: "${commitMsg}"`);
     console.log(`[GIT] Token length: ${token.length}, starts with: ${token.substring(0, 4)}...`);
 
-    // Run commands one by one for better error reporting
+    // Add remote if missing (Render strips it), then set URL
+    const repoUrl = `https://${token}@github.com/yasinbyrum/game-simulator.git`;
     const cmds = [
         'git config user.email "auto-save@render.com"',
         'git config user.name "Auto-Save Bot"',
-        `git remote set-url origin https://${token}@github.com/yasinbyrum/game-simulator.git`,
+        `git remote add origin ${repoUrl} 2>/dev/null; git remote set-url origin ${repoUrl}`,
         'git add -A',
         `git commit -m "${commitMsg}"`,
         'git push origin main'
