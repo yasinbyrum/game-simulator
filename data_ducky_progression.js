@@ -635,7 +635,7 @@ var cupRoadData = [
     "cup": 4720,
     "r1": "Arena 7 Unlock",
     "a1": "-",
-    "feat": "",
+    "feat": "Bucket 3",
     "arena": "Arena 7"
   },
   {
@@ -688,8 +688,8 @@ var cupRoadData = [
   },
   {
     "cup": 7480,
-    "r1": "Champion Card",
-    "a1": 4
+    "r1": "Pro Card",
+    "a1": 40
   },
   {
     "cup": 7800,
@@ -703,7 +703,7 @@ var cupRoadData = [
     "r2": "Gold",
     "a2": 1300,
     "arena": "Arena 9",
-    "feat": "Bucket 3"
+    "feat": ""
   },
   {
     "cup": 8440,
@@ -714,7 +714,7 @@ var cupRoadData = [
     "cup": 8790,
     "r1": "Pro Card",
     "a1": 40,
-    "r2": "Champion Chest",
+    "r2": "Rookie Chest",
     "a2": 1
   },
   {
@@ -729,8 +729,8 @@ var cupRoadData = [
   },
   {
     "cup": 9870,
-    "r1": "Champion Card",
-    "a1": 4
+    "r1": "Pro Card",
+    "a1": 40
   },
   {
     "cup": 10250,
@@ -754,7 +754,7 @@ var cupRoadData = [
     "cup": 11450,
     "r1": "Gold",
     "a1": 1800,
-    "r2": "Champion Chest",
+    "r2": "Pro Chest",
     "a2": 1
   },
   {
@@ -780,7 +780,7 @@ var cupRoadData = [
   {
     "cup": 13650,
     "r1": "Champion Card",
-    "a1": 6
+    "a1": 4
   },
   {
     "cup": 14120,
@@ -792,7 +792,7 @@ var cupRoadData = [
   },
   {
     "cup": 14590,
-    "r1": "Pro Chest",
+    "r1": "Champion Chest",
     "a1": 1
   },
   {
@@ -804,8 +804,8 @@ var cupRoadData = [
   },
   {
     "cup": 15590,
-    "r1": "Pro Card",
-    "a1": 40
+    "r1": "Champion Card",
+    "a1": 4
   },
   {
     "cup": 16090,
@@ -814,7 +814,7 @@ var cupRoadData = [
   },
   {
     "cup": 16620,
-    "r1": "Rookie Chest",
+    "r1": "Champion Chest",
     "a1": 1
   },
   {
@@ -837,19 +837,19 @@ var cupRoadData = [
   },
   {
     "cup": 18800,
-    "r1": "Pro Card",
-    "a1": 40
+    "r1": "Champion Card",
+    "a1": 6
   },
   {
     "cup": 19360,
     "r1": "Gold",
     "a1": 2400,
-    "r2": "Champion Chest",
+    "r2": "Rookie Chest",
     "a2": 1
   },
   {
     "cup": 19920,
-    "r1": "Rookie Chest",
+    "r1": "Champion Chest",
     "a1": 1
   },
   {
