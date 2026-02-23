@@ -1334,11 +1334,6 @@ window.simulateManualChestOpen = function (typeArg, bucketArg, logIdArg) {
                             validChars = potentialFallback;
                             // Note: Expected rarity 'r' is now different from selected char.
                             // We will update 'amt' after selection.
-                        } else {
-                            // 3. Last Resort: No unique chars left at all. Allow duplicate of original rarity.
-                            validChars = pool.filter(c => c.b <= b && c.r === r);
-                            // If even that is empty (e.g. rarity not in bucket), try full fallback
-                            if (validChars.length === 0) validChars = pool.filter(c => c.b <= b);
                         }
                     }
 
@@ -1360,6 +1355,10 @@ window.simulateManualChestOpen = function (typeArg, bucketArg, logIdArg) {
                             playerInventory[char.n].cards += amt;
                             chestItems.push(`${char.n} x${amt}`);
                         }
+                    } else {
+                        // Fallback Gold
+                        window.playerResources.gold += 50;
+                        chestItems.push("50 Gold (Fallback)");
                     }
                 }
             });
@@ -2269,10 +2268,6 @@ function openMarketChest(chestType, bucket, chestName, imgName) {
 
                     if (potentialFallback.length > 0) {
                         validChars = potentialFallback;
-                    } else {
-                        // 3. Last Resort: Allow duplicate
-                        validChars = pool.filter(ch => ch.b <= bucket && ch.r === r);
-                        if (validChars.length === 0) validChars = pool.filter(ch => ch.b <= bucket);
                     }
                 }
 

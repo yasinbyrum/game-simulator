@@ -303,10 +303,6 @@ function simulateGame(inputs) {
 
                         if (potentialFallback.length > 0) {
                             validChars = potentialFallback;
-                        } else {
-                            // 3. Last Resort: Allow duplicate or maxed if absolutely nothing else
-                            validChars = pool.filter(ch => ch.b <= bucket && ch.r === r);
-                            if (validChars.length === 0) validChars = pool.filter(ch => ch.b <= bucket);
                         }
                     }
 
