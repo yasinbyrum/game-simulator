@@ -251,7 +251,7 @@ function simulateGame(inputs) {
             //      YES. If B1_Unmaxed is empty, pool is [B2_Unmaxed]. 
             //      So random pick gives B2.
             //      This satisfies "When B1 maxed, B2 comes out".
-
+            let selectedChars = new Set();
             for (let i = 0; i < c.slotProbs.length; i++) {
                 let slot = c.slotProbs[i];
                 let probs = slot['b' + bucket] || slot['b1'];
@@ -275,7 +275,6 @@ function simulateGame(inputs) {
                     // 1. Match Rarity & Bucket Cap
                     // 2. Exclude "Event Locked" (Taiga)
                     // 3. Exclude MAXED chars (Level >= 12)
-                    let selectedChars = new Set();
                     let pool = inputs.charPool;
 
                     let validChars = pool.filter(ch => {
