@@ -1139,7 +1139,7 @@ var chestConfigs = {
     "gold": {
       "b1": 15,
       "b2": 15,
-      "b3": 20
+      "b3": 30
     },
     "amounts": {
       "Rookie": {
