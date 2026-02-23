@@ -635,7 +635,7 @@ var cupRoadData = [
     "cup": 3720,
     "r1": "Arena 7 Unlock",
     "a1": "-",
-    "feat": "Bucket 3",
+    "feat": "",
     "arena": "Arena 7"
   },
   {
@@ -702,7 +702,8 @@ var cupRoadData = [
     "a1": "-",
     "r2": "Gold",
     "a2": 1300,
-    "arena": "Arena 9"
+    "arena": "Arena 9",
+    "feat": "Bucket 3"
   },
   {
     "cup": 6100,
