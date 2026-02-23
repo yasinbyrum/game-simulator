@@ -393,8 +393,8 @@ var weConfig = {
     },
     {
       "step": 3,
-      "type": "Rookie Chest",
-      "amt": 2,
+      "type": "Gold",
+      "amt": 1000,
       "hcInt": 60
     },
     {
@@ -419,8 +419,8 @@ var weConfig = {
     },
     {
       "step": 3,
-      "type": "Rookie Chest",
-      "amt": 2,
+      "type": "Gold",
+      "amt": 2000,
       "hcInt": 120
     },
     {
