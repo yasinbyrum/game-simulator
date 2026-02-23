@@ -291,6 +291,38 @@ function attachCharFilters() {
     });
 }
 
+// --- CHARACTER UNLOCK & FIXING UTILITIES ---
+window.tryAutoUnlockGlobal = function (charName, inventoryRef) {
+    if (!inventoryRef) return;
+    let ch = inventoryRef[charName];
+    if (!ch || ch.level > 0) return;
+    // getCumulativeCardReq is globally available from sim_helpers.js
+    if (typeof getCumulativeCardReq !== 'function') return;
+    let cumReq = getCumulativeCardReq(charName, 1);
+    if (ch.cards >= cumReq) {
+        ch.level = 1;
+        console.log(`[Unlock] ${charName} reached ${cumReq} cards and unlocked to Level 1!`);
+    }
+};
+
+window.fixInventoryLevels = function (inventoryRef) {
+    if (!inventoryRef) return;
+    if (typeof getCumulativeCardReq !== 'function') return;
+    let fixedCount = 0;
+    for (let charName in inventoryRef) {
+        let ch = inventoryRef[charName];
+        if (ch.level > 0) {
+            let cumReq1 = getCumulativeCardReq(charName, 1);
+            if (ch.cards < cumReq1) {
+                console.log(`[Fix] Downgrading ${charName} from Level ${ch.level} to Level 0 (Cards: ${ch.cards} < Req: ${cumReq1})`);
+                ch.level = 0;
+                fixedCount++;
+            }
+        }
+    }
+    if (fixedCount > 0) console.log(`Fixed ${fixedCount} locked characters appearing as unlocked.`);
+};
+
 // ==========================================
 // 3. UI HELPER & RENDER (ROBUST)
 // ==========================================
@@ -1351,8 +1383,9 @@ window.simulateManualChestOpen = function (typeArg, bucketArg, logIdArg) {
 
                         if (amt > 0) {
                             // Update Character State
-                            if (!playerInventory[char.n]) playerInventory[char.n] = { cards: 0, level: 1, rarity: char.r };
+                            if (!playerInventory[char.n]) playerInventory[char.n] = { cards: 0, level: 0, rarity: char.r };
                             playerInventory[char.n].cards += amt;
+                            if (typeof window.tryAutoUnlockGlobal === 'function') window.tryAutoUnlockGlobal(char.n, playerInventory);
                             chestItems.push(`${char.n} x${amt}`);
                         }
                     } else {
@@ -2286,12 +2319,13 @@ function openMarketChest(chestType, bucket, chestName, imgName) {
                     if (amt > 0) {
                         // Global Inventory
                         if (!playerInventory[char.n]) {
-                            playerInventory[char.n] = { rarity: char.r, level: 1, cards: 0, bucket: char.b };
+                            playerInventory[char.n] = { rarity: char.r, level: 0, cards: 0, bucket: char.b };
                             lootLog.push(`${char.n} (New!) x${amt} `);
                         } else {
                             playerInventory[char.n].cards += amt;
                             lootLog.push(`${char.n} x${amt} `);
                         }
+                        if (typeof window.tryAutoUnlockGlobal === 'function') window.tryAutoUnlockGlobal(char.n, playerInventory);
                     }
                 } else {
                     // Fallback Gold
@@ -2428,6 +2462,7 @@ function initApp() {
     console.log("🚀 App Initialized (vFixed)");
     try {
         loadGame(); // LOAD DATA NOW
+        if (typeof window.fixInventoryLevels === 'function') window.fixInventoryLevels(window.playerInventory);
         nav('dashboard');
         if (typeof renderPlayerProfile === 'function') renderPlayerProfile();
 
