@@ -526,7 +526,7 @@ var loginConfig = {
     {
       "day": 1,
       "type": "Gold",
-      "amt": 100
+      "amt": 200
     },
     {
       "day": 2,
@@ -551,7 +551,7 @@ var loginConfig = {
     {
       "day": 6,
       "type": "Gold",
-      "amt": 300
+      "amt": 400
     },
     {
       "day": 7,
@@ -564,7 +564,7 @@ var loginConfig = {
       {
         "day": 1,
         "type": "Gold",
-        "amt": 50,
+        "amt": 200,
         "hcInt": 2.5
       },
       {
@@ -576,7 +576,7 @@ var loginConfig = {
       {
         "day": 3,
         "type": "Gold",
-        "amt": 100,
+        "amt": 400,
         "hcInt": 5
       },
       {
@@ -594,7 +594,7 @@ var loginConfig = {
       {
         "day": 6,
         "type": "Gold",
-        "amt": 200,
+        "amt": 800,
         "hcInt": 10
       },
       {
@@ -608,7 +608,7 @@ var loginConfig = {
       {
         "day": 1,
         "type": "Gold",
-        "amt": 100,
+        "amt": 400,
         "hcInt": 5
       },
       {
@@ -620,7 +620,7 @@ var loginConfig = {
       {
         "day": 3,
         "type": "Gold",
-        "amt": 200,
+        "amt": 800,
         "hcInt": 10
       },
       {
@@ -638,7 +638,7 @@ var loginConfig = {
       {
         "day": 6,
         "type": "Gold",
-        "amt": 400,
+        "amt": 1600,
         "hcInt": 20
       },
       {
@@ -652,7 +652,7 @@ var loginConfig = {
       {
         "day": 1,
         "type": "Gold",
-        "amt": 200,
+        "amt": 800,
         "hcInt": 10
       },
       {
@@ -664,7 +664,7 @@ var loginConfig = {
       {
         "day": 3,
         "type": "Gold",
-        "amt": 400,
+        "amt": 1600,
         "hcInt": 20
       },
       {
@@ -682,7 +682,7 @@ var loginConfig = {
       {
         "day": 6,
         "type": "Gold",
-        "amt": 800,
+        "amt": 3200,
         "hcInt": 40
       },
       {
