@@ -354,21 +354,21 @@ var winRewardData = {
       "type": "Rookie Chest",
       "amt": 1,
       "type2": "Gold",
-      "amt2": 1000
+      "amt2": 800
     },
     {
       "winCount": 3,
       "type": "Pro Chest",
       "amt": 1,
       "type2": "Gold",
-      "amt2": 1000
+      "amt2": 800
     },
     {
       "winCount": 5,
       "type": "Pro Chest",
       "amt": 1,
       "type2": "Gold",
-      "amt2": 1000
+      "amt2": 800
     }
   ]
 };
