@@ -2462,7 +2462,10 @@ function initApp() {
     console.log("🚀 App Initialized (vFixed)");
     try {
         loadGame(); // LOAD DATA NOW
-        if (typeof window.fixInventoryLevels === 'function') window.fixInventoryLevels(window.playerInventory);
+        if (typeof window.fixInventoryLevels === 'function') {
+            window.fixInventoryLevels(window.playerInventory);
+            saveGame();
+        }
         nav('dashboard');
         if (typeof renderPlayerProfile === 'function') renderPlayerProfile();
 

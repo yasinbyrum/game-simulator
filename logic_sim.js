@@ -319,7 +319,7 @@ function simulateGame(inputs) {
 
                         // Give cards logic...
                         if (!state.inventory[char.n]) {
-                            state.inventory[char.n] = { rarity: char.r, level: 1, cards: amt, bucket: char.b };
+                            state.inventory[char.n] = { rarity: char.r, level: 0, cards: amt, bucket: char.b };
                             lootLog.push(`${char.n} (New!) x${amt}`);
                         } else {
                             state.inventory[char.n].cards += amt;
