@@ -523,59 +523,262 @@ var marketConfig = {
 
 var loginConfig = {
   "onboarding": [
-    { "day": 1, "type": "Gold", "amt": 100 },
-    { "day": 2, "type": "Card Taiga", "amt": 8 },
-    { "day": 3, "type": "Diamonds", "amt": 10 },
-    { "day": 4, "type": "Card Taiga", "amt": 10 },
-    { "day": 5, "type": "Pro Chest", "amt": 1 },
-    { "day": 6, "type": "Gold", "amt": 300 },
-    { "day": 7, "type": "Pro Chest", "amt": 2 }
+    {
+      "day": 1,
+      "type": "Gold",
+      "amt": 100
+    },
+    {
+      "day": 2,
+      "type": "Card Taiga",
+      "amt": 10
+    },
+    {
+      "day": 3,
+      "type": "Diamonds",
+      "amt": 10
+    },
+    {
+      "day": 4,
+      "type": "Card Taiga",
+      "amt": 20
+    },
+    {
+      "day": 5,
+      "type": "Pro Chest",
+      "amt": 1
+    },
+    {
+      "day": 6,
+      "type": "Gold",
+      "amt": 300
+    },
+    {
+      "day": 7,
+      "type": "Pro Chest",
+      "amt": 2
+    }
   ],
   "fixed": {
     "b1": [
-      { "day": 1, "type": "Gold", "amt": 50, "hcInt": 2.5 },
-      { "day": 2, "type": "Rookie Chest", "amt": 1, "hcInt": 150 },
-      { "day": 3, "type": "Gold", "amt": 100, "hcInt": 5 },
-      { "day": 4, "type": "Rookie Chest", "amt": 1, "hcInt": 150 },
-      { "day": 5, "type": "Diamonds", "amt": 5, "hcInt": 75 },
-      { "day": 6, "type": "Gold", "amt": 200, "hcInt": 10 },
-      { "day": 7, "type": "Pro Chest", "amt": 1, "hcInt": 460 }
+      {
+        "day": 1,
+        "type": "Gold",
+        "amt": 50,
+        "hcInt": 2.5
+      },
+      {
+        "day": 2,
+        "type": "Rookie Chest",
+        "amt": 1,
+        "hcInt": 150
+      },
+      {
+        "day": 3,
+        "type": "Gold",
+        "amt": 100,
+        "hcInt": 5
+      },
+      {
+        "day": 4,
+        "type": "Rookie Chest",
+        "amt": 1,
+        "hcInt": 150
+      },
+      {
+        "day": 5,
+        "type": "Diamonds",
+        "amt": 5,
+        "hcInt": 75
+      },
+      {
+        "day": 6,
+        "type": "Gold",
+        "amt": 200,
+        "hcInt": 10
+      },
+      {
+        "day": 7,
+        "type": "Pro Chest",
+        "amt": 1,
+        "hcInt": 460
+      }
     ],
     "b2": [
-      { "day": 1, "type": "Gold", "amt": 100, "hcInt": 5 },
-      { "day": 2, "type": "Rookie Chest", "amt": 1, "hcInt": 150 },
-      { "day": 3, "type": "Gold", "amt": 200, "hcInt": 10 },
-      { "day": 4, "type": "Pro Chest", "amt": 1, "hcInt": 460 },
-      { "day": 5, "type": "Diamonds", "amt": 10, "hcInt": 150 },
-      { "day": 6, "type": "Gold", "amt": 400, "hcInt": 20 },
-      { "day": 7, "type": "Pro Chest", "amt": 2, "hcInt": 920 }
+      {
+        "day": 1,
+        "type": "Gold",
+        "amt": 100,
+        "hcInt": 5
+      },
+      {
+        "day": 2,
+        "type": "Rookie Chest",
+        "amt": 1,
+        "hcInt": 150
+      },
+      {
+        "day": 3,
+        "type": "Gold",
+        "amt": 200,
+        "hcInt": 10
+      },
+      {
+        "day": 4,
+        "type": "Pro Chest",
+        "amt": 1,
+        "hcInt": 460
+      },
+      {
+        "day": 5,
+        "type": "Diamonds",
+        "amt": 10,
+        "hcInt": 150
+      },
+      {
+        "day": 6,
+        "type": "Gold",
+        "amt": 400,
+        "hcInt": 20
+      },
+      {
+        "day": 7,
+        "type": "Pro Chest",
+        "amt": 2,
+        "hcInt": 920
+      }
     ],
     "b3": [
-      { "day": 1, "type": "Gold", "amt": 200, "hcInt": 10 },
-      { "day": 2, "type": "Pro Chest", "amt": 1, "hcInt": 460 },
-      { "day": 3, "type": "Gold", "amt": 400, "hcInt": 20 },
-      { "day": 4, "type": "Pro Chest", "amt": 2, "hcInt": 920 },
-      { "day": 5, "type": "Diamonds", "amt": 20, "hcInt": 300 },
-      { "day": 6, "type": "Gold", "amt": 800, "hcInt": 40 },
-      { "day": 7, "type": "Champion Chest", "amt": 1, "hcInt": 1150 }
+      {
+        "day": 1,
+        "type": "Gold",
+        "amt": 200,
+        "hcInt": 10
+      },
+      {
+        "day": 2,
+        "type": "Pro Chest",
+        "amt": 1,
+        "hcInt": 460
+      },
+      {
+        "day": 3,
+        "type": "Gold",
+        "amt": 400,
+        "hcInt": 20
+      },
+      {
+        "day": 4,
+        "type": "Pro Chest",
+        "amt": 2,
+        "hcInt": 920
+      },
+      {
+        "day": 5,
+        "type": "Diamonds",
+        "amt": 20,
+        "hcInt": 300
+      },
+      {
+        "day": 6,
+        "type": "Gold",
+        "amt": 800,
+        "hcInt": 40
+      },
+      {
+        "day": 7,
+        "type": "Champion Chest",
+        "amt": 1,
+        "hcInt": 1150
+      }
     ],
     "b4": [
-      { "day": 1, "type": "Gold", "amt": 400, "hcInt": 20 },
-      { "day": 2, "type": "Pro Chest", "amt": 2, "hcInt": 920 },
-      { "day": 3, "type": "Gold", "amt": 800, "hcInt": 40 },
-      { "day": 4, "type": "Champion Chest", "amt": 1, "hcInt": 1150 },
-      { "day": 5, "type": "Diamonds", "amt": 40, "hcInt": 600 },
-      { "day": 6, "type": "Gold", "amt": 1600, "hcInt": 80 },
-      { "day": 7, "type": "Champion Chest", "amt": 2, "hcInt": 2300 }
+      {
+        "day": 1,
+        "type": "Gold",
+        "amt": 400,
+        "hcInt": 20
+      },
+      {
+        "day": 2,
+        "type": "Pro Chest",
+        "amt": 2,
+        "hcInt": 920
+      },
+      {
+        "day": 3,
+        "type": "Gold",
+        "amt": 800,
+        "hcInt": 40
+      },
+      {
+        "day": 4,
+        "type": "Champion Chest",
+        "amt": 1,
+        "hcInt": 1150
+      },
+      {
+        "day": 5,
+        "type": "Diamonds",
+        "amt": 40,
+        "hcInt": 600
+      },
+      {
+        "day": 6,
+        "type": "Gold",
+        "amt": 1600,
+        "hcInt": 80
+      },
+      {
+        "day": 7,
+        "type": "Champion Chest",
+        "amt": 2,
+        "hcInt": 2300
+      }
     ],
     "b5": [
-      { "day": 1, "type": "Gold", "amt": 800, "hcInt": 40 },
-      { "day": 2, "type": "Champion Chest", "amt": 1, "hcInt": 1150 },
-      { "day": 3, "type": "Gold", "amt": 1600, "hcInt": 80 },
-      { "day": 4, "type": "Champion Chest", "amt": 2, "hcInt": 2300 },
-      { "day": 5, "type": "Diamonds", "amt": 80, "hcInt": 1200 },
-      { "day": 6, "type": "Gold", "amt": 3200, "hcInt": 160 },
-      { "day": 7, "type": "Champion Chest", "amt": 1, "hcInt": 2500 }
+      {
+        "day": 1,
+        "type": "Gold",
+        "amt": 800,
+        "hcInt": 40
+      },
+      {
+        "day": 2,
+        "type": "Champion Chest",
+        "amt": 1,
+        "hcInt": 1150
+      },
+      {
+        "day": 3,
+        "type": "Gold",
+        "amt": 1600,
+        "hcInt": 80
+      },
+      {
+        "day": 4,
+        "type": "Champion Chest",
+        "amt": 2,
+        "hcInt": 2300
+      },
+      {
+        "day": 5,
+        "type": "Diamonds",
+        "amt": 80,
+        "hcInt": 1200
+      },
+      {
+        "day": 6,
+        "type": "Gold",
+        "amt": 3200,
+        "hcInt": 160
+      },
+      {
+        "day": 7,
+        "type": "Champion Chest",
+        "amt": 1,
+        "hcInt": 2500
+      }
     ]
   }
 };
