@@ -858,9 +858,9 @@ var chestConfigs = {
   "Rookie Chest": {
     "slots": 3,
     "gold": {
-      "b1": 60,
-      "b2": 60,
-      "b3": 100
+      "b1": 40,
+      "b2": 40,
+      "b3": 80
     },
     "amounts": {
       "Rookie": {
@@ -941,7 +941,7 @@ var chestConfigs = {
     "gold": {
       "b1": 100,
       "b2": 100,
-      "b3": 200
+      "b3": 160
     },
     "amounts": {
       "Rookie": {
@@ -1038,9 +1038,9 @@ var chestConfigs = {
   "Champion Chest": {
     "slots": 4,
     "gold": {
-      "b1": 200,
-      "b2": 200,
-      "b3": 300
+      "b1": 180,
+      "b2": 180,
+      "b3": 240
     },
     "amounts": {
       "Rookie": {
@@ -1137,9 +1137,9 @@ var chestConfigs = {
   "Free Chest": {
     "slots": 2,
     "gold": {
-      "b1": 20,
-      "b2": 20,
-      "b3": 40
+      "b1": 10,
+      "b2": 10,
+      "b3": 20
     },
     "amounts": {
       "Rookie": {
