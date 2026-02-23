@@ -252,43 +252,79 @@ function simulateGame(inputs) {
             //      So random pick gives B2.
             //      This satisfies "When B1 maxed, B2 comes out".
 
-            c.slotProbs.forEach(slot => {
+            for (let i = 0; i < c.slotProbs.length; i++) {
+                let slot = c.slotProbs[i];
                 let probs = slot['b' + bucket] || slot['b1'];
-                if (!probs) return;
+                if (!probs) continue;
                 let roll = Math.random() * 100;
                 let pR = probs.R || 0, pP = probs.P || 0, pC = probs.C || 0, pL = probs.L || 0;
+
+                let totalProb = pR + pP + pC + pL;
+                if (totalProb <= 0 || roll >= totalProb) continue;
+
                 let r = (roll < pR) ? "Rookie" : (roll < pR + pP) ? "Pro" : (roll < pR + pP + pC) ? "Champion" : (pL > 0 ? "Legendary" : "Champion");
                 // Fallback if rarity doesn't exist in amounts
                 if (!c.amounts[r]) r = Object.keys(c.amounts).pop() || "Rookie";
                 let amt = (c.amounts[r] && c.amounts[r]['b' + bucket]) || (c.amounts[r] && c.amounts[r]['b1']) || 0;
 
                 // FIX: If amount is 0 (e.g. empty slot prob like Rookie Chest Slot 4 in B1), skip
-                if (!amt || amt <= 0) return;
+                if (!amt || amt <= 0) continue;
 
                 if (inputs.charPool) {
                     // Filter Logic:
                     // 1. Match Rarity & Bucket Cap
                     // 2. Exclude "Event Locked" (Taiga)
                     // 3. Exclude MAXED chars (Level >= 12)
-                    let validChars = inputs.charPool.filter(ch => {
-                        if (ch.b > bucket || ch.r !== r) return false;
+                    let selectedChars = new Set();
+                    let pool = inputs.charPool;
+
+                    let validChars = pool.filter(ch => {
+                        if (ch.b > bucket || ch.r !== r || selectedChars.has(ch.n)) return false;
 
                         // Taiga Check: If not in inventory OR level is 0, she's locked.
                         if (ch.n === "Taiga" && (!state.inventory[ch.n] || state.inventory[ch.n].level === 0)) return false;
 
                         // Maxed Check (Level >= 12)
-                        // If the character exists in inventory and its level is 12 or higher, it's maxed.
                         if (state.inventory[ch.n] && state.inventory[ch.n].level >= 12) return false;
 
                         return true;
                     });
 
+                    // 2. Fallback: If no unique chars of this rarity, try ANY unique char in bucket with >0 amount
+                    if (validChars.length === 0) {
+                        let potentialFallback = pool.filter(ch => {
+                            if (ch.b > bucket || selectedChars.has(ch.n)) return false;
+                            if (ch.n === "Taiga" && (!state.inventory[ch.n] || state.inventory[ch.n].level === 0)) return false;
+                            if (state.inventory[ch.n] && state.inventory[ch.n].level >= 12) return false;
+
+                            let a = c.amounts[ch.r]['b' + bucket] || c.amounts[ch.r]['b1'];
+                            return a > 0;
+                        });
+
+                        if (potentialFallback.length > 0) {
+                            validChars = potentialFallback;
+                        } else {
+                            // 3. Last Resort: Allow duplicate or maxed if absolutely nothing else
+                            validChars = pool.filter(ch => ch.b <= bucket && ch.r === r);
+                            if (validChars.length === 0) validChars = pool.filter(ch => ch.b <= bucket);
+                        }
+                    }
+
                     // Start Logic
                     if (validChars.length > 0) {
                         let char = validChars[Math.floor(Math.random() * validChars.length)];
+
+                        // Recalculate Amount based on ACTUAL char rarity
+                        if (char.r !== r) {
+                            r = char.r;
+                            amt = c.amounts[r]['b' + bucket] || c.amounts[r]['b1'];
+                        }
+
+                        selectedChars.add(char.n);
+
                         // Give cards logic...
                         if (!state.inventory[char.n]) {
-                            state.inventory[char.n] = { rarity: char.r, level: 0, cards: amt, bucket: char.b };
+                            state.inventory[char.n] = { rarity: char.r, level: 1, cards: amt, bucket: char.b };
                             lootLog.push(`${char.n} (New!) x${amt}`);
                         } else {
                             state.inventory[char.n].cards += amt;
@@ -310,7 +346,7 @@ function simulateGame(inputs) {
                         }
                     }
                 }
-            });
+            }
         }
 
         // Gold (Generic Chests Only)

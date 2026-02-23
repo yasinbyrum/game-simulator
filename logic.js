@@ -1102,14 +1102,218 @@ window.simulateManualChestOpen = function (typeArg, bucketArg, logIdArg) {
 
                 chestItems.push(`(${star}★) ${chosen.n} x${amt}`);
             }
+        }
+    }
+}
+window.updateManualBucketOptions = function () { const chestType = document.getElementById('manualChestType').value; const bucketSelect = document.getElementById('manualChestBucket'); if (!bucketSelect) return; let d = getSafe('chestConfigs'); let buckets = [1, 2, 3, 4, 5]; if (d) { let first = d[Object.keys(d)[0]]; if (first && first.gold) buckets = Object.keys(first.gold).map(k => parseInt(k.replace('b', ''))).sort((a, b) => a - b); } let options = buckets.map(b => `<option value="${b}">B${b}</option>`).join(''); bucketSelect.innerHTML = options; };
+function renderChestTabs() { const el = document.getElementById('chestTabs'); let d = getSafe('chestConfigs'); if (el && d) el.innerHTML = Object.keys(d).map(k => `<button class="tab-btn ${currentChestTab === k ? 'active' : ''}" onclick="currentChestTab='${k}';renderChestTabs();renderChestConfigViz()">${k}</button>`).join(''); }
+function renderChestConfigViz() {
+    let d = getSafe('chestConfigs'), el = document.getElementById('chestVizContainer'); if (!el || !d) return; let c = d[currentChestTab]; if (!c) return;
+    // Detect available buckets from gold keys
+    let allBuckets = Object.keys(c.gold || {}).map(k => parseInt(k.replace('b', ''))).sort((a, b) => a - b);
+    let extraBuckets = allBuckets.filter(b => b > 2); // B3+ for separate columns
+    // Detect available rarities from amounts
+    let rarities = Object.keys(c.amounts || {});
+    // Detect available prob keys from first slot
+    let probKeys = [];
+    if (c.slotProbs && c.slotProbs[0] && c.slotProbs[0]['b1']) {
+        probKeys = Object.keys(c.slotProbs[0]['b1']); // e.g. ['R','P','C'] or ['R','P','C','L']
+    }
+    let probLabel = probKeys.join('-');
+
+    let chestImgHTML = (currentChestTab !== "PowerUp Chest") ? `<div style="margin-right:15px;">${getPngTag(currentChestTab, 70)}</div>` : "";
+    if (currentChestTab === "PowerUp Chest") {
+        let poolIn = c.poolSplit ? c.poolSplit.in : 70; let poolOut = c.poolSplit ? c.poolSplit.out : 30; let dailyLim = getSafe('simConfig').dailyPowerUpChestLimit || 2;
+        let puRarities = rarities.length > 0 ? rarities : ['Rookie', 'Pro', 'Champion'];
+        let starLabels = { 'Rookie': '1★ Power', 'Pro': '2★ Power', 'Champion': '3★ Power', 'Legendary': '4★ Power' };
+        let html = `<div style="margin-bottom:20px; padding:15px; background:rgba(255,255,255,0.03); border:1px solid #444; border-radius:8px;"><div style="font-weight:bold; color:var(--accent); font-size:1.2rem; margin-bottom:15px; border-bottom:1px solid #444; padding-bottom:5px;">⚡ PowerUp Chest Configuration</div><div style="display:flex; gap:40px; margin-bottom:25px; justify-content:center;"><div><div style="font-weight:bold; color:#fff; margin-bottom:5px;">Drop Pool</div><div style="display:flex; gap:10px;"><div class="sim-input-group"><label style="color:#4ade80; font-size:0.9rem;">Unlocked %</label><input type="number" class="edit" value="${poolIn}" onchange="updateVal('chestConfigs[\\'PowerUp Chest\\'].poolSplit.in', this.value)" style="width:60px;"></div><div class="sim-input-group"><label style="color:#f87171; font-size:0.9rem;">Locked %</label><input type="number" class="edit" value="${poolOut}" onchange="updateVal('chestConfigs[\\'PowerUp Chest\\'].poolSplit.out', this.value)" style="width:60px;"></div></div></div><div><div style="font-weight:bold; color:#fff; margin-bottom:5px;">Daily Limit</div><div class="sim-input-group"><label style="color:#fbbf24; font-size:0.9rem;">Max Claims</label><input type="number" class="edit" value="${dailyLim}" onchange="updateVal('simConfig.dailyPowerUpChestLimit', this.value)" style="width:60px;"></div></div></div>`;
+        html += `<div style="margin-bottom:20px;"><div style="font-weight:bold; color:#a855f7; margin-bottom:5px;">🃏 PowerUp Amounts</div><table style="width:100%; font-size:1.15rem; text-align:center;"><thead><tr style="background:rgba(255,255,255,0.1);"><th style="padding:5px;">Star Rate</th>${allBuckets.map(b => `<th>B${b}</th>`).join('')}</tr></thead><tbody>`;
+        puRarities.forEach(r => {
+            html += `<tr><td>${starLabels[r] || r}</td>${allBuckets.map(b => `<td><input class="edit" type="number" value="${(c.amounts[r] && c.amounts[r]['b' + b]) || 0}" onchange="updateVal('chestConfigs[\\'PowerUp Chest\\'].amounts.${r}.b${b}',this.value)" style="width:40px; text-align:center;"></td>`).join('')}</tr>`;
+        });
+        html += `</tbody></table></div>`;
+        html += `<div><div style="font-weight:bold; color:var(--accent); margin-bottom:5px;">🎲 Drop Rates (%)</div><table style="width:100%; font-size:1.15rem; text-align:center;"><thead><tr style="background:rgba(255,255,255,0.1);"><th style="padding:5px;"></th>${allBuckets.map(b => `<th>B${b}</th>`).join('')}</tr></thead><tbody>`;
+        probKeys.forEach(pk => {
+            let label = pk === 'R' ? '1★ Power' : pk === 'P' ? '2★ Power' : pk === 'C' ? '3★ Power' : '4★ Power';
+            html += `<tr><td>${label}</td>${allBuckets.map(b => `<td><input class="edit" type="number" value="${(c.slotProbs[0] && c.slotProbs[0]['b' + b] && c.slotProbs[0]['b' + b][pk]) || 0}" onchange="updateVal('chestConfigs[\\'PowerUp Chest\\'].slotProbs[0].b${b}.${pk}',this.value)" style="width:40px; text-align:center;"></td>`).join('')}</tr>`;
+        });
+        html += `</tbody></table></div></div>`; el.innerHTML = html; return;
+    }
+    let h = `<div style="margin-bottom:15px; padding-bottom:10px; display:flex; align-items:center;">${chestImgHTML}<div><div style="font-weight:bold; color:var(--gold); margin-bottom:5px;">💰 Gold Drops</div><div style="display:flex; gap:10px;">
+        <div class="sim-input-group"><label>B1-B2</label><input type="number" class="edit" value="${c.gold['b1']}" onchange="updateB1B2('chestConfigs[\`' + currentChestTab + '\`].gold',this.value)" style="width:60px; font-size:1.15rem;"></div>
+        ${extraBuckets.map(b => `<div class="sim-input-group"><label>B${b}</label><input type="number" class="edit" value="${c.gold['b' + b] || 0}" onchange="updateVal('chestConfigs[\`' + currentChestTab + '\`].gold.b${b}',this.value)" style="width:50px; font-size:1.15rem;"></div>`).join('')}</div></div></div>`;
+
+    h += `<div style="font-weight:bold; color:#a855f7;">🃏 Card Amounts</div><table style="width:100%; font-size:1.15rem;"><thead><tr><th>Rarity</th><th>B1-B2</th>${extraBuckets.map(b => `<th>B${b}</th>`).join('')}</tr></thead><tbody>
+        ${rarities.map(r => `<tr><td>${r}</td>
+            <td><input type="number" class="edit" value="${(c.amounts[r] && c.amounts[r]['b1']) || 0}" onchange="updateB1B2('chestConfigs[\`' + currentChestTab + '\`].amounts.${r}',this.value)" style="width:50px; font-size:1.15rem;"></td>
+            ${extraBuckets.map(b => `<td><input type="number" class="edit" value="${(c.amounts[r] && c.amounts[r]['b' + b]) || 0}" onchange="updateVal('chestConfigs[\`' + currentChestTab + '\`].amounts.${r}.b${b}',this.value)" style="width:50px; font-size:1.15rem;"></td>`).join('')}
+        </tr>`).join('')}</tbody></table>`;
+
+    h += `<div style="font-weight:bold; color:var(--accent); margin-top:15px;">🎲 Slot Probabilities (%)</div><table style="width:100%; font-size:1.15rem;"><thead><tr><th>Slot</th><th>B1-B2 (${probLabel})</th>${extraBuckets.map(b => `<th>B${b} (${probLabel})</th>`).join('')}</tr></thead><tbody>`;
+    c.slotProbs.forEach((s, i) => {
+        h += `<tr><td style="font-size:1.15rem;">Slot ${s.id}</td>
+            <td><div style="display:flex; gap:5px;">
+                ${probKeys.map(pk => `<input class="edit" value="${(s['b1'] && s['b1'][pk]) || 0}" onchange="updateB1B2('chestConfigs[\`' + currentChestTab + '\`].slotProbs[${i}].',this.value, '${pk}')" style="width:50px; font-size:1.2rem; text-align:center;" title="${pk}">`).join('')}
+            </div></td>
+            ${extraBuckets.map(b => `<td><div style="display:flex; gap:5px;">${probKeys.map(pk => `<input class="edit" value="${(s['b' + b] && s['b' + b][pk]) || 0}" onchange="updateVal('chestConfigs[\`' + currentChestTab + '\`].slotProbs[${i}].b${b}.${pk}',this.value)" style="width:50px; font-size:1.2rem; text-align:center;" title="${pk}">`).join('')}</div></td>`).join('')}
+        </tr>`;
+    });
+    el.innerHTML = h + '</tbody></table>';
+}
+
+// ==========================================
+// 4. EXCEL IMPORT / EXPORT SYSTEM
+window.injectSaveButton = function (containerId, varOrList) {
+    const container = document.getElementById(containerId); if (!container) return;
+    let header = container.querySelector('.card-header'); if (!header) return;
+    let toolbar = header.querySelector('.toolbar');
+    if (!toolbar) { toolbar = document.createElement('div'); toolbar.className = 'toolbar'; header.appendChild(toolbar); }
+
+    let btnId = "btnSave_" + (Array.isArray(varOrList) ? varOrList[0] : varOrList);
+    if (document.getElementById(btnId)) return;
+
+    const btn = document.createElement('button');
+    btn.id = btnId;
+    btn.className = 'btn btn-save-sys';
+    btn.innerHTML = '💾 SAVE';
+    btn.style.cssText = "margin-left:10px; font-weight:bold;";
+
+    btn.onclick = () => {
+        let targets = Array.isArray(varOrList) ? varOrList : [varOrList];
+        let pending = targets.length;
+        btn.innerHTML = "⏳ SAVING...";
+
+        targets.forEach(vName => {
+            let data = getSafe(vName);
+            if (!data) { pending--; return; }
+            let filename = fileMap[vName] || 'data_core.js';
+
+            let exportVarName = vName;
+            if (['xpGainData', 'goldCostData', 'cardReqData'].includes(vName)) {
+                exportVarName = 'charProgressionData';
+            }
+
+            fetch('/update-data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename: filename, varName: exportVarName, data: data })
+            })
+                .then(r => { if (!r.ok) alert(`Save Failed for ${vName}`); })
+                .catch(e => console.error(e))
+                .finally(() => {
+                    pending--;
+                    if (pending <= 0) {
+                        btn.innerHTML = "✅ SAVED";
+                        btn.style.background = "#22c55e";
+                        setTimeout(() => { btn.innerHTML = "💾 SAVE"; btn.style.background = "#6366f1"; }, 2000);
+                    }
+                });
+        });
+    };
+    toolbar.appendChild(btn);
+};
+
+// ==========================================
+function injectExcelButtons(containerId, varOrList) {
+    const container = document.getElementById(containerId); if (!container) return;
+    let header = container.querySelector('.card-header'); if (!header) return;
+    let toolbar = header.querySelector('.toolbar');
+    if (!toolbar) { toolbar = document.createElement('div'); toolbar.className = 'toolbar'; header.appendChild(toolbar); }
+    if (toolbar.querySelector('.btn-excel-exp')) return;
+    const expBtn = document.createElement('button'); expBtn.className = 'btn btn-excel-exp'; expBtn.innerHTML = '📤 Export XLSX'; expBtn.style.cssText = "margin-left:5px; background:#22c55e; color:white; font-size:0.75rem;"; expBtn.onclick = () => exportToExcel(varOrList); toolbar.appendChild(expBtn);
+    const impBtn = document.createElement('button'); impBtn.className = 'btn btn-excel-imp'; impBtn.innerHTML = '📥 Import XLSX'; impBtn.style.cssText = "margin-left:5px; background:#3b82f6; color:white; font-size:0.75rem;";
+    const fileInput = document.createElement('input'); fileInput.type = 'file'; fileInput.accept = '.xlsx, .xls'; fileInput.style.display = 'none';
+    fileInput.onchange = (e) => importFromExcel(e, varOrList); impBtn.onclick = () => fileInput.click(); toolbar.appendChild(impBtn); toolbar.appendChild(fileInput);
+}
+
+function exportToExcel(varOrList) {
+    if (!window.XLSX) { alert("Excel library loading..."); return; }
+    let wb = XLSX.utils.book_new(); let targets = Array.isArray(varOrList) ? varOrList : [varOrList];
+    targets.forEach(vName => { let data = getSafe(vName); if (!data) return; let sheetName = vName.substring(0, 30); let ws; if (vName === 'missionData' || vName === 'leaderboardConfig') { let flatData = []; for (let bucket in data) { if (Array.isArray(data[bucket])) { data[bucket].forEach(row => { flatData.push({ ...row, Bucket: bucket }); }); } } ws = XLSX.utils.json_to_sheet(flatData); } else { ws = XLSX.utils.json_to_sheet(data); } XLSX.utils.book_append_sheet(wb, ws, sheetName); });
+    XLSX.writeFile(wb, "GameData_Export.xlsx");
+}
+
+function importFromExcel(event, varOrList) {
+    if (!window.XLSX) return; let file = event.target.files[0]; if (!file) return; let reader = new FileReader();
+    reader.onload = function (e) {
+        let data = new Uint8Array(e.target.result); let wb = XLSX.read(data, { type: 'array' }); let targets = Array.isArray(varOrList) ? varOrList : [varOrList];
+        targets.forEach(vName => { let sheetName = vName.substring(0, 30); let ws = wb.Sheets[sheetName]; if (!ws) return; let jsonData = XLSX.utils.sheet_to_json(ws); if (vName === 'missionData' || vName === 'leaderboardConfig') { let reconstructed = {}; jsonData.forEach(row => { let bucket = row.Bucket || "b1"; if (!reconstructed[bucket]) reconstructed[bucket] = []; let cleanRow = { ...row }; delete cleanRow.Bucket; reconstructed[bucket].push(cleanRow); }); updateVal(vName, reconstructed); } else { updateVal(vName, jsonData); } });
+        alert("✅ Data Imported! Please refresh."); location.reload();
+    }; reader.readAsArrayBuffer(file);
+}
+
+// ==========================================
+// 5. SIMULATION LOGIC
+// ==========================================
+// Render Inventory Wrapper (for simple_nav.js)
+window.renderInventory = function () {
+    if (window.lastSimState && window.lastSimState.inventory) {
+        if (typeof renderSimInventory === 'function') renderSimInventory(window.lastSimState.inventory);
+    } else if (window.playerInventory) {
+        // Fallback to playerInventory if simulation hasn't run yet
+        if (typeof renderSimInventory === 'function') renderSimInventory(window.playerInventory);
+    } else {
+        console.warn("No simulation state found for inventory.");
+    }
+};
+
+window.simulateManualChestOpen = function (typeArg, bucketArg, logIdArg) {
+    let type = typeArg || document.getElementById('manualChestType').value;
+    let b = bucketArg || parseInt(document.getElementById('manualChestBucket').value);
+    let count = 1; // Default to 1 for market calls
+    if (!typeArg) count = parseInt(document.getElementById('manualChestCount').value); // Use input only if no arg provided
+
+    let logEl = logIdArg ? document.getElementById(logIdArg) : document.getElementById('manualChestLog');
+    let configs = getSafe('chestConfigs');
+    let conf = configs ? (configs[type] || configs["Rookie Chest"]) : null;
+    if (!conf) return (logEl.innerHTML = "Chest Configs not loaded.");
+
+    // Ensure State Exists
+    if (!window.playerResources) {
+        window.playerResources = { gold: 0, diamonds: 0 };
+    }
+    // Note: state.inventory is now playerInventory (global)
+    // state.powerUps is now playerPowerUps (global)
+
+    let report = `Opener: ${count}x ${type} (B${b})\n`;
+    for (let i = 0; i < count; i++) {
+        let chestGold = conf.gold['b' + b] || conf.gold['b1'] || 0;
+        window.playerResources.gold = (window.playerResources.gold || 0) + chestGold; // Update Gold
+
+        let chestItems = [];
+        if (conf.customType === "PowerUp") {
+            // PowerUp Chest
+            let probs = conf.slotProbs[0]['b' + b] || conf.slotProbs[0]['b1'];
+            let roll = Math.random() * 100;
+            let star = (roll < probs.R) ? 1 : (roll < probs.R + probs.P) ? 2 : 3;
+            let amtKey = (star === 1) ? "Rookie" : (star === 2) ? "Pro" : "Champion";
+            let amt = conf.amounts[amtKey]['b' + b] || conf.amounts[amtKey]['b1'];
+            let pupPool = getSafe('powerUpData');
+
+            let candidates = pupPool.filter(p => p.s === star && !p.disabled);
+            if (candidates.length > 0) {
+                let chosen = candidates[Math.floor(Math.random() * candidates.length)];
+
+                // Update PowerUp State
+                if (!playerPowerUps[chosen.n]) playerPowerUps[chosen.n] = { amount: 0, level: 0, star: chosen.s, unlocked: false };
+                playerPowerUps[chosen.n].amount += amt;
+                if (!playerPowerUps[chosen.n].unlocked) playerPowerUps[chosen.n].unlocked = true; // Auto unlock on first drop? Or separate logic? Assuming unlock.
+
+                chestItems.push(`(${star}★) ${chosen.n} x${amt}`);
+            }
         } else {
             // Character Chest
             let selectedChars = new Set(); // Track selected characters for this chest
 
             conf.slotProbs.forEach(slot => {
                 let probs = slot['b' + b] || slot['b1'];
+                if (!probs) return;
                 let roll = Math.random() * 100;
-                let r = (roll < probs.R) ? "Rookie" : (roll < probs.R + probs.P) ? "Pro" : (roll < probs.R + probs.P + probs.C) ? "Champion" : "Legendary";
+                let pR = probs.R || 0, pP = probs.P || 0, pC = probs.C || 0, pL = probs.L || 0;
+                let totalProb = pR + pP + pC + pL;
+                if (totalProb <= 0 || roll >= totalProb) return;
+
+                let r = (roll < pR) ? "Rookie" : (roll < pR + pP) ? "Pro" : (roll < pR + pP + pC) ? "Champion" : "Legendary";
                 let amt = conf.amounts[r]['b' + b] || conf.amounts[r]['b1'];
                 let pool = getSafe('charPoolData');
 
@@ -1178,10 +1382,9 @@ window.simulateManualChestOpen = function (typeArg, bucketArg, logIdArg) {
         entry.innerHTML = `<span style="color:#aaa; font-size:0.8rem;">[${new Date().toLocaleTimeString()}]</span> ` + report.replace(/\n/g, '<br/>');
         if (logEl.firstChild) logEl.insertBefore(entry, logEl.firstChild);
         else logEl.appendChild(entry);
-    } else {
         logEl.innerHTML = report;
     }
-}
+} // End simulateManualChestOpen
 
 // runSimulation moved to logic_sim.js
 
@@ -1853,7 +2056,7 @@ window.renderMarketItems = function () {
         let priceTag = "";
         let contentTag = "";
         let isFreePremium = ['Rookie Chest', 'Pro Chest', 'Champion Chest', 'Legendary Chest'].includes(item.name);
-        
+
         let safeAdmin = (typeof isAdminMode !== 'undefined' && isAdminMode);
         let nameTag = safeAdmin ? `<div class="market-item-name"><input class="edit" value="${item.name}" onchange="updateVal('marketConfig.${cat}[${index}].name', this.value, false)" style="width:90%; text-align:center; font-weight:bold; font-size:1rem;"></div>` : `<div class="market-item-name">${item.name}</div>`;
 
@@ -1879,7 +2082,7 @@ window.renderMarketItems = function () {
             if (item.id === 'gold_chest' || item.id === 'diamond_chest') {
                 let configKey = (item.id === 'gold_chest') ? 'goldChest' : 'diamondChest';
                 let current = (window.playerResources && window.playerResources.dailyChests && window.playerResources.dailyChests[configKey]) || 0;
-                let limit = 2; 
+                let limit = 2;
                 let isMaxed = current >= limit;
                 let btnText = isMaxed ? "MAX" : "OPEN";
                 let btnClass = isMaxed ? "btn-open-chest disabled" : "btn-open-chest";
@@ -1929,7 +2132,8 @@ window.renderMarketItems = function () {
             ${priceTag}
             ${contentTag}
         </div>
-        `;    }).join('');
+        `;
+    }).join('');
 }
 
 
@@ -2042,11 +2246,13 @@ function openMarketChest(chestType, bucket, chestName, imgName) {
             if (!probs) return;
 
             let roll = Math.random() * 100;
-            let r = (roll < probs.R) ? "Rookie" : (roll < probs.R + probs.P) ? "Pro" : (roll < probs.R + probs.P + probs.C) ? "Champion" : "Legendary";
+            let pR = probs.R || 0, pP = probs.P || 0, pC = probs.C || 0, pL = probs.L || 0;
+            let totalProb = pR + pP + pC + pL;
+            if (totalProb <= 0 || roll >= totalProb) return;
+
+            let r = (roll < pR) ? "Rookie" : (roll < pR + pP) ? "Pro" : (roll < pR + pP + pC) ? "Champion" : "Legendary";
             if (!c.amounts[r]) r = Object.keys(c.amounts).pop() || "Rookie";
             let amt = (c.amounts[r] && c.amounts[r]['b' + bucket]) || (c.amounts[r] && c.amounts[r]['b1']) || 0;
-            if (!amt || amt <= 0) return;
-
             let pool = getSafe('charPoolData');
             if (pool) {
                 // 1. Try to find unique char with Rolled Rarity
