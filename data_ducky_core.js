@@ -394,7 +394,7 @@ var weConfig = {
     {
       "step": 3,
       "type": "Gold",
-      "amt": 1000,
+      "amt": 500,
       "hcInt": 60
     },
     {
@@ -420,7 +420,7 @@ var weConfig = {
     {
       "step": 3,
       "type": "Gold",
-      "amt": 2000,
+      "amt": 1000,
       "hcInt": 120
     },
     {
