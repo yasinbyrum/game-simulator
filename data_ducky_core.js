@@ -445,13 +445,13 @@ var weConfig = {
     },
     {
       "step": 3,
-      "type": "Pro Chest",
+      "type": "Rookie Chest",
       "amt": 1,
       "hcInt": 60
     },
     {
       "step": 4,
-      "type": "Champion Chest",
+      "type": "Pro Chest",
       "amt": 1,
       "hcInt": 1150
     }
