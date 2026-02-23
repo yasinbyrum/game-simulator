@@ -462,15 +462,15 @@ var weConfig = {
 var rewardChestConfig = {
   "goldChest": {
     "dailyLimit": 2,
-    "b1": 100,
-    "b2": 250,
-    "b3": 500
+    "b1": 150,
+    "b2": 300,
+    "b3": 600
   },
   "diamondChest": {
     "dailyLimit": 2,
     "b1": 10,
-    "b2": 20,
-    "b3": 30
+    "b2": 15,
+    "b3": 20
   }
 };
 
