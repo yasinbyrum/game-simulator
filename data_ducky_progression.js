@@ -513,27 +513,27 @@ var cupRoadData = [
     "a1": 120
   },
   {
-    "cup": 970,
+    "cup": 980,
     "r1": "Gold",
     "a1": 600
   },
   {
-    "cup": 1060,
+    "cup": 1080,
     "r1": "Rookie Chest",
     "a1": 1
   },
   {
-    "cup": 1150,
+    "cup": 1180,
     "r1": "Pro Card",
     "a1": 20
   },
   {
-    "cup": 1250,
+    "cup": 1300,
     "r1": "Gold",
     "a1": 700
   },
   {
-    "cup": 1350,
+    "cup": 1420,
     "r1": "Arena 4 Unlock",
     "a1": "-",
     "r2": "Gold",
@@ -541,32 +541,32 @@ var cupRoadData = [
     "arena": "Arena 4"
   },
   {
-    "cup": 1450,
+    "cup": 1540,
     "r1": "Rookie Chest",
     "a1": 1
   },
   {
-    "cup": 1560,
+    "cup": 1680,
     "r1": "Rookie Card",
     "a1": 140
   },
   {
-    "cup": 1670,
+    "cup": 1820,
     "r1": "Gold",
     "a1": 800
   },
   {
-    "cup": 1780,
+    "cup": 1960,
     "r1": "Rookie Chest",
     "a1": 1
   },
   {
-    "cup": 1900,
+    "cup": 2120,
     "r1": "Rookie Card",
     "a1": 80
   },
   {
-    "cup": 2020,
+    "cup": 2280,
     "r1": "Arena 5 Unlock",
     "a1": "-",
     "r2": "Gold",
@@ -574,32 +574,32 @@ var cupRoadData = [
     "arena": "Arena 5"
   },
   {
-    "cup": 2140,
+    "cup": 2440,
     "r1": "Gold",
     "a1": 900
   },
   {
-    "cup": 2270,
+    "cup": 2620,
     "r1": "Diamonds",
     "a1": 5
   },
   {
-    "cup": 2400,
+    "cup": 2800,
     "r1": "Pro Card",
     "a1": 30
   },
   {
-    "cup": 2530,
+    "cup": 2980,
     "r1": "Gold",
     "a1": 1000
   },
   {
-    "cup": 2670,
+    "cup": 3180,
     "r1": "Rookie Chest",
     "a1": 1
   },
   {
-    "cup": 2810,
+    "cup": 3380,
     "r1": "Arena 6 Unlock",
     "a1": "-",
     "r2": "Gold",
@@ -607,64 +607,64 @@ var cupRoadData = [
     "arena": "Arena 6"
   },
   {
-    "cup": 2950,
+    "cup": 3580,
     "r1": "Gold",
     "a1": 1100
   },
   {
-    "cup": 3100,
+    "cup": 3800,
     "r1": "Pro Chest",
     "a1": 1
   },
   {
-    "cup": 3250,
+    "cup": 4020,
     "r1": "Pro Card",
     "a1": 30
   },
   {
-    "cup": 3400,
+    "cup": 4240,
     "r1": "Gold",
     "a1": 1200
   },
   {
-    "cup": 3560,
+    "cup": 4480,
     "r1": "Rookie Chest",
     "a1": 1
   },
   {
-    "cup": 3720,
+    "cup": 4720,
     "r1": "Arena 7 Unlock",
     "a1": "-",
     "feat": "",
     "arena": "Arena 7"
   },
   {
-    "cup": 3880,
+    "cup": 4960,
     "r1": "Rookie Card",
     "a1": 160
   },
   {
-    "cup": 4050,
+    "cup": 5220,
     "r1": "Pro Chest",
     "a1": 1
   },
   {
-    "cup": 4220,
+    "cup": 5480,
     "r1": "Diamonds",
     "a1": 10
   },
   {
-    "cup": 4390,
+    "cup": 5740,
     "r1": "Rookie Card",
     "a1": 180
   },
   {
-    "cup": 4570,
+    "cup": 6020,
     "r1": "Gold",
     "a1": 1300
   },
   {
-    "cup": 4750,
+    "cup": 6300,
     "r1": "Arena 8 Unlock",
     "a1": "-",
     "r2": "Gold",
@@ -672,32 +672,32 @@ var cupRoadData = [
     "arena": "Arena 8"
   },
   {
-    "cup": 4930,
+    "cup": 6580,
     "r1": "Rookie Chest",
     "a1": 1
   },
   {
-    "cup": 5120,
+    "cup": 6880,
     "r1": "Gold",
     "a1": 1400
   },
   {
-    "cup": 5310,
+    "cup": 7180,
     "r1": "Pro Chest",
     "a1": 1
   },
   {
-    "cup": 5500,
+    "cup": 7480,
     "r1": "Champion Card",
-    "a1": 12
+    "a1": 4
   },
   {
-    "cup": 5700,
+    "cup": 7800,
     "r1": "Gold",
     "a1": 1500
   },
   {
-    "cup": 5900,
+    "cup": 8120,
     "r1": "Arena 9 Unlock",
     "a1": "-",
     "r2": "Gold",
@@ -706,44 +706,44 @@ var cupRoadData = [
     "feat": "Bucket 3"
   },
   {
-    "cup": 6100,
+    "cup": 8440,
     "r1": "Diamonds",
     "a1": 10
   },
   {
-    "cup": 6320,
+    "cup": 8790,
     "r1": "Pro Card",
     "a1": 40,
     "r2": "Champion Chest",
     "a2": 1
   },
   {
-    "cup": 6540,
+    "cup": 9140,
     "r1": "Gold",
     "a1": 1600
   },
   {
-    "cup": 6760,
+    "cup": 9490,
     "r1": "Rookie Chest",
     "a1": 1
   },
   {
-    "cup": 7000,
+    "cup": 9870,
     "r1": "Champion Card",
-    "a1": 12
+    "a1": 4
   },
   {
-    "cup": 7240,
+    "cup": 10250,
     "r1": "Gold",
     "a1": 1700
   },
   {
-    "cup": 7480,
+    "cup": 10630,
     "r1": "Pro Chest",
     "a1": 1
   },
   {
-    "cup": 7740,
+    "cup": 11040,
     "r1": "Arena 10 Unlock",
     "a1": "-",
     "r2": "Gold",
@@ -751,39 +751,39 @@ var cupRoadData = [
     "arena": "Arena 10"
   },
   {
-    "cup": 8000,
+    "cup": 11450,
     "r1": "Gold",
     "a1": 1800,
     "r2": "Champion Chest",
     "a2": 1
   },
   {
-    "cup": 8260,
+    "cup": 11860,
     "r1": "Pro Chest",
     "a1": 1
   },
   {
-    "cup": 8540,
+    "cup": 12300,
     "r1": "Pro Card",
     "a1": 40
   },
   {
-    "cup": 8820,
+    "cup": 12740,
     "r1": "Gold",
     "a1": 1900
   },
   {
-    "cup": 9100,
+    "cup": 13180,
     "r1": "Pro Chest",
     "a1": 1
   },
   {
-    "cup": 9400,
+    "cup": 13650,
     "r1": "Champion Card",
-    "a1": 16
+    "a1": 6
   },
   {
-    "cup": 9700,
+    "cup": 14120,
     "r1": "Arena 11 Unlock",
     "a1": "-",
     "r2": "Gold",
@@ -791,39 +791,39 @@ var cupRoadData = [
     "arena": "Arena 11"
   },
   {
-    "cup": 10000,
+    "cup": 14590,
     "r1": "Pro Chest",
     "a1": 1
   },
   {
-    "cup": 10320,
+    "cup": 15090,
     "r1": "Diamonds",
     "a1": 10,
     "r2": "Champion Chest",
     "a2": 1
   },
   {
-    "cup": 10640,
+    "cup": 15590,
     "r1": "Pro Card",
     "a1": 40
   },
   {
-    "cup": 10960,
+    "cup": 16090,
     "r1": "Gold",
     "a1": 2000
   },
   {
-    "cup": 11300,
+    "cup": 16620,
     "r1": "Rookie Chest",
     "a1": 1
   },
   {
-    "cup": 11640,
+    "cup": 17150,
     "r1": "Gold",
     "a1": 2200
   },
   {
-    "cup": 11980,
+    "cup": 17680,
     "r1": "Arena 12 Unlock",
     "a1": "-",
     "r2": "Gold",
@@ -831,30 +831,30 @@ var cupRoadData = [
     "arena": "Arena 12"
   },
   {
-    "cup": 12340,
+    "cup": 18240,
     "r1": "Pro Chest",
     "a1": 1
   },
   {
-    "cup": 12700,
+    "cup": 18800,
     "r1": "Pro Card",
     "a1": 40
   },
   {
-    "cup": 13060,
+    "cup": 19360,
     "r1": "Gold",
     "a1": 2400,
     "r2": "Champion Chest",
     "a2": 1
   },
   {
-    "cup": 13440,
+    "cup": 19920,
     "r1": "Rookie Chest",
     "a1": 1
   },
   {
-    "cup": 13820,
+    "cup": 20480,
     "r1": "Champion Card",
-    "a1": 16
+    "a1": 6
   }
 ];
