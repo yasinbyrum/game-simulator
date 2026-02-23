@@ -351,7 +351,7 @@ var winRewardData = {
   "b3": [
     {
       "winCount": 1,
-      "type": "Pro Chest",
+      "type": "Rookie Chest",
       "amt": 1,
       "type2": "Gold",
       "amt2": 1000
@@ -365,7 +365,7 @@ var winRewardData = {
     },
     {
       "winCount": 5,
-      "type": "Champion Chest",
+      "type": "Pro Chest",
       "amt": 1,
       "type2": "Gold",
       "amt2": 1000
