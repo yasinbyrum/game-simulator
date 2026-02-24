@@ -468,9 +468,9 @@ var rewardChestConfig = {
   },
   "diamondChest": {
     "dailyLimit": 2,
-    "b1": 10,
-    "b2": 15,
-    "b3": 20
+    "b1": 5,
+    "b2": 10,
+    "b3": 15
   }
 };
 
