@@ -509,7 +509,7 @@ var cupRoadData = [
   {
     "cup": 800,
     "r1": "Diamonds",
-    "a1": 5
+    "a1": 10
   },
   {
     "cup": 880,
@@ -585,7 +585,7 @@ var cupRoadData = [
   {
     "cup": 2620,
     "r1": "Diamonds",
-    "a1": 5
+    "a1": 10
   },
   {
     "cup": 2800,
