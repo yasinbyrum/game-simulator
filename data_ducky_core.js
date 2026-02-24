@@ -394,7 +394,7 @@ var weConfig = {
     {
       "step": 3,
       "type": "Diamonds",
-      "amt": 20,
+      "amt": 10,
       "hcInt": 60
     },
     {
@@ -420,7 +420,7 @@ var weConfig = {
     {
       "step": 3,
       "type": "Diamonds",
-      "amt": 40,
+      "amt": 15,
       "hcInt": 120
     },
     {
