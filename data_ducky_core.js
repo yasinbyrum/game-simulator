@@ -939,9 +939,9 @@ var chestConfigs = {
   "Pro Chest": {
     "slots": 4,
     "gold": {
-      "b1": 120,
-      "b2": 120,
-      "b3": 160
+      "b1": 90,
+      "b2": 90,
+      "b3": 140
     },
     "amounts": {
       "Rookie": {
