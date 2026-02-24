@@ -305,7 +305,9 @@ var levelData = [
     "l": 34,
     "req": 10000,
     "r1t": "Diamonds",
-    "r1a": 6
+    "r1a": 6,
+    "r2t": "Champion Chest",
+    "r2a": 1
   },
   {
     "l": 35,
@@ -319,7 +321,7 @@ var levelData = [
   {
     "l": 36,
     "req": 12000,
-    "r1t": "Pro Chest",
+    "r1t": "Champion Chest",
     "r1a": 1,
     "r2t": "Gold",
     "r2a": 1500
@@ -334,7 +336,9 @@ var levelData = [
     "l": 38,
     "req": 14000,
     "r1t": "1★ Powerup",
-    "r1a": 5
+    "r1a": 5,
+    "r2t": "Champion Chest",
+    "r2a": 1
   },
   {
     "l": 39,
@@ -391,7 +395,7 @@ var levelData = [
   {
     "l": 46,
     "req": 26000,
-    "r1t": "Champion Chest",
+    "r1t": "Pro Chest",
     "r1a": 1
   },
   {
