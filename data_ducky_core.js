@@ -530,22 +530,22 @@ var loginConfig = {
     },
     {
       "day": 2,
-      "type": "Diamonds",
+      "type": "Card Taiga",
       "amt": 10
     },
     {
       "day": 3,
-      "type": "Card Taiga",
+      "type": "Diamonds",
       "amt": 10
     },
     {
       "day": 4,
-      "type": "Pro Chest",
-      "amt": 1
+      "type": "Card Taiga",
+      "amt": 20
     },
     {
       "day": 5,
-      "type": "Card Taiga",
+      "type": "Pro Chest",
       "amt": 20
     },
     {
