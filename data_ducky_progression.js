@@ -754,8 +754,8 @@ var cupRoadData = [
     "cup": 11450,
     "r1": "Gold",
     "a1": 1800,
-    "r2": "Pro Chest",
-    "a2": 1
+    "r2": "Champion Card",
+    "a2": 4
   },
   {
     "cup": 11860,
@@ -769,18 +769,18 @@ var cupRoadData = [
   },
   {
     "cup": 12740,
+    "r1": "Champion Card",
+    "a1": 4
+  },
+  {
+    "cup": 13180,
     "r1": "Gold",
     "a1": 1900
   },
   {
-    "cup": 13180,
-    "r1": "Pro Chest",
-    "a1": 1
-  },
-  {
     "cup": 13650,
-    "r1": "Champion Card",
-    "a1": 4
+    "r1": "Champion Chest",
+    "a1": 1
   },
   {
     "cup": 14120,
@@ -792,8 +792,8 @@ var cupRoadData = [
   },
   {
     "cup": 14590,
-    "r1": "Champion Chest",
-    "a1": 1
+    "r1": "Champion Card",
+    "a1": 6
   },
   {
     "cup": 15090,
@@ -804,23 +804,23 @@ var cupRoadData = [
   },
   {
     "cup": 15590,
-    "r1": "Champion Card",
-    "a1": 4
+    "r1": "Pro Chest",
+    "a1": 1
   },
   {
     "cup": 16090,
-    "r1": "Gold",
-    "a1": 2000
-  },
-  {
-    "cup": 16620,
     "r1": "Champion Chest",
     "a1": 1
   },
   {
-    "cup": 17150,
+    "cup": 16620,
     "r1": "Gold",
-    "a1": 2200
+    "a1": 2000
+  },
+  {
+    "cup": 17150,
+    "r1": "Champion Card",
+    "a1": 6
   },
   {
     "cup": 17680,
@@ -837,24 +837,24 @@ var cupRoadData = [
   },
   {
     "cup": 18800,
-    "r1": "Champion Card",
-    "a1": 6
+    "r1": "Gold",
+    "a1": 2200
   },
   {
     "cup": 19360,
-    "r1": "Gold",
-    "a1": 2400,
+    "r1": "Pro Chest",
+    "a1": 1,
     "r2": "Rookie Chest",
     "a2": 1
   },
   {
     "cup": 19920,
-    "r1": "Champion Chest",
-    "a1": 1
+    "r1": "Gold",
+    "a1": 2400
   },
   {
     "cup": 20480,
-    "r1": "Champion Card",
-    "a1": 6
+    "r1": "Champion Chest",
+    "a1": 1
   }
 ];
