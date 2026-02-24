@@ -530,18 +530,18 @@ var loginConfig = {
     },
     {
       "day": 2,
-      "type": "Card Taiga",
-      "amt": 10
-    },
-    {
-      "day": 3,
       "type": "Diamonds",
       "amt": 10
     },
     {
+      "day": 3,
+      "type": "Gold",
+      "amt": 400
+    },
+    {
       "day": 4,
       "type": "Card Taiga",
-      "amt": 20
+      "amt": 10
     },
     {
       "day": 5,
@@ -550,8 +550,8 @@ var loginConfig = {
     },
     {
       "day": 6,
-      "type": "Gold",
-      "amt": 400
+      "type": "Card Taiga",
+      "amt": 20
     },
     {
       "day": 7,
