@@ -588,7 +588,7 @@ var loginConfig = {
       {
         "day": 5,
         "type": "Diamonds",
-        "amt": 5,
+        "amt": 10,
         "hcInt": 75
       },
       {
@@ -632,7 +632,7 @@ var loginConfig = {
       {
         "day": 5,
         "type": "Diamonds",
-        "amt": 10,
+        "amt": 20,
         "hcInt": 150
       },
       {
@@ -676,7 +676,7 @@ var loginConfig = {
       {
         "day": 5,
         "type": "Diamonds",
-        "amt": 20,
+        "amt": 40,
         "hcInt": 300
       },
       {
