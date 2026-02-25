@@ -1222,7 +1222,7 @@ var chestConfigs = {
       },
       "Champion": {
         "b1": 0,
-        "b2": 0,
+        "b2": 1,
         "b3": 2
       }
     },
