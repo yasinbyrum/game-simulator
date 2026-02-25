@@ -546,7 +546,7 @@ var loginConfig = {
     {
       "day": 5,
       "type": "Pro Chest",
-      "amt": 20
+      "amt": 1
     },
     {
       "day": 6,
