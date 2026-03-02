@@ -93,7 +93,7 @@ var levelData = [
   },
   {
     "l": 5,
-    "req": 70,
+    "req": 80,
     "r1t": "Gold",
     "r1a": 200,
     "r2t": "1★ Powerup",
@@ -102,19 +102,19 @@ var levelData = [
   },
   {
     "l": 6,
-    "req": 80,
+    "req": 100,
     "r1t": "Rookie Chest",
     "r1a": 1
   },
   {
     "l": 7,
-    "req": 100,
+    "req": 150,
     "r1t": "1★ Powerup",
     "r1a": 5
   },
   {
     "l": 8,
-    "req": 150,
+    "req": 200,
     "r1t": "Gold",
     "r1a": 300,
     "r2t": "2★ Powerup",
@@ -144,13 +144,13 @@ var levelData = [
   },
   {
     "l": 12,
-    "req": 270,
+    "req": 300,
     "r1t": "Gold",
     "r1a": 500
   },
   {
     "l": 13,
-    "req": 300,
+    "req": 350,
     "r1t": "Rookie Chest",
     "r1a": 1
   },
@@ -185,7 +185,7 @@ var levelData = [
   },
   {
     "l": 18,
-    "req": 650,
+    "req": 700,
     "r1t": "Gold",
     "r1a": 600,
     "r2t": "1★ Powerup",
@@ -194,7 +194,7 @@ var levelData = [
   },
   {
     "l": 19,
-    "req": 750,
+    "req": 800,
     "r1t": "Pro Chest",
     "r1a": 1
   },
@@ -260,19 +260,19 @@ var levelData = [
   },
   {
     "l": 28,
-    "req": 4100,
+    "req": 4000,
     "r1t": "1★ Powerup",
     "r1a": 5
   },
   {
     "l": 29,
-    "req": 5000,
+    "req": 4500,
     "r1t": "Diamonds",
     "r1a": 5
   },
   {
     "l": 30,
-    "req": 6000,
+    "req": 5000,
     "r1t": "1★ Powerup",
     "r1a": 5,
     "r2t": "Gold",
@@ -280,7 +280,7 @@ var levelData = [
   },
   {
     "l": 31,
-    "req": 7000,
+    "req": 5000,
     "r1t": "Pro Chest",
     "r1a": 1,
     "r2t": "2★ Powerup",
@@ -289,13 +289,13 @@ var levelData = [
   },
   {
     "l": 32,
-    "req": 8000,
+    "req": 7000,
     "r1t": "2★ Powerup",
     "r1a": 3
   },
   {
     "l": 33,
-    "req": 9000,
+    "req": 8000,
     "r1t": "1★ Powerup",
     "r1a": 5,
     "r2t": "Gold",
@@ -414,7 +414,7 @@ var levelData = [
   },
   {
     "l": 49,
-    "req": 24000,
+    "req": 23000,
     "r1t": "Diamonds",
     "r1a": 15,
     "r2t": "3★ Powerup",
@@ -423,7 +423,7 @@ var levelData = [
   },
   {
     "l": 50,
-    "req": 25000,
+    "req": 24000,
     "r1t": "3★ Powerup",
     "r1a": 3
   }
