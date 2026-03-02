@@ -87,13 +87,13 @@ var levelData = [
   },
   {
     "l": 4,
-    "req": 50,
+    "req": 60,
     "r1t": "Rookie Chest",
     "r1a": 1
   },
   {
     "l": 5,
-    "req": 50,
+    "req": 70,
     "r1t": "Gold",
     "r1a": 200,
     "r2t": "1★ Powerup",
@@ -108,7 +108,7 @@ var levelData = [
   },
   {
     "l": 7,
-    "req": 120,
+    "req": 100,
     "r1t": "1★ Powerup",
     "r1a": 5
   },
@@ -123,19 +123,19 @@ var levelData = [
   },
   {
     "l": 9,
-    "req": 150,
+    "req": 200,
     "r1t": "Rookie Chest",
     "r1a": 1
   },
   {
     "l": 10,
-    "req": 200,
+    "req": 220,
     "r1t": "Gold",
     "r1a": 400
   },
   {
     "l": 11,
-    "req": 200,
+    "req": 250,
     "r1t": "Rookie Chest",
     "r1a": 1,
     "r2t": "1★ Powerup",
@@ -144,19 +144,19 @@ var levelData = [
   },
   {
     "l": 12,
-    "req": 240,
+    "req": 270,
     "r1t": "Gold",
     "r1a": 500
   },
   {
     "l": 13,
-    "req": 280,
+    "req": 300,
     "r1t": "Rookie Chest",
     "r1a": 1
   },
   {
     "l": 14,
-    "req": 300,
+    "req": 350,
     "r1t": "1★ Powerup",
     "r1a": 5,
     "r2t": "2★ Powerup",
@@ -165,7 +165,7 @@ var levelData = [
   },
   {
     "l": 15,
-    "req": 350,
+    "req": 400,
     "r1t": "Diamonds",
     "r1a": 10,
     "r2t": "Gold",
@@ -229,7 +229,7 @@ var levelData = [
   },
   {
     "l": 24,
-    "req": 2200,
+    "req": 2250,
     "r1t": "Diamonds",
     "r1a": 5,
     "r2t": "Gold",
@@ -350,7 +350,7 @@ var levelData = [
   },
   {
     "l": 40,
-    "req": 17000,
+    "req": 16000,
     "r1t": "3★ Powerup",
     "r1a": 3,
     "r2t": "1★ Powerup",
@@ -359,13 +359,13 @@ var levelData = [
   },
   {
     "l": 41,
-    "req": 19000,
+    "req": 17000,
     "r1t": "Champion Chest",
     "r1a": 1
   },
   {
     "l": 42,
-    "req": 20000,
+    "req": 18000,
     "r1t": "2★ Powerup",
     "r1a": 3,
     "r2t": "Gold",
@@ -373,13 +373,13 @@ var levelData = [
   },
   {
     "l": 43,
-    "req": 22500,
+    "req": 19000,
     "r1t": "3★ Powerup",
     "r1a": 3
   },
   {
     "l": 44,
-    "req": 25000,
+    "req": 20000,
     "r1t": "Diamonds",
     "r1a": 10,
     "r2t": "2★ Powerup",
@@ -388,25 +388,25 @@ var levelData = [
   },
   {
     "l": 45,
-    "req": 26000,
+    "req": 21000,
     "r1t": "Gold",
     "r1a": 1300
   },
   {
     "l": 46,
-    "req": 26000,
+    "req": 21000,
     "r1t": "Pro Chest",
     "r1a": 1
   },
   {
     "l": 47,
-    "req": 27000,
+    "req": 22000,
     "r1t": "2★ Powerup",
     "r1a": 3
   },
   {
     "l": 48,
-    "req": 28000,
+    "req": 23000,
     "r1t": "1★ Powerup",
     "r1a": 5,
     "r2t": "Gold",
@@ -414,7 +414,7 @@ var levelData = [
   },
   {
     "l": 49,
-    "req": 29000,
+    "req": 24000,
     "r1t": "Diamonds",
     "r1a": 15,
     "r2t": "3★ Powerup",
@@ -423,7 +423,7 @@ var levelData = [
   },
   {
     "l": 50,
-    "req": 30000,
+    "req": 25000,
     "r1t": "3★ Powerup",
     "r1a": 3
   }
