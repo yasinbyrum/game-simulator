@@ -16,6 +16,7 @@ function simulateGame(inputs) {
         level: 1,
         cups: inputs.startCfg.cups || 0,
         maxAchievedCups: inputs.startCfg.maxCups || 0,
+        elo: inputs.matchmakingConfig?.elo?.startValue || 500,
         totalAds: 0,
         totalMissions: 0,
         totalUpgrades: 1,
@@ -668,6 +669,8 @@ function simulateGame(inputs) {
     safeCheckMilestones(); // Initial Check (Cup 0)
 
     for (let d = 1; d <= inputs.days; d++) {
+        let dailyEloLoss = 0;
+
         // Activity Check (Skip days based on profile)
         if (Math.random() > (inputs.activityChance !== undefined ? inputs.activityChance : 1.0)) {
             addLog("DAY HEADER", `DAY ${d} (Inactive)`, "Player did not play today.");
@@ -838,7 +841,16 @@ function simulateGame(inputs) {
                 }
             }
 
-            let win = Math.random() * 100 < inputs.winRate;
+            // Dynamic Win Rate based on ELO
+            let currentElo = state.elo || 500;
+            let botDiffConfig = null;
+            if (inputs.matchmakingConfig && inputs.matchmakingConfig.botDifficulty) {
+                botDiffConfig = inputs.matchmakingConfig.botDifficulty.find(b => currentElo >= b.minElo && currentElo <= b.maxElo);
+                if (!botDiffConfig) botDiffConfig = inputs.matchmakingConfig.botDifficulty[inputs.matchmakingConfig.botDifficulty.length - 1]; //Fallback
+            }
+            let dynamicWinRate = botDiffConfig ? botDiffConfig.winRate : 50;
+
+            let win = Math.random() * 100 < dynamicWinRate;
             let matchLog = `Score: ${myG}-${oppG}${puInfo}`;
             if (win) {
                 wins++;
@@ -848,19 +860,18 @@ function simulateGame(inputs) {
                 let cupGain = 30; // Standard win reward
                 if (inputs.simConfig && inputs.simConfig.winReward) cupGain = inputs.simConfig.winReward;
 
-                // console.log(`[DEBUG] Win! Old Cups: ${state.cups}, Gain: ${cupGain}`);
-
                 let oldCups = state.cups;
                 state.cups += cupGain;
                 state.maxAchievedCups = Math.max(state.maxAchievedCups, state.cups);
 
-                // console.log(`[DEBUG] New Cups: ${state.cups}`);
+                // ELO Logic
+                let eloGain = inputs.matchmakingConfig?.elo?.perWin || 30;
+                let oldElo = state.elo;
+                state.elo += eloGain;
 
                 // LOG MATCH RESULT FIRST
-                // Format: ✅ Match 1 Won (8-3) +30 Cups
-                // Detail: Used: Rocket Gun & Giant Player | Total Cups: 30 🏆
                 let puStr = (usedList.length > 0) ? `Used: ${usedList.join(' & ')}` : "No PowerUps";
-                addLog("WIN", `Match ${m} Won (${myG}-${oppG})`, `+${cupGain} Cups | ${puStr} | Total: ${state.cups} 🏆`);
+                addLog("WIN", `Match ${m} Won (${myG}-${oppG})`, `+${cupGain} Cups | +${eloGain} ELO | Total: ${state.cups} 🏆 | ${state.elo} 📈`);
 
                 // CHECK MILESTONES
                 safeCheckMilestones();
@@ -888,13 +899,24 @@ function simulateGame(inputs) {
                 }
             } else {
                 // Cup Logic: -30 Cups (min 0)
-                let cupLoss = inputs.simConfig.lossPenalty || 30;
+                let cupLoss = inputs.simConfig?.lossPenalty || 30;
                 let oldCups = state.cups;
                 state.cups = Math.max(0, state.cups - cupLoss);
                 let actualLoss = oldCups - state.cups;
 
+                // ELO Logic
+                let eloLossPerMatch = Math.abs(inputs.matchmakingConfig?.elo?.perLose || 30);
+                let dailyCap = inputs.matchmakingConfig?.elo?.dailyLoseCap || 120;
+                let eloLoss = eloLossPerMatch;
+                if (dailyEloLoss + eloLoss > dailyCap) eloLoss = Math.max(0, dailyCap - dailyEloLoss);
+                
+                let oldElo = state.elo;
+                state.elo = Math.max(0, state.elo - eloLoss);
+                let actualEloLoss = oldElo - state.elo;
+                dailyEloLoss += actualEloLoss;
+
                 let puStr = (usedList.length > 0) ? `Used: ${usedList.join(' & ')}` : "No PowerUps";
-                addLog("LOSS", `Match ${m} Lost (${myG}-${oppG})`, `-${actualLoss} Cups | ${puStr} | Total: ${state.cups} 🏆`);
+                addLog("LOSS", `Match ${m} Lost (${myG}-${oppG})`, `-${actualLoss} Cups | -${actualEloLoss} ELO | Total: ${state.cups} 🏆 | ${state.elo} 📈`);
             }
             goals += myG;
             checkMissionsNow(m); // Check missions after each match

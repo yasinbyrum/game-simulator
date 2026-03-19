@@ -1734,7 +1734,6 @@ window.loadProfile = function (idx) {
 
     // Set Dashboard Inputs
     if (document.getElementById('simDailyMatches')) document.getElementById('simDailyMatches').value = p.matches;
-    if (document.getElementById('simWinRate')) document.getElementById('simWinRate').value = p.winRate;
     if (document.getElementById('simCharUpgradeChance')) document.getElementById('simCharUpgradeChance').value = p.charFreq;
     if (document.getElementById('simPupUpgradeFreq')) document.getElementById('simPupUpgradeFreq').value = p.puFreq;
 
@@ -1795,7 +1794,6 @@ window.renderPlayerProfile = function () {
                     <tr style="background:rgba(255,255,255,0.05);">
                         <th style="padding:8px; text-align:left; min-width:120px;">Profile Name</th>
                         <th style="padding:8px; text-align:center; width:60px;">Matches</th>
-                        <th style="padding:8px; text-align:center; width:60px;">Win %</th>
                         <th style="padding:8px; text-align:center; width:60px;">Char %</th>
                         <th style="padding:8px; text-align:center; width:60px;">Pup %</th>
                         <th style="padding:8px; text-align:center; min-width:100px;">Active Days</th>
@@ -1848,7 +1846,6 @@ window.renderPlayerProfile = function () {
                 ${p.name}
             </td>
             <td style="padding:4px;"><input type="number" value="${p.match}" onchange="updateProfileVal('${k}', 'match', this.value)" style="width:100%; text-align:center; background:#222; border:1px solid #444; color:#fff; padding:4px; border-radius:4px;"></td>
-            <td style="padding:4px;"><input type="number" value="${p.win}" onchange="updateProfileVal('${k}', 'win', this.value)" style="width:100%; text-align:center; background:#222; border:1px solid #444; color:#fff; padding:4px; border-radius:4px;"></td>
             <td style="padding:4px;"><input type="number" value="${p.charRate}" onchange="updateProfileVal('${k}', 'charRate', this.value)" style="width:100%; text-align:center; background:#222; border:1px solid #444; color:#fff; padding:4px; border-radius:4px;"></td>
             <td style="padding:4px;"><input type="number" value="${p.pupRate}" onchange="updateProfileVal('${k}', 'pupRate', this.value)" style="width:100%; text-align:center; background:#222; border:1px solid #444; color:#fff; padding:4px; border-radius:4px;"></td>
             <td style="padding:4px;">${actSelect}</td>
