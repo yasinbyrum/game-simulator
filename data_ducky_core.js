@@ -1342,16 +1342,16 @@ var shopConfig = {
 
 var matchmakingConfig = {
   botDifficulty: [
-    { diff: 10, winRate: 100 },
-    { diff: 20, winRate: 90 },
-    { diff: 30, winRate: 80 },
-    { diff: 40, winRate: 70 },
-    { diff: 50, winRate: 60 },
-    { diff: 60, winRate: 50 },
-    { diff: 70, winRate: 40 },
-    { diff: 80, winRate: 30 },
-    { diff: 90, winRate: 20 },
-    { diff: 100, winRate: 10 }
+    { minElo: 500, maxElo: 1000, diff: 10, winRate: 100 },
+    { minElo: 1000, maxElo: 1500, diff: 20, winRate: 90 },
+    { minElo: 1500, maxElo: 2000, diff: 30, winRate: 80 },
+    { minElo: 2000, maxElo: 2500, diff: 40, winRate: 70 },
+    { minElo: 2500, maxElo: 3000, diff: 50, winRate: 60 },
+    { minElo: 3000, maxElo: 3500, diff: 60, winRate: 50 },
+    { minElo: 3500, maxElo: 4000, diff: 70, winRate: 40 },
+    { minElo: 4000, maxElo: 4500, diff: 80, winRate: 30 },
+    { minElo: 4500, maxElo: 5000, diff: 90, winRate: 20 },
+    { minElo: 5000, maxElo: 5500, diff: 100, winRate: 10 }
   ],
   elo: {
     startValue: 500,

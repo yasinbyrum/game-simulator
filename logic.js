@@ -816,6 +816,8 @@ function renderMatchmaking() {
     if (bdEl && conf.botDifficulty) {
         bdEl.innerHTML = conf.botDifficulty.map((b, i) => `
         <tr style="font-size:1.1rem;">
+            <td><input type="number" class="edit" value="${b.minElo}" onchange="updateVal('matchmakingConfig.botDifficulty[${i}].minElo', this.value)" style="width:80px; text-align:center;"></td>
+            <td><input type="number" class="edit" value="${b.maxElo}" onchange="updateVal('matchmakingConfig.botDifficulty[${i}].maxElo', this.value)" style="width:80px; text-align:center;"></td>
             <td><input type="number" class="edit" value="${b.diff}" onchange="updateVal('matchmakingConfig.botDifficulty[${i}].diff', this.value)" style="width:80px; text-align:center;"></td>
             <td><input type="number" class="edit" value="${b.winRate}" onchange="updateVal('matchmakingConfig.botDifficulty[${i}].winRate', this.value)" style="width:80px; text-align:center;"></td>
         </tr>`).join('');
