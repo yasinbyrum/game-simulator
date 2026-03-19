@@ -28,7 +28,8 @@ const fileMap = {
     'missionCompletion': coreDataFile,
     'startConfig': coreDataFile,
     'slotUnlockData': coreDataFile,
-    'marketConfig': coreDataFile
+    'marketConfig': coreDataFile,
+    'matchmakingConfig': coreDataFile
 };
 
 // Excel Library Loader
@@ -128,9 +129,11 @@ window.loadGameData = function () {
         window.playerResources.diamonds = parseInt(document.getElementById('simStartGems')?.value) || 0;
         window.playerResources.cups = 0;
         window.playerResources.maxCups = 0;
+        window.playerResources.elo = window.matchmakingConfig ? window.matchmakingConfig.elo.startValue : 500;
 
         // Visual Update if elements exist (Top Bar & Dashboard)
         if (document.getElementById('resCups')) document.getElementById('resCups').innerText = window.playerResources.cups || 0;
+        if (document.getElementById('resElo')) document.getElementById('resElo').innerText = window.playerResources.elo || 500;
         if (document.getElementById('resGold')) document.getElementById('resGold').innerText = window.playerResources.gold || 500;
         if (document.getElementById('resGems')) document.getElementById('resGems').innerText = window.playerResources.diamonds || 0;
 
@@ -270,8 +273,8 @@ window.nav = function (id) {
     else if (id === 'win-rewards') { renderWinRewards(); injectSaveButton('win-rewards', 'winRewardData'); }
     else if (id === 'chest-config') { renderChestTabs(); renderChestConfigViz(); renderScriptedChestUI(); updateManualBucketOptions(); injectSaveButton('chest-config', ['chestConfigs', 'simConfig']); injectExcelButtons('chest-config', 'chestConfigs'); }
     else if (id === 'power-ups') { renderPowerUps(); renderSlotConfig(); injectSaveButton('power-ups', ['powerUpData', 'slotUnlockData']); injectExcelButtons('power-ups', 'powerUpData'); }
-    else if (id === 'power-ups') { renderPowerUps(); renderSlotConfig(); injectSaveButton('power-ups', ['powerUpData', 'slotUnlockData']); injectExcelButtons('power-ups', 'powerUpData'); }
     else if (id === 'market') { renderMarket(); injectSaveButton('market', 'marketConfig'); }
+    else if (id === 'matchmaking') { renderMatchmaking(); injectSaveButton('matchmaking', 'matchmakingConfig'); }
 
     // Fix Fake Rich Mode Leak
     if (id !== 'market') {
@@ -803,6 +806,27 @@ function renderBotIntelligence() {
         <td><input type="number" class="edit" value="${b.difficulty}" onchange="updateVal('botData[${i}].difficulty', this.value)" style="width:50px;"></td>
         <td><input class="edit" value="${b.desc}" onchange="updateVal('botData[${i}].desc', this.value)"></td>
     </tr>`).join('');
+}
+
+function renderMatchmaking() {
+    let conf = getSafe('matchmakingConfig');
+    if (!conf) return;
+    
+    const bdEl = document.getElementById('botDiffBody');
+    if (bdEl && conf.botDifficulty) {
+        bdEl.innerHTML = conf.botDifficulty.map((b, i) => `
+        <tr style="font-size:1.1rem;">
+            <td><input type="number" class="edit" value="${b.diff}" onchange="updateVal('matchmakingConfig.botDifficulty[${i}].diff', this.value)" style="width:80px; text-align:center;"></td>
+            <td><input type="number" class="edit" value="${b.winRate}" onchange="updateVal('matchmakingConfig.botDifficulty[${i}].winRate', this.value)" style="width:80px; text-align:center;"></td>
+        </tr>`).join('');
+    }
+
+    if (conf.elo) {
+        if (document.getElementById('eloStartVal')) document.getElementById('eloStartVal').value = conf.elo.startValue;
+        if (document.getElementById('eloWin')) document.getElementById('eloWin').value = conf.elo.perWin;
+        if (document.getElementById('eloLose')) document.getElementById('eloLose').value = conf.elo.perLose;
+        if (document.getElementById('eloLoseCap')) document.getElementById('eloLoseCap').value = conf.elo.dailyLoseCap;
+    }
 }
 
 

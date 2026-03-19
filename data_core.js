@@ -1788,5 +1788,26 @@ var shopConfig = {
   }
 };
 
+var matchmakingConfig = {
+  botDifficulty: [
+    { diff: 10, winRate: 100 },
+    { diff: 20, winRate: 90 },
+    { diff: 30, winRate: 80 },
+    { diff: 40, winRate: 70 },
+    { diff: 50, winRate: 60 },
+    { diff: 60, winRate: 50 },
+    { diff: 70, winRate: 40 },
+    { diff: 80, winRate: 30 },
+    { diff: 90, winRate: 20 },
+    { diff: 100, winRate: 10 }
+  ],
+  elo: {
+    startValue: 500,
+    perWin: 30,
+    perLose: -30,
+    dailyLoseCap: 120
+  }
+};
+
 
 

@@ -52,6 +52,9 @@
             <div class="nav-link" onclick="nav('card-req')">🃏 Card Reqs</div>
             <div class="nav-link" onclick="nav('power-ups')">🔥 Power Ups</div>
 
+            <div class="nav-group">Systems</div>
+            <div class="nav-link" onclick="nav('matchmaking')">⚔️ Matchmaking</div>
+
             <div class="nav-group">Rewards</div>
 
             <div class="nav-link" onclick="nav('win-rewards')">🏆 Win Rewards</div>
@@ -68,6 +71,10 @@
                 <div class="res-item gold">
                     <div class="res-label">🏆 Cups</div>
                     <div id="resCups" class="res-value">0</div>
+                </div>
+                <div class="res-item">
+                    <div class="res-label">📈 ELO</div>
+                    <div id="resElo" class="res-value">0</div>
                 </div>
                 <div class="res-item">
                     <div class="res-label">💰 Gold</div>
@@ -184,21 +191,41 @@
 
         <div id="matchmaking" class="content-area">
             <div class="card">
-                <div class="card-header">⚔️ Matchmaking Rules (Cup Ranges)</div>
-                <div style="padding:15px; overflow-x:auto;">
-                    <table class="data-table">
+                <div class="card-header">⚔️ Matchmaking - Bot Difficulty<div class="toolbar"></div></div>
+                <div class="table-wrapper">
+                    <table>
                         <thead>
                             <tr>
-                                <th>Min Cups</th>
-                                <th>Max Cups</th>
-                                <th>Bot Distribution (%)</th>
-                                <th>Actions</th>
+                                <th>Bot Difficulty</th>
+                                <th>Win Rate (%)</th>
                             </tr>
                         </thead>
-                        <tbody id="mmBody"></tbody>
+                        <tbody id="botDiffBody"></tbody>
                     </table>
-                    <div style="margin-top:10px; font-size:0.9rem; color:#aaa;">* Percentages must sum to 100 for proper
-                        distribution. Format: <code>bot_id: %</code></div>
+                </div>
+            </div>
+
+            <div class="card public-card">
+                <div class="card-header">📊 ELO Configuration</div>
+                <div style="padding: 15px;">
+                    <div class="flex-row" style="display:flex; gap:15px; flex-wrap:wrap; align-items:flex-end;">
+                        <div class="sim-input-group">
+                            <label>Elo Start Value</label>
+                            <input type="number" class="edit" id="eloStartVal" onchange="updateVal('matchmakingConfig.elo.startValue', this.value)" style="width:80px">
+                        </div>
+                        <div class="sim-input-group">
+                            <label>Elo Per Win</label>
+                            <input type="number" class="edit" id="eloWin" onchange="updateVal('matchmakingConfig.elo.perWin', this.value)" style="width:80px">
+                        </div>
+                        <div class="sim-input-group">
+                            <label>Elo Per Lose</label>
+                            <input type="number" class="edit" id="eloLose" onchange="updateVal('matchmakingConfig.elo.perLose', this.value)" style="width:80px">
+                        </div>
+                        <div class="sim-input-group">
+                            <label>Daily Lose Cap</label>
+                            <input type="number" class="edit" id="eloLoseCap" onchange="updateVal('matchmakingConfig.elo.dailyLoseCap', this.value)" style="width:80px">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
