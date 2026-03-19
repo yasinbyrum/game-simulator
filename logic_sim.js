@@ -1106,6 +1106,7 @@ function renderSimulationResults(state, inputs) {
 
     // Update Dashboard Stats
     if (document.getElementById('resCups')) document.getElementById('resCups').innerText = state.maxAchievedCups || state.cups || 0;
+    if (document.getElementById('resElo')) document.getElementById('resElo').innerText = state.elo || 0;
     if (document.getElementById('resGold')) document.getElementById('resGold').innerText = state.gold || 0;
     if (document.getElementById('resGems')) document.getElementById('resGems').innerText = state.diamonds || 0;
     if (document.getElementById('resXP')) document.getElementById('resXP').innerText = state.xp || 0;
