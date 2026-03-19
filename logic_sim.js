@@ -882,16 +882,19 @@ function simulateGame(inputs) {
                 let wr = rewards.find(w => w && w.winCount === wins);
 
                 if (wr) {
+                    let getOrdinal = (n) => { let s = ["th", "st", "nd", "rd"], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
+                    let ordStr = getOrdinal(wins);
+
                     if (wr.type2 === "Gold") {
                         let oldG = state.gold;
                         addRes("Gold", wr.amt2, "Win Reward");
-                        addLog("WIN REWARD", `Win Reward (${wins}. Win)`, `+${wr.amt2} Gold (${oldG} -> ${state.gold})`);
+                        addLog("WIN REWARD", `Win Reward (${ordStr} Win Reward)`, `+${wr.amt2} Gold (${oldG} -> ${state.gold})`);
                     }
 
                     if (wr.type === "Gold") {
                         let oldG = state.gold;
                         addRes("Gold", wr.amt, "Win Reward");
-                        addLog("WIN REWARD", `Win Reward (${wins}. Win)`, `+${wr.amt} Gold (${oldG} -> ${state.gold})`);
+                        addLog("WIN REWARD", `Win Reward (${ordStr} Win Reward)`, `+${wr.amt} Gold (${oldG} -> ${state.gold})`);
                     }
                     else if (wr.type === "Chest" || wr.type.includes("Chest")) {
                         openChest(wr.type, "Win Reward");
