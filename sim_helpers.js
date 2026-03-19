@@ -223,6 +223,7 @@ function getSimulationInputs() {
         botData: getSafe('botData') || [],
         matchmakingData: getSafe('matchmakingData') || [],
         shopConfig: getSafe('shopConfig') || { slots: [], priceMultipliers: {} },
-        rewardChestConfig: getSafe('rewardChestConfig') || {}
+        rewardChestConfig: getSafe('rewardChestConfig') || {},
+        matchmakingConfig: getSafe('matchmakingConfig') || {}
     };
 }

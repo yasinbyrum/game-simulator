@@ -911,7 +911,7 @@ function simulateGame(inputs) {
                 if (dailyEloLoss + eloLoss > dailyCap) eloLoss = Math.max(0, dailyCap - dailyEloLoss);
                 
                 let oldElo = state.elo;
-                state.elo = Math.max(0, state.elo - eloLoss);
+                state.elo = Math.max(500, state.elo - eloLoss);
                 let actualEloLoss = oldElo - state.elo;
                 dailyEloLoss += actualEloLoss;
 
