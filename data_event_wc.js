@@ -12,8 +12,8 @@ var wcEventData = {
         "Ivory Coast", "Mali", "Norway", "Turkey", "Ukraine", "Austria", "Hungary", "Czech Republic"
     ],
     characters: [
-        "Axel", "James", "Bruce", "Taiga", "Max", "Leo", "Sam", "Tom", "Ray", "Ken",
-        "Bob", "Dan", "Ian", "Jay", "Ron", "Zac", "Eli", "Ben", "Joe", "Rex"
+        "Axel", "Raven", "James", "Bruce", "Bucky", "Wilson", "Ivanna", "Bolshoi", "Taiga", "Monk",
+        "Gnoll", "Maximus", "Thomas", "Spike", "Mogadi", "Hogmar", "Camila", "Pedro", "Süleyman", "Hürrem"
     ],
     dailyPass: Array.from({length: 7}, (_, i) => ({
         day: i + 1,

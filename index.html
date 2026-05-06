@@ -857,11 +857,24 @@
             <h2 class="section-title">🌍 World Cup Event Configuration</h2>
 
             <div class="card">
-                <h3>Event Simulation Settings</h3>
-                <div class="form-grid" style="margin-bottom:15px;">
-                    <div class="input-group">
-                        <label>Simulate Days (Max 7)</label>
-                        <input type="number" id="wcSimDays" value="7" min="1" max="7">
+                <div class="card-header" style="flex-wrap: wrap; gap: 10px;">
+                    <span style="font-size: 1.1rem;">Event Simulation Settings</span>
+                    <div style="display: flex; gap: 15px; align-items: center; margin-left: auto;">
+                        <label style="display:flex; align-items:center; gap: 5px; font-size: 0.85rem; font-weight: normal;">
+                            BP Premium
+                            <label class="switch"><input type="checkbox" id="wcSimBPPremium"><span class="slider"></span></label>
+                        </label>
+                        <label style="display:flex; align-items:center; gap: 5px; font-size: 0.85rem; font-weight: normal;">
+                            Daily Premium
+                            <label class="switch"><input type="checkbox" id="wcSimDailyPremium"><span class="slider"></span></label>
+                        </label>
+                        <button class="btn btn-run" onclick="runWCSimulation()" style="padding: 5px 15px; font-size: 0.85rem;">▶ Run Simulation</button>
+                    </div>
+                </div>
+                <div class="form-grid" style="margin-bottom:15px; padding: 15px;">
+                    <div class="input-group" style="grid-column: 1 / -1; display:flex; align-items:center; gap:10px;">
+                        <label style="margin:0;">Simulate Days (Max 7):</label>
+                        <input type="number" id="wcSimDays" value="7" min="1" max="7" style="width: 60px;" class="edit">
                     </div>
                     <div class="input-group" style="grid-column: 1 / -1;">
                         <label>Selected Character</label>
@@ -871,20 +884,7 @@
                         <label>Selected Country</label>
                         <div id="wcCountryGrid" class="selection-grid"></div>
                     </div>
-                    <div class="input-group" style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
-                        <label style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0;">
-                            Battle Pass Premium
-                            <label class="switch"><input type="checkbox" id="wcSimBPPremium"><span class="slider"></span></label>
-                        </label>
-                    </div>
-                    <div class="input-group" style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
-                        <label style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0;">
-                            Daily Pass Premium
-                            <label class="switch"><input type="checkbox" id="wcSimDailyPremium"><span class="slider"></span></label>
-                        </label>
-                    </div>
                 </div>
-                <button class="btn btn-run" onclick="runWCSimulation()">▶ Run Event Simulation</button>
             </div>
 
             <div class="card" id="wcSimResults" style="display:none; margin-top:20px;">

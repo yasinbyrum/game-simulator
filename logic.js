@@ -2557,7 +2557,18 @@ if (document.readyState === 'loading') {
 // ==========================================
 // WORLD CUP EVENT UI LOGIC
 // ==========================================
-const countryFlags = { "Argentina": "🇦🇷", "Brazil": "🇧🇷", "France": "🇫🇷", "Germany": "🇩🇪", "Spain": "🇪🇸", "England": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "Italy": "🇮🇹", "Netherlands": "🇳🇱", "Portugal": "🇵🇹", "Belgium": "🇧🇪", "Croatia": "🇭🇷", "Uruguay": "🇺🇾", "Colombia": "🇨🇴", "USA": "🇺🇸", "Mexico": "🇲🇽", "Japan": "🇯🇵", "South Korea": "🇰🇷", "Senegal": "🇸🇳", "Morocco": "🇲🇦", "Switzerland": "🇨🇭", "Denmark": "🇩🇰", "Sweden": "🇸🇪", "Poland": "🇵🇱", "Serbia": "🇷🇸", "Wales": "🏴󠁧󠁢󠁷󠁬󠁳󠁿", "Iran": "🇮🇷", "Australia": "🇦🇺", "Canada": "🇨🇦", "Ecuador": "🇪🇨", "Ghana": "🇬🇭", "Cameroon": "🇨🇲", "Tunisia": "🇹🇳", "Costa Rica": "🇨🇷", "Saudi Arabia": "🇸🇦", "Qatar": "🇶🇦", "Chile": "🇨🇱", "Peru": "🇵🇪", "Nigeria": "🇳🇬", "Egypt": "🇪🇬", "Algeria": "🇩🇿", "Ivory Coast": "🇨🇮", "Mali": "🇲🇱", "Norway": "🇳🇴", "Turkey": "🇹🇷", "Ukraine": "🇺🇦", "Austria": "🇦🇹", "Hungary": "🇭🇺", "Czech Republic": "🇨🇿" };
+const countryISO = {
+    "Argentina": "ar", "Brazil": "br", "France": "fr", "Germany": "de", "Spain": "es", 
+    "England": "gb-eng", "Italy": "it", "Netherlands": "nl", "Portugal": "pt", "Belgium": "be", 
+    "Croatia": "hr", "Uruguay": "uy", "Colombia": "co", "USA": "us", "Mexico": "mx", 
+    "Japan": "jp", "South Korea": "kr", "Senegal": "sn", "Morocco": "ma", "Switzerland": "ch", 
+    "Denmark": "dk", "Sweden": "se", "Poland": "pl", "Serbia": "rs", "Wales": "gb-wls", 
+    "Iran": "ir", "Australia": "au", "Canada": "ca", "Ecuador": "ec", "Ghana": "gh", 
+    "Cameroon": "cm", "Tunisia": "tn", "Costa Rica": "cr", "Saudi Arabia": "sa", "Qatar": "qa", 
+    "Chile": "cl", "Peru": "pe", "Nigeria": "ng", "Egypt": "eg", "Algeria": "dz", 
+    "Ivory Coast": "ci", "Mali": "ml", "Norway": "no", "Turkey": "tr", "Ukraine": "ua", 
+    "Austria": "at", "Hungary": "hu", "Czech Republic": "cz"
+};
 
 window.selectedWCChar = "";
 window.selectedWCCountry = "";
@@ -2594,12 +2605,13 @@ function populateWCDropdowns() {
     
     if (ctryGrid) {
         ctryGrid.innerHTML = d.countries.map((c, i) => {
-            let flag = countryFlags[c] || "🏳️";
+            let iso = countryISO[c];
+            let flagHtml = iso ? `<img src="https://flagcdn.com/w40/${iso}.png" alt="${c} flag" onerror="this.outerHTML='<div class=\\'emoji\\'>🏳️</div>'">` : `<div class="emoji">🏳️</div>`;
             let isSel = (window.selectedWCCountry === c) || (window.selectedWCCountry === "" && i === 0);
             if (isSel) window.selectedWCCountry = c;
             return `<div class="selection-item ${isSel ? 'selected' : ''}" onclick="selectWCCard('country', '${c}', this)">
                 <div class="check">✓</div>
-                <div class="emoji">${flag}</div>
+                ${flagHtml}
                 <div class="name">${c}</div>
             </div>`;
         }).join('');
