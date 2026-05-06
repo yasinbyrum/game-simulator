@@ -1,10 +1,9 @@
 // ==========================================
 // 1. GLOBAL STATE & HELPERS
 // ==========================================
-const isDucky = window.location.pathname.toLowerCase().includes('ducky');
-const coreDataFile = isDucky ? 'data_ducky_core.js' : 'data_core.js';
-const assetsDataFile = isDucky ? 'data_ducky_assets.js' : 'data_assets.js';
-const progressionDataFile = isDucky ? 'data_ducky_progression.js' : 'data_progression.js';
+const coreDataFile = 'data_core.js';
+const assetsDataFile = 'data_assets.js';
+const progressionDataFile = 'data_progression.js';
 
 const fileMap = {
     'charPoolData': assetsDataFile,
