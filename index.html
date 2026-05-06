@@ -863,20 +863,25 @@
                         <label>Simulate Days (Max 7)</label>
                         <input type="number" id="wcSimDays" value="7" min="1" max="7">
                     </div>
-                    <div class="input-group">
+                    <div class="input-group" style="grid-column: 1 / -1;">
                         <label>Selected Character</label>
-                        <select id="wcSimChar"></select>
+                        <div id="wcCharGrid" class="selection-grid"></div>
                     </div>
-                    <div class="input-group">
+                    <div class="input-group" style="grid-column: 1 / -1;">
                         <label>Selected Country</label>
-                        <select id="wcSimCountry"></select>
+                        <div id="wcCountryGrid" class="selection-grid"></div>
                     </div>
-                    <div class="input-group">
-                        <label>Premium Pass Unlocked?</label>
-                        <select id="wcSimPremium">
-                            <option value="false">No</option>
-                            <option value="true">Yes</option>
-                        </select>
+                    <div class="input-group" style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
+                        <label style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0;">
+                            Battle Pass Premium
+                            <label class="switch"><input type="checkbox" id="wcSimBPPremium"><span class="slider"></span></label>
+                        </label>
+                    </div>
+                    <div class="input-group" style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
+                        <label style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0;">
+                            Daily Pass Premium
+                            <label class="switch"><input type="checkbox" id="wcSimDailyPremium"><span class="slider"></span></label>
+                        </label>
                     </div>
                 </div>
                 <button class="btn btn-run" onclick="runWCSimulation()">▶ Run Event Simulation</button>

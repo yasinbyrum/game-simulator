@@ -2557,13 +2557,53 @@ if (document.readyState === 'loading') {
 // ==========================================
 // WORLD CUP EVENT UI LOGIC
 // ==========================================
+const countryFlags = { "Argentina": "🇦🇷", "Brazil": "🇧🇷", "France": "🇫🇷", "Germany": "🇩🇪", "Spain": "🇪🇸", "England": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "Italy": "🇮🇹", "Netherlands": "🇳🇱", "Portugal": "🇵🇹", "Belgium": "🇧🇪", "Croatia": "🇭🇷", "Uruguay": "🇺🇾", "Colombia": "🇨🇴", "USA": "🇺🇸", "Mexico": "🇲🇽", "Japan": "🇯🇵", "South Korea": "🇰🇷", "Senegal": "🇸🇳", "Morocco": "🇲🇦", "Switzerland": "🇨🇭", "Denmark": "🇩🇰", "Sweden": "🇸🇪", "Poland": "🇵🇱", "Serbia": "🇷🇸", "Wales": "🏴󠁧󠁢󠁷󠁬󠁳󠁿", "Iran": "🇮🇷", "Australia": "🇦🇺", "Canada": "🇨🇦", "Ecuador": "🇪🇨", "Ghana": "🇬🇭", "Cameroon": "🇨🇲", "Tunisia": "🇹🇳", "Costa Rica": "🇨🇷", "Saudi Arabia": "🇸🇦", "Qatar": "🇶🇦", "Chile": "🇨🇱", "Peru": "🇵🇪", "Nigeria": "🇳🇬", "Egypt": "🇪🇬", "Algeria": "🇩🇿", "Ivory Coast": "🇨🇮", "Mali": "🇲🇱", "Norway": "🇳🇴", "Turkey": "🇹🇷", "Ukraine": "🇺🇦", "Austria": "🇦🇹", "Hungary": "🇭🇺", "Czech Republic": "🇨🇿" };
+
+window.selectedWCChar = "";
+window.selectedWCCountry = "";
+
+window.selectWCCard = function(type, val, el) {
+    if (type === 'char') {
+        window.selectedWCChar = val;
+        document.querySelectorAll('#wcCharGrid .selection-item').forEach(e => e.classList.remove('selected'));
+    } else {
+        window.selectedWCCountry = val;
+        document.querySelectorAll('#wcCountryGrid .selection-item').forEach(e => e.classList.remove('selected'));
+    }
+    el.classList.add('selected');
+}
+
 function populateWCDropdowns() {
     let d = getSafe('wcEventData');
     if (!d) return;
-    let charSel = document.getElementById('wcSimChar');
-    let ctrySel = document.getElementById('wcSimCountry');
-    if (charSel) charSel.innerHTML = d.characters.map(c => `<option value="${c}">${c}</option>`).join('');
-    if (ctrySel) ctrySel.innerHTML = d.countries.map(c => `<option value="${c}">${c}</option>`).join('');
+    let charGrid = document.getElementById('wcCharGrid');
+    let ctryGrid = document.getElementById('wcCountryGrid');
+    
+    if (charGrid) {
+        charGrid.innerHTML = d.characters.map((c, i) => {
+            let imgName = c.toLowerCase().replace(/ /g, '_') + '.jpg';
+            let isSel = (window.selectedWCChar === c) || (window.selectedWCChar === "" && i === 0);
+            if (isSel) window.selectedWCChar = c;
+            return `<div class="selection-item ${isSel ? 'selected' : ''}" onclick="selectWCCard('char', '${c}', this)">
+                <div class="check">✓</div>
+                <img src="img/${imgName}" onerror="this.outerHTML='<div class=\\'emoji\\'>👤</div>'">
+                <div class="name">${c}</div>
+            </div>`;
+        }).join('');
+    }
+    
+    if (ctryGrid) {
+        ctryGrid.innerHTML = d.countries.map((c, i) => {
+            let flag = countryFlags[c] || "🏳️";
+            let isSel = (window.selectedWCCountry === c) || (window.selectedWCCountry === "" && i === 0);
+            if (isSel) window.selectedWCCountry = c;
+            return `<div class="selection-item ${isSel ? 'selected' : ''}" onclick="selectWCCard('country', '${c}', this)">
+                <div class="check">✓</div>
+                <div class="emoji">${flag}</div>
+                <div class="name">${c}</div>
+            </div>`;
+        }).join('');
+    }
 }
 
 function renderWCDailyPass() {

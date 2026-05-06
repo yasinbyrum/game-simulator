@@ -18,7 +18,7 @@ var wcEventData = {
     dailyPass: Array.from({length: 7}, (_, i) => ({
         day: i + 1,
         freeType: "Ticket",
-        freeAmt: 1,
+        freeAmt: 2,
         premType: "Ticket",
         premAmt: 2
     })),

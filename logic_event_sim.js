@@ -10,9 +10,10 @@ window.runWCSimulation = function() {
     }
 
     let daysToSim = parseInt(document.getElementById('wcSimDays').value) || 7;
-    let selectedChar = document.getElementById('wcSimChar').value;
-    let selectedCountry = document.getElementById('wcSimCountry').value;
-    let premiumUnlocked = document.getElementById('wcSimPremium').value === 'true';
+    let selectedChar = window.selectedWCChar || "None";
+    let selectedCountry = window.selectedWCCountry || "None";
+    let bpPremium = document.getElementById('wcSimBPPremium').checked;
+    let dailyPremium = document.getElementById('wcSimDailyPremium').checked;
 
     // State
     let tickets = 0;
@@ -32,7 +33,8 @@ window.runWCSimulation = function() {
     }
 
     addLog(`🌍 Starting World Cup Event Simulation for ${daysToSim} days`);
-    addLog(`Character: ${selectedChar} | Country: ${selectedCountry} | Premium: ${premiumUnlocked}`);
+    addLog(`Character: ${selectedChar} | Country: ${selectedCountry}`);
+    addLog(`BP Premium: ${bpPremium ? 'YES' : 'NO'} | Daily Premium: ${dailyPremium ? 'YES' : 'NO'}`);
     addLog(`-----------------------------------------------------`);
 
     let totalTicketsSpent = 0;
@@ -47,7 +49,7 @@ window.runWCSimulation = function() {
             else addReward(dPass.freeType, dPass.freeAmt);
             addLog(`🎁 Claimed Daily Free: ${dPass.freeAmt} ${dPass.freeType}`);
 
-            if (premiumUnlocked) {
+            if (dailyPremium) {
                 if (dPass.premType === 'Ticket') tickets += dPass.premAmt;
                 else addReward(dPass.premType, dPass.premAmt);
                 addLog(`💎 Claimed Daily Premium: ${dPass.premAmt} ${dPass.premType}`);
@@ -93,7 +95,7 @@ window.runWCSimulation = function() {
                     if (newLevelData.freeType === 'Ticket') tickets += newLevelData.freeAmt;
                     else addReward(newLevelData.freeType, newLevelData.freeAmt);
                     
-                    if (premiumUnlocked) {
+                    if (bpPremium) {
                         if (newLevelData.premType === 'Ticket') tickets += newLevelData.premAmt;
                         else addReward(newLevelData.premType, newLevelData.premAmt);
                     }
