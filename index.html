@@ -58,6 +58,8 @@
             <div class="nav-link" onclick="nav('watch-earn')">📺 Watch & Earn</div>
             <div class="nav-link" onclick="nav('reward-chests')">🎁 Reward Chests</div>
             <div class="nav-link" onclick="nav('market')">🛒 Market</div>
+            <div class="nav-group">Events</div>
+            <div class="nav-link" onclick="nav('event-worldcup')">🌍 World Cup Event</div>
         </nav>
 
         <div id="dashboard" class="content-area active">
@@ -850,11 +852,128 @@
                 </div>
             </div>
         </div>
+
+        <div id="event-worldcup" class="content-area">
+            <h2 class="section-title">🌍 World Cup Event Configuration</h2>
+
+            <div class="card">
+                <h3>Event Simulation Settings</h3>
+                <div class="form-grid" style="margin-bottom:15px;">
+                    <div class="input-group">
+                        <label>Simulate Days (Max 7)</label>
+                        <input type="number" id="wcSimDays" value="7" min="1" max="7">
+                    </div>
+                    <div class="input-group">
+                        <label>Selected Character</label>
+                        <select id="wcSimChar"></select>
+                    </div>
+                    <div class="input-group">
+                        <label>Selected Country</label>
+                        <select id="wcSimCountry"></select>
+                    </div>
+                    <div class="input-group">
+                        <label>Premium Pass Unlocked?</label>
+                        <select id="wcSimPremium">
+                            <option value="false">No</option>
+                            <option value="true">Yes</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-run" onclick="runWCSimulation()">▶ Run Event Simulation</button>
+            </div>
+
+            <div class="card" id="wcSimResults" style="display:none; margin-top:20px;">
+                <h3>Simulation Results</h3>
+                <div class="result-grid" style="margin-bottom:15px;">
+                    <div class="res-item">
+                        <div class="res-label">🎟️ Tickets Spent</div>
+                        <div id="wcResTickets" class="res-value">0</div>
+                    </div>
+                    <div class="res-item">
+                        <div class="res-label">⭐ BP Level Reached</div>
+                        <div id="wcResBP" class="res-value">1</div>
+                    </div>
+                    <div class="res-item">
+                        <div class="res-label">✨ Total XP Earned</div>
+                        <div id="wcResXP" class="res-value">0</div>
+                    </div>
+                </div>
+                <h4>Collected Rewards</h4>
+                <div id="wcResRewards" style="padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 15px;"></div>
+                
+                <h4>Activity Log</h4>
+                <div id="wcResLog" style="max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; font-family: monospace; font-size: 0.9em; white-space: pre-wrap;"></div>
+            </div>
+
+            <div class="card" style="margin-top:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3>Daily Pass Config (7 Days)</h3>
+                    <button class="btn btn-save" id="btn-save-wcDaily" style="display:none;" onclick="saveWCDaily()">Save Daily Pass</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Free Reward Type</th>
+                                <th>Free Reward Amount</th>
+                                <th>Premium Reward Type</th>
+                                <th>Premium Reward Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wcDailyBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3>Battle Pass Config (40 Steps)</h3>
+                    <button class="btn btn-save" id="btn-save-wcBP" style="display:none;" onclick="saveWCBattlePass()">Save Battle Pass</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Level</th>
+                                <th>XP Required</th>
+                                <th>Free Reward Type</th>
+                                <th>Free Reward Amount</th>
+                                <th>Premium Reward Type</th>
+                                <th>Premium Reward Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wcBPBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3>Daily Missions Config (6 Missions)</h3>
+                    <button class="btn btn-save" id="btn-save-wcMissions" style="display:none;" onclick="saveWCMissions()">Save Missions</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mission Task</th>
+                                <th>Requirement</th>
+                                <th>Reward Type</th>
+                                <th>Reward Amount</th>
+                                <th>XP Granted</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wcMissionsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         (function () {
-            const scripts = ['data_core.js', 'data_assets.js', 'data_progression.js', 'sim_helpers.js', 'logic.js', 'logic_sim.js'];
+            const scripts = ['data_core.js', 'data_assets.js', 'data_progression.js', 'data_event_wc.js', 'sim_helpers.js', 'logic.js', 'logic_sim.js', 'logic_event_sim.js'];
             let loaded = 0;
             function loadNext() {
                 if (loaded >= scripts.length) { console.log("✅ All scripts loaded."); return; }

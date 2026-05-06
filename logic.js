@@ -28,6 +28,7 @@ const fileMap = {
     'startConfig': coreDataFile,
     'slotUnlockData': coreDataFile,
     'marketConfig': coreDataFile,
+    'wcEventData': 'data_event_wc.js',
     'matchmakingConfig': coreDataFile
 };
 
@@ -273,6 +274,17 @@ window.nav = function (id) {
     else if (id === 'chest-config') { renderChestTabs(); renderChestConfigViz(); renderScriptedChestUI(); updateManualBucketOptions(); injectSaveButton('chest-config', ['chestConfigs', 'simConfig']); injectExcelButtons('chest-config', 'chestConfigs'); }
     else if (id === 'power-ups') { renderPowerUps(); renderSlotConfig(); injectSaveButton('power-ups', ['powerUpData', 'slotUnlockData']); injectExcelButtons('power-ups', 'powerUpData'); }
     else if (id === 'market') { renderMarket(); injectSaveButton('market', 'marketConfig'); }
+    else if (id === 'event-worldcup') { 
+        if (typeof renderWCDailyPass === 'function') {
+            renderWCDailyPass(); 
+            renderWCBattlePass(); 
+            renderWCMissions(); 
+            populateWCDropdowns();
+            document.getElementById('btn-save-wcDaily').style.display = 'none';
+            document.getElementById('btn-save-wcBP').style.display = 'none';
+            document.getElementById('btn-save-wcMissions').style.display = 'none';
+        }
+    }
     else if (id === 'matchmaking') { renderMatchmaking(); injectSaveButton('matchmaking', 'matchmakingConfig'); }
 
     // Fix Fake Rich Mode Leak
@@ -2541,3 +2553,103 @@ if (document.readyState === 'loading') {
     // DOM already ready
     safeInitApp();
 }
+
+// ==========================================
+// WORLD CUP EVENT UI LOGIC
+// ==========================================
+function populateWCDropdowns() {
+    let d = getSafe('wcEventData');
+    if (!d) return;
+    let charSel = document.getElementById('wcSimChar');
+    let ctrySel = document.getElementById('wcSimCountry');
+    if (charSel) charSel.innerHTML = d.characters.map(c => `<option value="${c}">${c}</option>`).join('');
+    if (ctrySel) ctrySel.innerHTML = d.countries.map(c => `<option value="${c}">${c}</option>`).join('');
+}
+
+function renderWCDailyPass() {
+    let d = getSafe('wcEventData');
+    if (!d || !d.dailyPass) return;
+    let html = '';
+    d.dailyPass.forEach((item, idx) => {
+        html += `<tr>
+            <td>Day ${item.day}</td>
+            <td><input class="edit" type="text" value="${item.freeType}" onchange="updateWCDaily(${idx}, 'freeType', this.value)"></td>
+            <td><input class="edit" type="number" value="${item.freeAmt}" onchange="updateWCDaily(${idx}, 'freeAmt', this.value)"></td>
+            <td><input class="edit" type="text" value="${item.premType}" onchange="updateWCDaily(${idx}, 'premType', this.value)"></td>
+            <td><input class="edit" type="number" value="${item.premAmt}" onchange="updateWCDaily(${idx}, 'premAmt', this.value)"></td>
+        </tr>`;
+    });
+    let el = document.getElementById('wcDailyBody');
+    if (el) el.innerHTML = html;
+}
+
+function updateWCDaily(idx, key, val) {
+    let d = getSafe('wcEventData');
+    if (d && d.dailyPass[idx]) {
+        d.dailyPass[idx][key] = isNaN(val) ? val : Number(val);
+        document.getElementById('btn-save-wcDaily').style.display = 'inline-block';
+    }
+}
+window.saveWCDaily = function() {
+    window.updateVal('wcEventData', getSafe('wcEventData'));
+    document.getElementById('btn-save-wcDaily').style.display = 'none';
+};
+
+function renderWCBattlePass() {
+    let d = getSafe('wcEventData');
+    if (!d || !d.battlePass) return;
+    let html = '';
+    d.battlePass.forEach((item, idx) => {
+        html += `<tr>
+            <td>Level ${item.level}</td>
+            <td><input class="edit" type="number" value="${item.xpReq}" onchange="updateWCBattlePass(${idx}, 'xpReq', this.value)"></td>
+            <td><input class="edit" type="text" value="${item.freeType}" onchange="updateWCBattlePass(${idx}, 'freeType', this.value)"></td>
+            <td><input class="edit" type="number" value="${item.freeAmt}" onchange="updateWCBattlePass(${idx}, 'freeAmt', this.value)"></td>
+            <td><input class="edit" type="text" value="${item.premType}" onchange="updateWCBattlePass(${idx}, 'premType', this.value)"></td>
+            <td><input class="edit" type="number" value="${item.premAmt}" onchange="updateWCBattlePass(${idx}, 'premAmt', this.value)"></td>
+        </tr>`;
+    });
+    let el = document.getElementById('wcBPBody');
+    if (el) el.innerHTML = html;
+}
+
+function updateWCBattlePass(idx, key, val) {
+    let d = getSafe('wcEventData');
+    if (d && d.battlePass[idx]) {
+        d.battlePass[idx][key] = isNaN(val) ? val : Number(val);
+        document.getElementById('btn-save-wcBP').style.display = 'inline-block';
+    }
+}
+window.saveWCBattlePass = function() {
+    window.updateVal('wcEventData', getSafe('wcEventData'));
+    document.getElementById('btn-save-wcBP').style.display = 'none';
+};
+
+function renderWCMissions() {
+    let d = getSafe('wcEventData');
+    if (!d || !d.missions) return;
+    let html = '';
+    d.missions.forEach((item, idx) => {
+        html += `<tr>
+            <td><input class="edit" type="text" value="${item.task}" onchange="updateWCMissions(${idx}, 'task', this.value)"></td>
+            <td><input class="edit" type="number" value="${item.req}" onchange="updateWCMissions(${idx}, 'req', this.value)"></td>
+            <td><input class="edit" type="text" value="${item.type}" onchange="updateWCMissions(${idx}, 'type', this.value)"></td>
+            <td><input class="edit" type="number" value="${item.amt}" onchange="updateWCMissions(${idx}, 'amt', this.value)"></td>
+            <td><input class="edit" type="number" value="${item.xp}" onchange="updateWCMissions(${idx}, 'xp', this.value)"></td>
+        </tr>`;
+    });
+    let el = document.getElementById('wcMissionsBody');
+    if (el) el.innerHTML = html;
+}
+
+function updateWCMissions(idx, key, val) {
+    let d = getSafe('wcEventData');
+    if (d && d.missions[idx]) {
+        d.missions[idx][key] = isNaN(val) ? val : Number(val);
+        document.getElementById('btn-save-wcMissions').style.display = 'inline-block';
+    }
+}
+window.saveWCMissions = function() {
+    window.updateVal('wcEventData', getSafe('wcEventData'));
+    document.getElementById('btn-save-wcMissions').style.display = 'none';
+};
