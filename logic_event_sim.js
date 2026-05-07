@@ -17,8 +17,7 @@ window.runWCSimulation = function() {
     let winRate = (parseFloat(document.getElementById('wcWinRate').value) || 50) / 100;
     let matchesPerDay = parseInt(document.getElementById('wcMatchesPlayed').value) || 5;
     let bpBundle = document.getElementById('wcSimBPBundle')?.checked || false;
-    let adBehavior = parseFloat(document.getElementById('wcAdBehavior').value || "1");
-    let adTicketsParam = parseInt(document.getElementById('wcAdTickets')?.value || "2");
+    let adsWatched = parseInt(document.getElementById('wcAdTickets')?.value || "2");
     let missionBehavior = (parseFloat(document.getElementById('wcMissionBehavior').value) || 100) / 100;
 
     // State
@@ -41,7 +40,7 @@ window.runWCSimulation = function() {
     addLog(`🌍 Starting World Cup Event Simulation for ${daysToSim} days`);
     addLog(`Character: ${selectedChar} | Country: ${selectedCountry}`);
     addLog(`BP Premium: ${bpPremium ? 'YES' : 'NO'} | Daily Premium: ${dailyPremium ? 'YES' : 'NO'} | BP Bundle: ${bpBundle ? 'YES' : 'NO'}`);
-    addLog(`Win Rate: ${Math.round(winRate*100)}% | Matches/Day: ${matchesPerDay} | Ads: ${adBehavior*100}% | Missions: ${missionBehavior*100}%`);
+    addLog(`Win Rate: ${Math.round(winRate*100)}% | Matches/Day: ${matchesPerDay} | Ads Watched/Day: ${adsWatched} | Missions: ${missionBehavior*100}%`);
     addLog(`-----------------------------------------------------`);
 
     let totalTicketsSpent = 0;
@@ -74,10 +73,9 @@ window.runWCSimulation = function() {
         }
 
         // 2. Ads
-        if (adBehavior > 0) {
-            let adTix = Math.round(adTicketsParam * adBehavior);
-            tickets += adTix;
-            addLog(`📺 Watched Ads (${adBehavior*100}%): +${adTix} Tickets`);
+        if (adsWatched > 0) {
+            tickets += adsWatched;
+            addLog(`📺 Watched Ads: +${adsWatched} Tickets`);
         }
 
         // 3. Missions
