@@ -864,10 +864,6 @@
                             BP Premium
                             <label class="switch"><input type="checkbox" id="wcSimBPPremium"><span class="slider"></span></label>
                         </label>
-                        <label style="display:flex; align-items:center; gap: 5px; font-size: 0.85rem; font-weight: normal;">
-                            Daily Premium
-                            <label class="switch"><input type="checkbox" id="wcSimDailyPremium"><span class="slider"></span></label>
-                        </label>
                         <button class="btn btn-run" onclick="runWCSimulation()" style="padding: 5px 15px; font-size: 0.85rem;">▶ Run Simulation</button>
                     </div>
                 </div>
@@ -883,17 +879,15 @@
                         <input type="number" id="wcMatchesPlayed" value="5" min="0" style="width: 60px;" class="edit">
                         
                         <label style="margin:0; margin-left:10px;">Ad Watch:</label>
-                        <select id="wcAdBehavior" class="edit">
+                        <select id="wcAdBehavior" class="edit" style="width: 70px;">
                             <option value="1">Full</option>
                             <option value="0.5">50%</option>
                             <option value="0">None</option>
                         </select>
+                        <input type="number" id="wcAdTickets" value="2" min="1" max="2" style="width: 40px;" class="edit" title="Ad Tickets">
                         
-                        <label style="margin:0; margin-left:10px;">Missions:</label>
-                        <select id="wcMissionBehavior" class="edit">
-                            <option value="1">100%</option>
-                            <option value="0">0%</option>
-                        </select>
+                        <label style="margin:0; margin-left:10px;">Missions (%):</label>
+                        <input type="number" id="wcMissionBehavior" value="100" min="0" max="100" style="width: 50px;" class="edit">
 
                         <label style="display:flex; align-items:center; gap: 5px; font-size: 0.85rem; font-weight: normal; margin:0; margin-left:10px;">
                             BP Bundle

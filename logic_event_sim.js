@@ -13,12 +13,13 @@ window.runWCSimulation = function() {
     let selectedChar = window.selectedWCChar || "None";
     let selectedCountry = window.selectedWCCountry || "None";
     let bpPremium = document.getElementById('wcSimBPPremium').checked;
-    let dailyPremium = document.getElementById('wcSimDailyPremium').checked;
+    let dailyPremium = bpPremium; // Map daily premium to the same BP Premium toggle
     let winRate = (parseFloat(document.getElementById('wcWinRate').value) || 50) / 100;
     let matchesPerDay = parseInt(document.getElementById('wcMatchesPlayed').value) || 5;
     let bpBundle = document.getElementById('wcSimBPBundle')?.checked || false;
     let adBehavior = parseFloat(document.getElementById('wcAdBehavior').value || "1");
-    let missionBehavior = parseFloat(document.getElementById('wcMissionBehavior').value || "1");
+    let adTicketsParam = parseInt(document.getElementById('wcAdTickets')?.value || "2");
+    let missionBehavior = (parseFloat(document.getElementById('wcMissionBehavior').value) || 100) / 100;
 
     // State
     let tickets = 0;
@@ -74,19 +75,32 @@ window.runWCSimulation = function() {
 
         // 2. Ads
         if (adBehavior > 0) {
-            let adTix = Math.round(d.settings.adsTickets * adBehavior);
+            let adTix = Math.round(adTicketsParam * adBehavior);
             tickets += adTix;
             addLog(`📺 Watched Ads (${adBehavior*100}%): +${adTix} Tickets`);
         }
 
         // 3. Missions
         if (missionBehavior > 0) {
+            let dailyMissionTickets = 0;
+            let dailyMissionXp = 0;
             d.missions.forEach(m => {
-                if (m.type === 'Ticket') tickets += m.amt;
-                else addReward(m.type, m.amt);
-                xp += m.xp;
-                addLog(`🎯 Mission Completed: ${m.task} -> +${m.amt} ${m.type}, +${m.xp} XP`);
+                let scaledAmt = m.amt * missionBehavior;
+                let scaledXp = m.xp * missionBehavior;
+                
+                if (m.type === 'Ticket') {
+                    dailyMissionTickets += scaledAmt;
+                } else {
+                    addReward(m.type, Math.round(scaledAmt));
+                }
+                dailyMissionXp += scaledXp;
             });
+            
+            let roundedTickets = Math.round(dailyMissionTickets);
+            tickets += roundedTickets;
+            xp += Math.round(dailyMissionXp);
+            
+            addLog(`🎯 Missions Completed (${Math.round(missionBehavior*100)}%): +${roundedTickets} Ticket, +${Math.round(dailyMissionXp)} XP`);
         } else {
             addLog(`🎯 Missions Skipped (0% completion)`);
         }
