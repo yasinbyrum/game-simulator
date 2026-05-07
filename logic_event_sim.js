@@ -14,6 +14,11 @@ window.runWCSimulation = function() {
     let selectedCountry = window.selectedWCCountry || "None";
     let bpPremium = document.getElementById('wcSimBPPremium').checked;
     let dailyPremium = document.getElementById('wcSimDailyPremium').checked;
+    let winRate = (parseFloat(document.getElementById('wcWinRate').value) || 50) / 100;
+    let matchesPerDay = parseInt(document.getElementById('wcMatchesPlayed').value) || 5;
+    let bpBundle = document.getElementById('wcSimBPBundle')?.checked || false;
+    let adBehavior = parseFloat(document.getElementById('wcAdBehavior').value || "1");
+    let missionBehavior = parseFloat(document.getElementById('wcMissionBehavior').value || "1");
 
     // State
     let tickets = 0;
@@ -34,13 +39,24 @@ window.runWCSimulation = function() {
 
     addLog(`🌍 Starting World Cup Event Simulation for ${daysToSim} days`);
     addLog(`Character: ${selectedChar} | Country: ${selectedCountry}`);
-    addLog(`BP Premium: ${bpPremium ? 'YES' : 'NO'} | Daily Premium: ${dailyPremium ? 'YES' : 'NO'}`);
+    addLog(`BP Premium: ${bpPremium ? 'YES' : 'NO'} | Daily Premium: ${dailyPremium ? 'YES' : 'NO'} | BP Bundle: ${bpBundle ? 'YES' : 'NO'}`);
+    addLog(`Win Rate: ${Math.round(winRate*100)}% | Matches/Day: ${matchesPerDay} | Ads: ${adBehavior*100}% | Missions: ${missionBehavior*100}%`);
     addLog(`-----------------------------------------------------`);
 
     let totalTicketsSpent = 0;
 
     for (let day = 1; day <= daysToSim; day++) {
         addLog(`\n[DAY ${day}]`);
+        
+        // 0. Onboarding & Bundle
+        if (day <= 2) {
+            tickets += 2;
+            addLog(`✨ Onboarding Bonus: +2 Tickets`);
+        }
+        if (bpBundle) {
+            tickets += 2;
+            addLog(`🎟️ BP Bundle: +2 Tickets`);
+        }
         
         // 1. Daily Pass
         let dPass = d.dailyPass.find(p => p.day === day);
@@ -57,26 +73,42 @@ window.runWCSimulation = function() {
         }
 
         // 2. Ads
-        tickets += d.settings.adsTickets;
-        addLog(`📺 Watched Ads: +${d.settings.adsTickets} Tickets`);
+        if (adBehavior > 0) {
+            let adTix = Math.round(d.settings.adsTickets * adBehavior);
+            tickets += adTix;
+            addLog(`📺 Watched Ads (${adBehavior*100}%): +${adTix} Tickets`);
+        }
 
-        // 3. Missions (assuming all completed daily)
-        d.missions.forEach(m => {
-            if (m.type === 'Ticket') tickets += m.amt;
-            else addReward(m.type, m.amt);
-            xp += m.xp;
-            addLog(`🎯 Mission Completed: ${m.task} -> +${m.amt} ${m.type}, +${m.xp} XP`);
-        });
+        // 3. Missions
+        if (missionBehavior > 0) {
+            d.missions.forEach(m => {
+                if (m.type === 'Ticket') tickets += m.amt;
+                else addReward(m.type, m.amt);
+                xp += m.xp;
+                addLog(`🎯 Mission Completed: ${m.task} -> +${m.amt} ${m.type}, +${m.xp} XP`);
+            });
+        } else {
+            addLog(`🎯 Missions Skipped (0% completion)`);
+        }
 
         // 4. Play Matches
         if (tickets > 0) {
-            addLog(`⚔️ Playing ${tickets} matches...`);
-            let matchXpPerTicket = 20; // Assume 20 XP per match played
-            let xpGained = tickets * matchXpPerTicket;
-            xp += xpGained;
-            totalTicketsSpent += tickets;
-            addLog(`⚔️ Earned ${xpGained} XP from matches.`);
-            tickets = 0; // Spent all tickets
+            let matchesToPlay = Math.min(tickets, matchesPerDay);
+            if (matchesToPlay > 0) {
+                addLog(`⚔️ Playing ${matchesToPlay} matches (Tickets before: ${tickets})...`);
+                let winEP = 30;
+                let lossEP = 10;
+                let expectedEPPerMatch = (winEP * winRate) + (lossEP * (1 - winRate));
+                let xpGained = Math.round(matchesToPlay * expectedEPPerMatch);
+                
+                xp += xpGained;
+                totalTicketsSpent += matchesToPlay;
+                tickets -= matchesToPlay; // Keep remaining tickets for next day
+                
+                addLog(`⚔️ Earned ${xpGained} XP from matches (Win Rate: ${Math.round(winRate*100)}%). Tickets remaining: ${tickets}`);
+            } else {
+                addLog(`⚔️ No matches played today due to 0 capacity.`);
+            }
         }
 
         // 5. Check BP Level Up

@@ -872,9 +872,33 @@
                     </div>
                 </div>
                 <div class="form-grid" style="margin-bottom:15px; padding: 15px;">
-                    <div class="input-group" style="grid-column: 1 / -1; display:flex; align-items:center; gap:10px;">
+                    <div class="input-group" style="grid-column: 1 / -1; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
                         <label style="margin:0;">Simulate Days (Max 7):</label>
                         <input type="number" id="wcSimDays" value="7" min="1" max="7" style="width: 60px;" class="edit">
+                        
+                        <label style="margin:0; margin-left:10px;">Win Rate (%):</label>
+                        <input type="number" id="wcWinRate" value="50" min="0" max="100" style="width: 60px;" class="edit">
+                        
+                        <label style="margin:0; margin-left:10px;">Matches Played/Day:</label>
+                        <input type="number" id="wcMatchesPlayed" value="5" min="0" style="width: 60px;" class="edit">
+                        
+                        <label style="margin:0; margin-left:10px;">Ad Watch:</label>
+                        <select id="wcAdBehavior" class="edit">
+                            <option value="1">Full</option>
+                            <option value="0.5">50%</option>
+                            <option value="0">None</option>
+                        </select>
+                        
+                        <label style="margin:0; margin-left:10px;">Missions:</label>
+                        <select id="wcMissionBehavior" class="edit">
+                            <option value="1">100%</option>
+                            <option value="0">0%</option>
+                        </select>
+
+                        <label style="display:flex; align-items:center; gap: 5px; font-size: 0.85rem; font-weight: normal; margin:0; margin-left:10px;">
+                            BP Bundle
+                            <label class="switch"><input type="checkbox" id="wcSimBPBundle"><span class="slider"></span></label>
+                        </label>
                     </div>
                     <div class="input-group" style="grid-column: 1 / -1;">
                         <label>Selected Character</label>
