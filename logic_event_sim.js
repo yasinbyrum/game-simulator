@@ -24,10 +24,14 @@ window.runWCSimulation = function() {
     let lossEP = parseInt(document.getElementById('wcLossXP')?.value) || 10;
     let winCurrency = parseInt(document.getElementById('wcWinCurrency')?.value) || 50;
     let lossCurrency = parseInt(document.getElementById('wcLossCurrency')?.value) || 10;
+    
+    let winCup = parseInt(document.getElementById('wcWinCup')?.value) || 30;
+    let lossCup = parseInt(document.getElementById('wcLossCup')?.value) || -10;
 
     // State
     let tickets = 0;
     let xp = 0;
+    let cups = 0;
     let bpLevel = 1;
     let rewards = {};
     let log = [];
@@ -120,7 +124,11 @@ window.runWCSimulation = function() {
                 let expectedCurrencyPerMatch = (winCurrency * winRate) + (lossCurrency * (1 - winRate));
                 let currencyGained = Math.round(matchesToPlay * expectedCurrencyPerMatch);
                 
+                let expectedCupPerMatch = (winCup * winRate) + (lossCup * (1 - winRate));
+                let cupsGained = Math.round(matchesToPlay * expectedCupPerMatch);
+                
                 xp += xpGained;
+                cups += cupsGained;
                 if (currencyGained > 0) {
                     addReward("Event Currency", currencyGained);
                 }
@@ -128,7 +136,7 @@ window.runWCSimulation = function() {
                 totalTicketsSpent += matchesToPlay;
                 tickets -= matchesToPlay; // Keep remaining tickets for next day
                 
-                addLog(`⚔️ Earned ${xpGained} XP and ${currencyGained} Event Currency from matches (Win Rate: ${Math.round(winRate*100)}%). Tickets remaining: ${tickets}`);
+                addLog(`⚔️ Earned ${xpGained} XP, ${cupsGained} Cups, and ${currencyGained} Event Currency from matches (Win Rate: ${Math.round(winRate*100)}%). Tickets remaining: ${tickets}`);
             } else {
                 addLog(`⚔️ No matches played today due to 0 capacity.`);
             }
@@ -172,6 +180,7 @@ window.runWCSimulation = function() {
     if (document.getElementById('wcResTicketsLeft')) document.getElementById('wcResTicketsLeft').innerText = tickets;
     document.getElementById('wcResBP').innerText = bpLevel;
     document.getElementById('wcResXP').innerText = xp;
+    if (document.getElementById('wcResCups')) document.getElementById('wcResCups').innerText = cups;
 
     let rewardHtml = '';
     for (const [k, v] of Object.entries(rewards)) {
