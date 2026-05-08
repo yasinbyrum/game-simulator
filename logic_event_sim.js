@@ -144,9 +144,10 @@ window.runWCSimulation = function() {
         }
         
         if (matchesPlayedToday > 0) {
-            addLog(`⚔️ Played ${matchesPlayedToday} matches. Wins: ${dailyMatchesWon}, Goals: ${dailyGoalsScored}, SP: ${dailySuperPowers}. Tickets left: ${tickets}`);
+            let limitReason = (tickets === 0) ? "(Ran out of tickets)" : `(Reached daily limit of ${matchesPerDay})`;
+            addLog(`⚔️ Played ${matchesPlayedToday} matches ${limitReason}. Wins: ${dailyMatchesWon}, Goals: ${dailyGoalsScored}, SP: ${dailySuperPowers}. Tickets left: ${tickets}`);
         } else if (tickets === 0 && initialTickets === 0) {
-            addLog(`⚔️ No matches played today (0 Tickets).`);
+            addLog(`⚔️ No matches played today (0 Tickets available).`);
         } else if (matchesPlayedToday === 0 && tickets > 0) {
             addLog(`⚔️ No matches played today (Reached max matches/day cap of ${matchesPerDay}).`);
         }
