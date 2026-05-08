@@ -860,10 +860,6 @@
                 <div class="card-header" style="flex-wrap: wrap; gap: 10px;">
                     <span style="font-size: 1.1rem;">Event Simulation Settings</span>
                     <div style="display: flex; gap: 15px; align-items: center; margin-left: auto;">
-                        <label style="display:flex; align-items:center; gap: 5px; font-size: 0.85rem; font-weight: normal;">
-                            BP Premium
-                            <label class="switch"><input type="checkbox" id="wcSimBPPremium"><span class="slider"></span></label>
-                        </label>
                         <button class="btn btn-run" onclick="runWCSimulation()" style="padding: 5px 15px; font-size: 0.85rem;">▶ Run Simulation</button>
                     </div>
                 </div>
@@ -873,7 +869,7 @@
                         <input type="number" id="wcSimDays" value="7" min="1" max="7" style="width: 60px;" class="edit">
                         
                         <label style="margin:0; margin-left:10px;">Win Rate (%):</label>
-                        <input type="number" id="wcWinRate" value="50" min="0" max="100" style="width: 60px;" class="edit">
+                        <input type="number" id="wcWinRate" value="85" min="0" max="100" style="width: 60px;" class="edit">
                         
                         <label style="margin:0; margin-left:10px;">Matches Played/Day:</label>
                         <input type="number" id="wcMatchesPlayed" value="5" min="0" style="width: 60px;" class="edit">
@@ -888,6 +884,16 @@
                             BP Bundle
                             <label class="switch"><input type="checkbox" id="wcSimBPBundle"><span class="slider"></span></label>
                         </label>
+                    </div>
+                    <div class="input-group" style="grid-column: 1 / -1; display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:10px;">
+                        <label style="margin:0;">Win XP:</label>
+                        <input type="number" id="wcWinXP" value="30" min="0" style="width: 60px;" class="edit">
+                        <label style="margin:0; margin-left:10px;">Loss XP:</label>
+                        <input type="number" id="wcLossXP" value="10" min="0" style="width: 60px;" class="edit">
+                        <label style="margin:0; margin-left:10px;">Win Currency:</label>
+                        <input type="number" id="wcWinCurrency" value="50" min="0" style="width: 60px;" class="edit">
+                        <label style="margin:0; margin-left:10px;">Loss Currency:</label>
+                        <input type="number" id="wcLossCurrency" value="10" min="0" style="width: 60px;" class="edit">
                     </div>
                     <div class="input-group" style="grid-column: 1 / -1;">
                         <label>Selected Character</label>
@@ -906,6 +912,10 @@
                     <div class="res-item">
                         <div class="res-label">🎟️ Tickets Spent</div>
                         <div id="wcResTickets" class="res-value">0</div>
+                    </div>
+                    <div class="res-item">
+                        <div class="res-label">🎟️ Tickets Left</div>
+                        <div id="wcResTicketsLeft" class="res-value">0</div>
                     </div>
                     <div class="res-item">
                         <div class="res-label">⭐ BP Level Reached</div>

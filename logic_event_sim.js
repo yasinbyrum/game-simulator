@@ -12,13 +12,18 @@ window.runWCSimulation = function() {
     let daysToSim = parseInt(document.getElementById('wcSimDays').value) || 7;
     let selectedChar = window.selectedWCChar || "None";
     let selectedCountry = window.selectedWCCountry || "None";
-    let bpPremium = document.getElementById('wcSimBPPremium').checked;
-    let dailyPremium = bpPremium; // Map daily premium to the same BP Premium toggle
     let winRate = (parseFloat(document.getElementById('wcWinRate').value) || 50) / 100;
     let matchesPerDay = parseInt(document.getElementById('wcMatchesPlayed').value) || 5;
     let bpBundle = document.getElementById('wcSimBPBundle')?.checked || false;
+    let bpPremium = bpBundle;
+    let dailyPremium = bpBundle;
     let adsWatched = parseInt(document.getElementById('wcAdTickets')?.value || "2");
     let missionBehavior = (parseFloat(document.getElementById('wcMissionBehavior').value) || 100) / 100;
+
+    let winEP = parseInt(document.getElementById('wcWinXP')?.value) || 30;
+    let lossEP = parseInt(document.getElementById('wcLossXP')?.value) || 10;
+    let winCurrency = parseInt(document.getElementById('wcWinCurrency')?.value) || 50;
+    let lossCurrency = parseInt(document.getElementById('wcLossCurrency')?.value) || 10;
 
     // State
     let tickets = 0;
@@ -108,16 +113,22 @@ window.runWCSimulation = function() {
             let matchesToPlay = Math.min(tickets, matchesPerDay);
             if (matchesToPlay > 0) {
                 addLog(`⚔️ Playing ${matchesToPlay} matches (Tickets before: ${tickets})...`);
-                let winEP = 30;
-                let lossEP = 10;
+                
                 let expectedEPPerMatch = (winEP * winRate) + (lossEP * (1 - winRate));
                 let xpGained = Math.round(matchesToPlay * expectedEPPerMatch);
                 
+                let expectedCurrencyPerMatch = (winCurrency * winRate) + (lossCurrency * (1 - winRate));
+                let currencyGained = Math.round(matchesToPlay * expectedCurrencyPerMatch);
+                
                 xp += xpGained;
+                if (currencyGained > 0) {
+                    addReward("Event Currency", currencyGained);
+                }
+                
                 totalTicketsSpent += matchesToPlay;
                 tickets -= matchesToPlay; // Keep remaining tickets for next day
                 
-                addLog(`⚔️ Earned ${xpGained} XP from matches (Win Rate: ${Math.round(winRate*100)}%). Tickets remaining: ${tickets}`);
+                addLog(`⚔️ Earned ${xpGained} XP and ${currencyGained} Event Currency from matches (Win Rate: ${Math.round(winRate*100)}%). Tickets remaining: ${tickets}`);
             } else {
                 addLog(`⚔️ No matches played today due to 0 capacity.`);
             }
@@ -158,6 +169,7 @@ window.runWCSimulation = function() {
     // Render Results
     document.getElementById('wcSimResults').style.display = 'block';
     document.getElementById('wcResTickets').innerText = totalTicketsSpent;
+    if (document.getElementById('wcResTicketsLeft')) document.getElementById('wcResTicketsLeft').innerText = tickets;
     document.getElementById('wcResBP').innerText = bpLevel;
     document.getElementById('wcResXP').innerText = xp;
 
