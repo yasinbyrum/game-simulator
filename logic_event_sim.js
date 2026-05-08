@@ -52,7 +52,7 @@ window.runWCSimulation = function() {
     addLog(`🌍 Starting World Cup Event Simulation for ${daysToSim} days`);
     addLog(`Character: ${selectedChar} | Country: ${selectedCountry}`);
     addLog(`BP Premium: ${bpPremium ? 'YES' : 'NO'} | Daily Premium: ${dailyPremium ? 'YES' : 'NO'} | BP Bundle: ${bpBundle ? 'YES' : 'NO'}`);
-    addLog(`Win Rate: ${Math.round(winRate*100)}% | Matches/Day: ${matchesPerDay} | Ads Watched/Day: ${adsWatched} | Missions: ${missionBehavior*100}%`);
+    addLog(`Win Rate: ${Math.round(winRate*100)}% | Matches/Day: ${matchesPerDay} | Ads/Day: ${adsWatched} | Goals: ${goalMin}-${goalMax} | SP: ${spMin}-${spMax}`);
     addLog(`-----------------------------------------------------`);
 
     let totalTicketsSpent = 0;
