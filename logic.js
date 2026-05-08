@@ -2592,7 +2592,8 @@ function populateWCDropdowns() {
     
     if (charGrid) {
         charGrid.innerHTML = d.characters.map((c, i) => {
-            let imgName = c.toLowerCase().replace(/ /g, '_') + '.jpg';
+            let cleanC = c.replace(/ü/g, 'u').replace(/Ü/g, 'u');
+            let imgName = cleanC.toLowerCase().replace(/ /g, '_') + '.jpg';
             let isSel = (window.selectedWCChar === c) || (window.selectedWCChar === "" && i === 0);
             if (isSel) window.selectedWCChar = c;
             return `<div class="selection-item ${isSel ? 'selected' : ''}" onclick="selectWCCard('char', '${c}', this)">
