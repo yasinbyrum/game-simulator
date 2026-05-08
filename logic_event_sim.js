@@ -18,7 +18,10 @@ window.runWCSimulation = function() {
     let bpPremium = bpBundle;
     let dailyPremium = bpBundle;
     let adsWatched = parseInt(document.getElementById('wcAdTickets')?.value || "2");
-    let missionBehavior = (parseFloat(document.getElementById('wcMissionBehavior').value) || 100) / 100;
+    let goalMin = parseInt(document.getElementById('wcGoalMin')?.value) || 1;
+    let goalMax = parseInt(document.getElementById('wcGoalMax')?.value) || 5;
+    let spMin = parseInt(document.getElementById('wcSPMin')?.value) || 0;
+    let spMax = parseInt(document.getElementById('wcSPMax')?.value) || 3;
 
     let winEP = parseInt(document.getElementById('wcWinXP')?.value) || 30;
     let lossEP = parseInt(document.getElementById('wcLossXP')?.value) || 10;
@@ -87,59 +90,65 @@ window.runWCSimulation = function() {
             addLog(`📺 Watched Ads: +${adsWatched} Tickets`);
         }
 
-        // 3. Missions
-        if (missionBehavior > 0) {
-            let dailyMissionTickets = 0;
-            let dailyMissionXp = 0;
-            d.missions.forEach(m => {
-                let scaledAmt = m.amt * missionBehavior;
-                let scaledXp = m.xp * missionBehavior;
+        // 3. Play Matches & Dynamic Missions
+        let matchesPlayedToday = 0;
+        let dailyGoalsScored = 0;
+        let dailyMatchesWon = 0;
+        let dailySuperPowers = 0;
+        let claimedMissions = new Set();
+        
+        let initialTickets = tickets;
+        
+        while (tickets > 0 && matchesPlayedToday < matchesPerDay) {
+            tickets--;
+            totalTicketsSpent++;
+            matchesPlayedToday++;
+            
+            // Simulate 1 Match
+            let isWin = Math.random() < winRate;
+            let goals = Math.floor(Math.random() * (goalMax - goalMin + 1)) + goalMin;
+            let spUsed = Math.floor(Math.random() * (spMax - spMin + 1)) + spMin;
+            
+            dailyGoalsScored += goals;
+            dailySuperPowers += spUsed;
+            if (isWin) dailyMatchesWon++;
+            
+            // Match Rewards
+            xp += isWin ? winEP : lossEP;
+            cups += isWin ? winCup : lossCup;
+            let curGained = isWin ? winCurrency : lossCurrency;
+            if (curGained > 0) addReward("Event Currency", curGained);
+            
+            // Evaluate Missions
+            d.missions.forEach((m, idx) => {
+                if (claimedMissions.has(idx)) return; // Already claimed today
                 
-                if (m.type === 'Ticket') {
-                    dailyMissionTickets += scaledAmt;
-                } else {
-                    addReward(m.type, Math.round(scaledAmt));
+                let isCompleted = false;
+                if (m.task.includes("Play") && matchesPlayedToday >= m.req) isCompleted = true;
+                else if (m.task.includes("Win") && dailyMatchesWon >= m.req) isCompleted = true;
+                else if (m.task.includes("Score") && dailyGoalsScored >= m.req) isCompleted = true;
+                else if (m.task.includes("Power") && dailySuperPowers >= m.req) isCompleted = true;
+                
+                if (isCompleted) {
+                    claimedMissions.add(idx);
+                    if (m.type === 'Ticket') {
+                        tickets += m.amt;
+                        addLog(`  🎯 Mission '${m.task}' Complete! +${m.amt} Ticket(s) (Remaining: ${tickets})`);
+                    } else {
+                        addReward(m.type, m.amt);
+                        addLog(`  🎯 Mission '${m.task}' Complete! +${m.amt} ${m.type}`);
+                    }
+                    if (m.xp) xp += m.xp;
                 }
-                dailyMissionXp += scaledXp;
             });
-            
-            let roundedTickets = Math.round(dailyMissionTickets);
-            tickets += roundedTickets;
-            xp += Math.round(dailyMissionXp);
-            
-            addLog(`🎯 Missions Completed (${Math.round(missionBehavior*100)}%): +${roundedTickets} Ticket, +${Math.round(dailyMissionXp)} XP`);
-        } else {
-            addLog(`🎯 Missions Skipped (0% completion)`);
         }
-
-        // 4. Play Matches
-        if (tickets > 0) {
-            let matchesToPlay = Math.min(tickets, matchesPerDay);
-            if (matchesToPlay > 0) {
-                addLog(`⚔️ Playing ${matchesToPlay} matches (Tickets before: ${tickets})...`);
-                
-                let expectedEPPerMatch = (winEP * winRate) + (lossEP * (1 - winRate));
-                let xpGained = Math.round(matchesToPlay * expectedEPPerMatch);
-                
-                let expectedCurrencyPerMatch = (winCurrency * winRate) + (lossCurrency * (1 - winRate));
-                let currencyGained = Math.round(matchesToPlay * expectedCurrencyPerMatch);
-                
-                let expectedCupPerMatch = (winCup * winRate) + (lossCup * (1 - winRate));
-                let cupsGained = Math.round(matchesToPlay * expectedCupPerMatch);
-                
-                xp += xpGained;
-                cups += cupsGained;
-                if (currencyGained > 0) {
-                    addReward("Event Currency", currencyGained);
-                }
-                
-                totalTicketsSpent += matchesToPlay;
-                tickets -= matchesToPlay; // Keep remaining tickets for next day
-                
-                addLog(`⚔️ Earned ${xpGained} XP, ${cupsGained} Cups, and ${currencyGained} Event Currency from matches (Win Rate: ${Math.round(winRate*100)}%). Tickets remaining: ${tickets}`);
-            } else {
-                addLog(`⚔️ No matches played today due to 0 capacity.`);
-            }
+        
+        if (matchesPlayedToday > 0) {
+            addLog(`⚔️ Played ${matchesPlayedToday} matches. Wins: ${dailyMatchesWon}, Goals: ${dailyGoalsScored}, SP: ${dailySuperPowers}. Tickets left: ${tickets}`);
+        } else if (tickets === 0 && initialTickets === 0) {
+            addLog(`⚔️ No matches played today (0 Tickets).`);
+        } else if (matchesPlayedToday === 0 && tickets > 0) {
+            addLog(`⚔️ No matches played today (Reached max matches/day cap of ${matchesPerDay}).`);
         }
 
         // 5. Check BP Level Up
