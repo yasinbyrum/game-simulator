@@ -2653,7 +2653,7 @@ function renderWCBattlePass() {
     let html = '';
     d.battlePass.forEach((item, idx) => {
         html += `<tr>
-            <td>Level ${item.level}</td>
+            <td>Step ${item.level}</td>
             <td><input class="edit" type="number" value="${item.xpReq}" onchange="updateWCBattlePass(${idx}, 'xpReq', this.value)"></td>
             <td><input class="edit" type="text" value="${item.freeType}" onchange="updateWCBattlePass(${idx}, 'freeType', this.value)"></td>
             <td><input class="edit" type="number" value="${item.freeAmt}" onchange="updateWCBattlePass(${idx}, 'freeAmt', this.value)"></td>

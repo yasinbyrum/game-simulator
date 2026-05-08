@@ -177,7 +177,7 @@ window.runWCSimulation = function() {
             }
         }
         if (leveledUp) {
-            addLog(`⭐ Reached BP Level ${bpLevel}!`);
+            addLog(`⭐ Reached BP Step ${bpLevel}!`);
         }
     }
 
