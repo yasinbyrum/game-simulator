@@ -2498,7 +2498,7 @@ function initApp() {
         loadGame(); // LOAD DATA NOW
         if (typeof window.fixInventoryLevels === 'function') {
             window.fixInventoryLevels(window.playerInventory);
-            saveGame();
+            saveGameData();
         }
         nav('dashboard');
         if (typeof renderPlayerProfile === 'function') renderPlayerProfile();
